@@ -11,10 +11,10 @@ import jason.future.Action
 import java.util.logging.Logger
 
 
-class GridJasonEnv() : Environment() {
+class GridJasonEnv : Environment() {
 
     val model   = GridEnvModel()
-    val actions = model.actions().associate { it.name to it }
+    val actions = model.actions().associateBy { it.name }
     val view    = GridWorldView(model,  "Future!", 800)
 
     val log   = Logger.getLogger("grid-env")

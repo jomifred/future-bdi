@@ -2,8 +2,8 @@ package jason.future
 
 /** simulates the future for an Intention */
 class Simulator<S : State> (
-    val env: EnvironmentModel<S>,
-    val ag : AgentModel<S>
+    private val env: EnvironmentModel<S>,
+    private val ag : AgentModel<S>
 ) {
 
     fun simulate(init: S, goal: S): List<Pair<S,Action>> {
@@ -23,7 +23,7 @@ interface EnvironmentModel<T : State>  {
     fun next(s:T, a:Action): T
 }
 
-interface State {}
+interface State
 
 class Action(val name: String) {
     override fun toString(): String = name

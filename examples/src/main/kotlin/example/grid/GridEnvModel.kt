@@ -6,14 +6,9 @@ import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.State
 
-class GridEnvModel : EnvironmentModel<GridLocation>, GridWorldModel {
+class GridEnvModel : EnvironmentModel<GridLocation>, GridWorldModel(30, 30, 1) {
 
-    constructor() : super(30,30,1) {
-        addWall(10,15,20,15)
-        setAgPos( 0, 15, 5)
-    }
-
-    val actions = listOf(
+    private val actions = listOf(
         Action("n"),
         Action("nw"),
         Action("ne"),
@@ -27,18 +22,32 @@ class GridEnvModel : EnvironmentModel<GridLocation>, GridWorldModel {
     override fun actions() = actions
 
     override fun next(s: GridLocation, a: Action): GridLocation {
-        return  (if (a.name == "n")  GridLocation(s.x(), s.y() - 1)
-            else if (a.name == "nw") GridLocation(s.x() - 1, s.y() - 1)
-            else if (a.name == "ne") GridLocation(s.x() + 1, s.y() - 1)
-            else if (a.name == "w")  GridLocation(s.x() - 1, s.y())
-            else if (a.name == "e")  GridLocation(s.x() + 1, s.y())
-            else if (a.name == "s")  GridLocation(s.x(), s.y() + 1)
-            else if (a.name == "sw") GridLocation(s.x() - 1, s.y() + 1)
-            else if (a.name == "se") GridLocation(s.x() + 1, s.y() + 1)
-            else s)
-            .let {
+        return when(a.name) {
+            "n" -> GridLocation(s.x(), s.y() - 1)
+            "nw"-> GridLocation(s.x() - 1, s.y() - 1)
+            "ne"-> GridLocation(s.x() + 1, s.y() - 1)
+            "w" -> GridLocation(s.x() - 1, s.y())
+            "e" -> GridLocation(s.x() + 1, s.y())
+            "s" -> GridLocation(s.x(), s.y() + 1)
+            "sw"-> GridLocation(s.x() - 1, s.y() + 1)
+            "se"-> GridLocation(s.x() + 1, s.y() + 1)
+            else -> s
+            }.let {
                 if (isFree(it.x(), it.y())) it else s
             }
+
+//        return  (if (a.name == "n")  GridLocation(s.x(), s.y() - 1)
+//            else if (a.name == "nw") GridLocation(s.x() - 1, s.y() - 1)
+//            else if (a.name == "ne") GridLocation(s.x() + 1, s.y() - 1)
+//            else if (a.name == "w")  GridLocation(s.x() - 1, s.y())
+//            else if (a.name == "e")  GridLocation(s.x() + 1, s.y())
+//            else if (a.name == "s")  GridLocation(s.x(), s.y() + 1)
+//            else if (a.name == "sw") GridLocation(s.x() - 1, s.y() + 1)
+//            else if (a.name == "se") GridLocation(s.x() + 1, s.y() + 1)
+//            else s)
+//            .let {
+//                if (isFree(it.x(), it.y())) it else s
+//            }
 //                .let { it } //if isFree(it.x, it.y) it else s }
 
 //        var newLoc = s as GridLocation
@@ -57,6 +66,11 @@ class GridEnvModel : EnvironmentModel<GridLocation>, GridWorldModel {
 //        else
 //            return s
     }
+
+    init {
+        addWall(10,15,20,15)
+        setAgPos( 0, 15, 5)
+    }
 }
 
 class GridLocation : State {
@@ -72,11 +86,11 @@ class GridLocation : State {
     fun x() = jgl.x
     fun y() = jgl.y
 
-    override fun toString() = "<${jgl.toString()}>"
+    override fun toString() = "<${jgl}>"
 
     override fun equals(other: Any?): Boolean {
         if (this === other)  return true
-        if (other is GridLocation) return jgl.equals(other.jgl)
+        if (other is GridLocation) return jgl == other.jgl
         return false
     }
 

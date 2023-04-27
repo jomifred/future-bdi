@@ -4,11 +4,12 @@ package example.grid
 
 import jason.environment.grid.GridWorldView
 import jason.future.*
+import kotlin.system.exitProcess
 
 fun main() {
     val env = GridEnvModel()
     val view = GridWorldView(env,  "Future!", 800)
-    view.setVisible(true)
+    view.isVisible = true
 
     val initialState = GridLocation(env.getAgPos(0).x, env.getAgPos(0).y)
     val goalState    = GridLocation(15,25)
@@ -22,20 +23,20 @@ fun main() {
         env.setAgPos(0, s.x(), s.y())
         Thread.sleep(200)
     }
-    System.exit(0)
+    exitProcess(0)
 }
 
 class Robot : AgentModel<GridLocation> {
 
-    val visited = mutableSetOf<GridLocation>()
+    private val visited = mutableSetOf<GridLocation>()
 
     override fun decide(e: EnvironmentModel<GridLocation>, s:GridLocation, goal:GridLocation): Action {
         //println("deciding for $s "+visited)
         visited.add(s)
 
         return e.actions()
-            .associate { it to e.next(s,it) }
-            .filter { it.value != s && !visited.contains(it.value) }
+            .associateWith { e.next(s,it) }
+            .filterValues { it != s && !visited.contains(it) }
             .minBy { a -> a.value.distance(goal) }
             .key
 
