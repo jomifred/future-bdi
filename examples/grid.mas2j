@@ -14,7 +14,7 @@ MAS grid {
 
     environment: example.grid.GridJasonEnv
 
-    agents: robot1;
+    agents: robot1 agentClass example.grid.PreferenceAgent;
 
     aslSourcePath: "src/agt";
 }
