@@ -1,10 +1,12 @@
 package example.grid
 
+/** class used just to play with the implementation */
+
 import jason.environment.grid.GridWorldView
 import jason.future.*
 
-fun main(args: Array<String>) {
-    val env = Grid()
+fun main() {
+    val env = GridEnvModel()
     val view = GridWorldView(env,  "Future!", 800)
     view.setVisible(true)
 
@@ -34,7 +36,7 @@ class Robot : AgentModel<GridLocation> {
         return e.actions()
             .associate { it to e.next(s,it) }
             .filter { it.value != s && !visited.contains(it.value) }
-            .minBy { a -> a.value.distance(goal as GridLocation) }
+            .minBy { a -> a.value.distance(goal) }
             .key
 
         // get all action, select the closer to goal

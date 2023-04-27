@@ -6,7 +6,7 @@ import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.State
 
-class Grid : EnvironmentModel<GridLocation>, GridWorldModel {
+class GridEnvModel : EnvironmentModel<GridLocation>, GridWorldModel {
 
     constructor() : super(30,30,1) {
         addWall(10,15,20,15)
@@ -65,15 +65,18 @@ class GridLocation : State {
     constructor(x: Int, y: Int) {
         jgl = Location(x,y)
     }
+    constructor(l: Location) {
+        jgl = l
+    }
 
     fun x() = jgl.x
     fun y() = jgl.y
 
     override fun toString() = "<${jgl.toString()}>"
 
-    override fun equals(l: Any?): Boolean {
-        if (this === l)  return true
-        if (l is GridLocation) return jgl.equals(l.jgl)
+    override fun equals(other: Any?): Boolean {
+        if (this === other)  return true
+        if (other is GridLocation) return jgl.equals(other.jgl)
         return false
     }
 
