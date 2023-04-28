@@ -10,15 +10,14 @@ import jason.future.Simulator
 import kotlin.system.exitProcess
 
 fun main() {
-    val env = GridEnvModel(GridLocation(15,5))
+    val env = GridEnvModel(GridState(15,5),GridState(15,25))
     val view = GridWorldView(env,  "Future!", 800)
     view.isVisible = true
 
     val initialState = env.currentState()
-    val goalState    = GridLocation(15,25)
 
     val plan = Simulator(  env, Robot() )
-        .simulate( initialState, goalState)
+        .simulate( initialState, env.goalState)
 
     println("Plan: $plan")
     for ( (s,a) in plan) {
@@ -27,21 +26,14 @@ fun main() {
         Thread.sleep(200)
     }
 
-//    runBlocking { // this: CoroutineScope
-//        launch { // launch a new coroutine and continue
-//            delay(1000L) // non-blocking delay for 1 second (default time unit is ms)
-//            println("World!") // print after delay
-//        }
-//        println("Hello")
-//    }
     exitProcess(0)
 }
 
-class Robot : AgentModel<GridLocation> {
+class Robot : AgentModel<GridState> {
 
-    private val visited = mutableSetOf<GridLocation>()
+    private val visited = mutableSetOf<GridState>()
 
-    override fun decide(e: EnvironmentModel<GridLocation>, s:GridLocation, goal:GridLocation): Action {
+    override fun decide(e: EnvironmentModel<GridState>, s:GridState, goal:GridState): Action {
         //println("deciding for $s "+visited)
         visited.add(s)
 

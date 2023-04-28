@@ -7,7 +7,7 @@ import jason.asSyntax.Literal
 /** Agent class that select options based on preference */
 open class PreferenceAgent : Agent() {
 
-    override fun selectOption(options: MutableList<Option>): Option =
+    override fun selectOption(options: MutableList<Option>): Option? =
         options
             .associateWith {
                 it.plan.label

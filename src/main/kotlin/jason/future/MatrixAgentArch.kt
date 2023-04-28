@@ -3,31 +3,32 @@ package jason.future
 import jason.architecture.AgArch
 import jason.asSemantics.ActionExec
 import jason.asSemantics.Event
-import jason.asSemantics.Intention
 import jason.asSyntax.Literal
 
 /** agent that run in the "Matrix" (simulated world) */
 class MatrixAgentArch (
-    private val env : EnvironmentModel<State>,
+    val env    : EnvironmentModel<State>,
     private val agName : String
 ) : AgArch() {
 
     private val history = mutableListOf<State>()
+    private var hasLoop = false
 
     override fun getAgName(): String {
         return agName
     }
 
     override fun perceive(): MutableCollection<Literal> {
-        println("        matrix perception: ${env.agPerception(agName)}")
+        //println("        matrix perception: ${env.agPerception(agName)}")
         return env.agPerception(agName)
     }
 
     override fun act(action: ActionExec) {
-        println("        matrix action: ${action.actionTerm}")
-        history.add(
-            env.execute( env.structureToAction(action.actionTerm) )
-        )
+        //println("        matrix action: ${action.actionTerm}")
+        val newState = env.execute( env.structureToAction(action.actionTerm) )
+        if  (history.contains(newState))
+            hasLoop = true
+        history.add(newState)
         action.result = true
         actionExecuted(action)
     }
@@ -37,20 +38,22 @@ class MatrixAgentArch (
 //        super.actionExecuted(act)
 //    }
 
+    /** returns true if the simulated history has problem */
+    fun hasProblem() = hasLoop
+
     fun run(evt: Event) {
         val intention = evt.intention
         var rcCounter = 0
         var a : Literal? = null
-        while (!intention.isFinished && rcCounter < 10) { // TODO: give a way to set this number
+        while (!intention.isFinished && !hasProblem() && rcCounter < 40) { // TODO: give a way to set this number
             rcCounter++
-            //println("looking $rcCounter steps ahead")
 
             ts.sense()
             ts.deliberate()
             ts.act()
-            println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
-            println("    history: ${history}")
+            //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
+            //println("    history: ${history}")
         }
-        println("intention finished, in $rcCounter steps")
+        println("    simulation finished, in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
     }
 }

@@ -10,15 +10,21 @@ import jason.future.EnvironmentModel
 import jason.future.State
 
 class GridEnvModel(
-    private var currentState: GridLocation
-) : EnvironmentModel<GridLocation>, GridWorldModel(30, 30, 1) {
+    var currentState: GridState,
+    var goalState: GridState
+) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
     init {
-        addWall(10,15,20,15)
-        setAgPos( 0, currentState.l.x, currentState.l.y)
+        //addWall(10,15,20,15)
+        addWall(13,15,17,15)
+        setAgPos( 0, currentState.l)
     }
 
-    public override fun clone(): GridEnvModel = GridEnvModel( GridLocation(currentState.l))
+    public override fun clone(): GridEnvModel =
+        GridEnvModel(
+            GridState(currentState.l),
+            GridState(goalState.l)
+        )
 
     private val actions = listOf(
         Action("n"),
@@ -38,11 +44,11 @@ class GridEnvModel(
     override fun structureToAction(jasonAction: Structure): Action {
         return actions.getOrDefault( jasonAction.functor, skip) // here, only functor is relevant
     }
-    override fun currentState(): GridLocation = currentState
+    override fun currentState(): GridState = currentState
 
     override fun execute(a: Action): State {
         currentState = next(currentState, a)
-        setAgPos( 0, currentState.l.x, currentState.l.y)
+        setAgPos( 0, currentState.l)
         return currentState()
     }
 
@@ -55,7 +61,7 @@ class GridEnvModel(
             ASSyntax.createNumber(l.y.toDouble()),
         ))
 
-        for ( v in getAdjacent( GridLocation(l)).values) {
+        for ( v in getAdjacent(GridState(l)).values) {
             if (hasObject(OBSTACLE, v.l.x, v.l.y)) {
                 p.add( ASSyntax.createLiteral(
                     "obstacle",
@@ -64,16 +70,18 @@ class GridEnvModel(
                 ))
             }
         }
+
+        p.add(ASSyntax.createLiteral(
+            "destination",
+            ASSyntax.createNumber(goalState.l.x.toDouble()),
+            ASSyntax.createNumber(goalState.l.y.toDouble()),
+        ))
+
         return p
     }
 
     val fixedPerception : List<Literal> by lazy {
         listOf<Literal>(
-            ASSyntax.createLiteral(
-                "destination",
-                ASSyntax.createNumber(15.0),
-                ASSyntax.createNumber(8.0),
-            ),
             ASSyntax.createLiteral(
                 "w_size",
                 ASSyntax.createNumber(width.toDouble()),
@@ -82,21 +90,21 @@ class GridEnvModel(
         )
     }
 
-    fun getAdjacent(s: GridLocation) : Map<String, GridLocation> {
+    fun getAdjacent(s: GridState) : Map<String, GridState> {
         return mapOf(
-            "n"  to GridLocation(s.l.x, s.l.y - 1),
-            "nw" to GridLocation(s.l.x - 1, s.l.y - 1),
-            "ne" to GridLocation(s.l.x + 1, s.l.y - 1),
-            "w"  to GridLocation(s.l.x - 1, s.l.y),
-            "e"  to GridLocation(s.l.x + 1, s.l.y),
-            "s"  to GridLocation(s.l.x, s.l.y + 1),
-            "sw" to GridLocation(s.l.x - 1, s.l.y + 1),
-            "se" to GridLocation(s.l.x + 1, s.l.y + 1)
+            "n"  to GridState(s.l.x, s.l.y - 1),
+            "nw" to GridState(s.l.x - 1, s.l.y - 1),
+            "ne" to GridState(s.l.x + 1, s.l.y - 1),
+            "w"  to GridState(s.l.x - 1, s.l.y),
+            "e"  to GridState(s.l.x + 1, s.l.y),
+            "s"  to GridState(s.l.x, s.l.y + 1),
+            "sw" to GridState(s.l.x - 1, s.l.y + 1),
+            "se" to GridState(s.l.x + 1, s.l.y + 1)
         )
     }
 
-    override fun next(s: GridLocation, a: Action): GridLocation {
-        fun GridLocation.ifFreeOrS(): GridLocation = if (isFree(l.x, l.y)) this else s
+    override fun next(s: GridState, a: Action): GridState {
+        fun GridState.ifFreeOrS(): GridState = if (isFree(l)) this else s
 
         return getAdjacent(s).getOrDefault(a.name, s).ifFreeOrS()
 
@@ -144,26 +152,24 @@ class GridEnvModel(
     }
 }
 
-class GridLocation : State {
+class GridState : State {
     val l: Location // jason grid location
 
     constructor(x: Int, y: Int) {
         l = Location(x,y)
     }
-    constructor(l: Location) {
-        this.l = l
-    }
+    constructor(l: Location) : this(l.x,l.y)
 
     override fun toString() = "<${l}>"
 
     override fun equals(other: Any?): Boolean {
         if (this === other)  return true
-        if (other is GridLocation) return l == other.l
+        if (other is GridState) return l == other.l
         return false
     }
 
     override fun hashCode() = l.hashCode()
 
-    fun distance(l: GridLocation) = this.l.distanceEuclidean(Location(l.l.x, l.l.y))
+    fun distance(l: GridState) = this.l.distanceEuclidean(Location(l.l.x, l.l.y))
 }
 

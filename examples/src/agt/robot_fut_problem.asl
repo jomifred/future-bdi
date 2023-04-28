@@ -3,17 +3,17 @@
 // (and so it does not need to maintain visited locations to avoid loops)
 
 +destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
-// NO NEED +pos(X,Y)     <- +visited(X,Y). // remember visited locations
+// NOT NEEDED: +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
 @[preference(0)] +!pos(X,Y) : pos(X,Y) <-  .print(done).
 @[preference(D)] +!pos(X,Y) : ok(s, D) <- s;  !pos(X,Y).
-@[preference(D)] +!pos(X,Y) : ok(sw,D) <- sw; !pos(X,Y).
-@[preference(D)] +!pos(X,Y) : ok(se,D) <- se; !pos(X,Y).
+//@[preference(D)] +!pos(X,Y) : ok(sw,D) <- sw; !pos(X,Y).
+//@[preference(D)] +!pos(X,Y) : ok(se,D) <- se; !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(w ,D) <- w;  !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(e ,D) <- e;  !pos(X,Y).
-@[preference(D)] +!pos(X,Y) : ok(n ,D) <- n;  !pos(X,Y).
-@[preference(D)] +!pos(X,Y) : ok(nw,D) <- nw; !pos(X,Y).
-@[preference(D)] +!pos(X,Y) : ok(ne,D) <- ne; !pos(X,Y).
+//@[preference(D)] +!pos(X,Y) : ok(n ,D) <- n;  !pos(X,Y).
+//@[preference(D)] +!pos(X,Y) : ok(nw,D) <- nw; !pos(X,Y).
+//@[preference(D)] +!pos(X,Y) : ok(ne,D) <- ne; !pos(X,Y).
 
 // checks if go to some direction is possible (free cell)
 // and computes the distance from goal to there
@@ -30,6 +30,6 @@ ok(ne,D) :- pos(X,Y) & unknown_free(X+1,Y-1) & distance(X+1,Y-1,D).
 unknown_free(X,Y) :-
     X >= 0 & Y >= 0 & w_size(W,H) & X < W & Y < H
     & not obstacle(X,Y).
-    // NO  NEED & not visited(X,Y).
+    // NOT NEEDED: & not visited(X,Y).
 
-distance(X,Y,D) :- destination(GX,GY) & D = math.sqrt( (X-GX)**2 + (Y-GY)**2).
+distance(X,Y,D) :- destination(GX,GY) & D = math.sqrt( (X-GX)**2 + (Y-GY)**2 ).
