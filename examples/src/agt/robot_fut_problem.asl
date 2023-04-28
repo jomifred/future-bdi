@@ -1,11 +1,11 @@
-// this agent computes the future foreseen problems
+// this agent computes the future to foresee problems
 // the problem in case is returning (in the future) to a visited location
 // (and so it does not need to maintain visited locations to avoid loops)
 
 +destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
 // NO NEED +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
-@[preference(0)] +!pos(X,Y) : pos(X,Y). // done!
+@[preference(0)] +!pos(X,Y) : pos(X,Y) <-  .print(done).
 @[preference(D)] +!pos(X,Y) : ok(s, D) <- s;  !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(sw,D) <- sw; !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(se,D) <- se; !pos(X,Y).

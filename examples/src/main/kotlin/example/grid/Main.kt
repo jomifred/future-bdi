@@ -10,11 +10,11 @@ import jason.future.Simulator
 import kotlin.system.exitProcess
 
 fun main() {
-    val env = GridEnvModel()
+    val env = GridEnvModel(GridLocation(15,5))
     val view = GridWorldView(env,  "Future!", 800)
     view.isVisible = true
 
-    val initialState = GridLocation(env.getAgPos(0).x, env.getAgPos(0).y)
+    val initialState = env.currentState()
     val goalState    = GridLocation(15,25)
 
     val plan = Simulator(  env, Robot() )

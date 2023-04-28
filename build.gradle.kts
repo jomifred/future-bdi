@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.7.21"
     application
@@ -14,6 +12,7 @@ repositories {
 
 dependencies {
     implementation("io.github.jason-lang:jason-interpreter:3.2.0")
+    //implementation( project(":examples"))
     testImplementation(kotlin("test"))
 }
 
