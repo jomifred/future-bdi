@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    //implementation("io.github.jason-lang:jason-interpreter:3.2.0")
+    implementation("io.github.jason-lang:jason-interpreter:3.2.0")
     testImplementation(kotlin("test"))
 }
 

@@ -3,7 +3,10 @@ package example.grid
 /** class used just to play with the implementation */
 
 import jason.environment.grid.GridWorldView
-import jason.future.*
+import jason.future.Action
+import jason.future.AgentModel
+import jason.future.EnvironmentModel
+import jason.future.Simulator
 import kotlin.system.exitProcess
 
 fun main() {
@@ -20,9 +23,17 @@ fun main() {
     println("Plan: $plan")
     for ( (s,a) in plan) {
         println( "in $s do $a")
-        env.setAgPos(0, s.x(), s.y())
+        env.setAgPos(0, s.l.x, s.l.y)
         Thread.sleep(200)
     }
+
+//    runBlocking { // this: CoroutineScope
+//        launch { // launch a new coroutine and continue
+//            delay(1000L) // non-blocking delay for 1 second (default time unit is ms)
+//            println("World!") // print after delay
+//        }
+//        println("Hello")
+//    }
     exitProcess(0)
 }
 

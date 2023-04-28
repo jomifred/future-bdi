@@ -1,20 +1,21 @@
-package example.grid
+package jason.agent
 
 import jason.asSemantics.Agent
 import jason.asSemantics.Option
 import jason.asSyntax.Literal
-import jason.asSyntax.NumberTerm
 
-class PreferenceAgent : Agent() {
+/** Agent class that select options based on preference */
+open class PreferenceAgent : Agent() {
 
     override fun selectOption(options: MutableList<Option>): Option =
         options
             .associateWith {
-                it.plan.label.capplyAnnots(it.unifier)
+                it.plan.label
+                    .annots
                     .filter { it.isLiteral && it.toString().startsWith("preference") }
             }
             .filterValues { it.isNotEmpty() }
-            .minByOrNull { ((it.value.first() as Literal).getTerm(0) as NumberTerm).solve() }
+            .minByOrNull { (it.value.first().capply(it.key.unifier) as Literal).getTerm(0) }
             ?. key
             ?: super.selectOption(options)
 }
