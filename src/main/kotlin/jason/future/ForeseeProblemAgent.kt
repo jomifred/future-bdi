@@ -13,7 +13,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var firstSO  = true
     private var depth    = 0
 
-    private val BSF = true
+    private val BSF = false
     private val orderOptions = true
 
     var originalAgent : ForeseeProblemAgent? = null
@@ -21,7 +21,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
     val explorationQueue = LinkedBlockingDeque<FutureOption>()
 
-    val visitedStates = mutableSetOf<State>()
+    //val visitedStates = mutableSetOf<State>()
     val visitedOption = mutableSetOf< Pair<State,String> >()
 
 
@@ -42,8 +42,8 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
     fun addToExplore(fo: FutureOption) {
 //        println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
-
         if (visitedOption.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
+            //visitedStates.add(fo.arch.env.currentState())
             if (BSF)
                 explorationQueue.offerLast(fo) // for BSF
             else
@@ -71,14 +71,14 @@ class ForeseeProblemAgent : PreferenceAgent() {
                 }
             }
             // the default option state is visited
-            visitedStates.add( envModel().currentState())
+            //visitedStates.add( envModel().currentState())
 
             // do not consider the future in matrix mode
             return defaultOption
         }
 
-        visitedStates.clear()
-        visitedStates.add( envModel().currentState())
+        //visitedStates.clear()
+        //visitedStates.add( envModel().currentState())
         visitedOption.clear()
         explorationQueue.clear()
 

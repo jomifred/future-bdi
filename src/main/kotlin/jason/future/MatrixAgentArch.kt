@@ -28,9 +28,9 @@ class MatrixAgentArch (
         //println("        matrix action: ${action.actionTerm}")
         val newState = env.execute( env.structureToAction(action.actionTerm) )
 
-        val agent = ts.ag as ForeseeProblemAgent
+        //val agent = ts.ag as ForeseeProblemAgent
         //alreadyVisited = agent.originalAgent?.visited?.unzip()?.first?.contains(newState)?:false // TODO: optimise this
-        alreadyVisited = agent.originalAgent?.visitedStates?.contains(newState)?:false
+        //alreadyVisited = agent.originalAgent?.visitedStates?.contains(newState)?:false
         //alreadyVisited = !(agent.originalAgent?.visited?.add(newState)?:true)
         //println("        visited ${agent.originalAgent?.visited}")
         hasLoop = history.contains(newState)
