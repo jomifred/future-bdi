@@ -15,8 +15,8 @@ class GridEnvModel(
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
     init {
-        //addWall(10,15,20,15)
-        addWall(13,15,17,15)
+        addWall(11,15,20,15)
+        //addWall(13,15,17,15)
         setAgPos( 0, currentState.l)
     }
 

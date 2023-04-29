@@ -85,7 +85,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
         // explore options to see their future
         var nbE = 0
         var fo = explorationQueue.poll()
-        while (fo != null && nbE < 1000) { // TODO: add a parameter somewhere to define o max number os options to explore
+        while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
             nbE++
 
             println("starting simulation for ${fo.evt.trigger.literal} with ${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth = ${fo.ag.depth}")
