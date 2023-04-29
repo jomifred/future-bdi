@@ -13,7 +13,7 @@ class MatrixAgentArch (
 
     private val history = mutableListOf<State>()
     private var hasLoop = false
-    private var alreadyVisited = false // if I've got to a state explored by other options
+    //private var alreadyVisited = false // if I've got to a state explored by other options
 
     override fun getAgName(): String {
         return agName
@@ -40,7 +40,7 @@ class MatrixAgentArch (
     }
 
     /** returns true if the simulated history has problem */
-    fun hasProblem() = hasLoop || alreadyVisited
+    fun hasProblem() = hasLoop // || alreadyVisited
 
     fun run(evt: Event) {
         val intention = evt.intention
@@ -54,6 +54,6 @@ class MatrixAgentArch (
             //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
             //println("    history: ${history}")
         }
-        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}. visited=$alreadyVisited")
+        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
     }
 }
