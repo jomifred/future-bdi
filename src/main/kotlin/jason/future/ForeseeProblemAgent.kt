@@ -12,12 +12,12 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var inMatrix = false
     private var firstSO  = true
     private var depth    = 0
-    private var originalOption : Option? = null
 
-    private val BSF = false
+    private val BSF = true
     private val orderOptions = true
 
     var originalAgent : ForeseeProblemAgent? = null
+    var originalOption : Option? = null
 
     val explorationQueue = LinkedBlockingDeque<FutureOption>()
 
@@ -29,8 +29,16 @@ class ForeseeProblemAgent : PreferenceAgent() {
         else
             options
 
+    fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
+    fun userEnv() : MatrixCapable<*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*>
+
+    fun envModel() : EnvironmentModel<State> =
+        if (inMatrix)
+            myMatrixArch().env
+        else
+            userEnv().getModel() as EnvironmentModel<State>
+
     fun addToExplore(fo: FutureOption, prune: Boolean = true) {
-        if (depth != 0) println("!!!!!!!!")
         if (BSF)
             explorationQueue.offerLast(fo) // for BSF
         else
@@ -51,11 +59,8 @@ class ForeseeProblemAgent : PreferenceAgent() {
                 firstSO = false
                 val arch = ts.agArch as MatrixAgentArch
                 for (o in optionsCfParameter(options)) {
-                    if (o != defaultOption) {
-                        originalAgent?.addToExplore(
-                            prepareSimulation(arch.env.clone(), o, this)
-                        )
-                    }
+                    if (o != defaultOption)
+                        originalAgent?.addToExplore( prepareSimulation( o ))
                 }
                 // the default option state is visited
                 //visited.add( arch.env.currentState() )
@@ -79,8 +84,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
         // add (sorted) option to be explored
         // TODO: only add other options if default option is not ok; or use kind of lazy creation of this exploration  points
         for (o in optionsCfParameter(options)) {
-            addToExplore(
-                prepareSimulation( userEnv.getModel().clone() as EnvironmentModel<State>, o,this) )
+            addToExplore(prepareSimulation(o))
         }
 
         // explore options to see their future
@@ -108,29 +112,24 @@ class ForeseeProblemAgent : PreferenceAgent() {
         return null
     }
 
-    //fun prepareSimulation(userEnv: MatrixCapable<*>, opt: Option, ag: ForeseeProblemAgent) : FutureOption {
-    fun prepareSimulation(envModel: EnvironmentModel<State>, opt: Option, ag: ForeseeProblemAgent) : FutureOption {
-        //val envModel = userEnv.getModel().clone()
-        //println("env $envModel ${RunLocalMAS.getRunner().environmentInfraTier.userEnvironment}")
-
+    fun prepareSimulation(opt: Option) : FutureOption {
         // clone agent model (based on this agent)
         val agArch = MatrixAgentArch(
-            envModel, // as EnvironmentModel<State>,
+            envModel().clone(), // as EnvironmentModel<State>,
             "${ts.agArch.agName}_matrix"
         )
-        val agModel = ag.clone(agArch) as ForeseeProblemAgent
+        val agModel = this.clone(agArch) as ForeseeProblemAgent
         agModel.inMatrix = true
         agModel.ts.setLogger(agArch)
-        agModel.originalAgent = ag.originalAgent?:ag
-        agModel.depth = ag.depth+1
-        agModel.originalOption = ag.originalOption?:opt
+        agModel.originalAgent = this.originalAgent?:this
+        agModel.depth = this.depth+1
+        agModel.originalOption = this.originalOption?:opt
 
         return FutureOption(
             opt,
             agModel,
             agArch,
-            ag.ts.c.selectedEvent.clone() as Event,
-            envModel.currentState())
+            this.ts.c.selectedEvent.clone() as Event)
     }
 
     fun curInt() = ts.c.selectedEvent.intention
@@ -140,6 +139,5 @@ data class FutureOption(
     val o: Option,
     val ag: ForeseeProblemAgent,
     val arch: MatrixAgentArch,
-    val evt: Event,
-    val state: State
+    val evt: Event
 )

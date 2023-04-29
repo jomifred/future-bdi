@@ -29,19 +29,15 @@ class MatrixAgentArch (
         val newState = env.execute( env.structureToAction(action.actionTerm) )
 
         val agent = ts.ag as ForeseeProblemAgent
+        //alreadyVisited = agent.originalAgent?.visited?.unzip()?.first?.contains(newState)?:false // TODO: optimise this
         alreadyVisited = agent.originalAgent?.visited?.contains(newState)?:false
         //alreadyVisited = !(agent.originalAgent?.visited?.add(newState)?:true)
         //println("        visited ${agent.originalAgent?.visited}")
-        hasLoop =history.contains(newState)
+        hasLoop = history.contains(newState)
         history.add(newState)
         action.result = true
         actionExecuted(action)
     }
-
-//    override fun actionExecuted(act: ActionExec?) {
-//        println("executed: ${act?.actionTerm}")
-//        super.actionExecuted(act)
-//    }
 
     /** returns true if the simulated history has problem */
     fun hasProblem() = hasLoop || alreadyVisited
@@ -49,7 +45,6 @@ class MatrixAgentArch (
     fun run(evt: Event) {
         val intention = evt.intention
         var rcCounter = 0
-        var a : Literal? = null
         while (!intention.isFinished && !hasProblem() && rcCounter < 40) { // TODO: give a way to set this number
             rcCounter++
 
@@ -59,6 +54,6 @@ class MatrixAgentArch (
             //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
             //println("    history: ${history}")
         }
-        println("    simulation finished, in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}. visited=$alreadyVisited")
+        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}. visited=$alreadyVisited")
     }
 }
