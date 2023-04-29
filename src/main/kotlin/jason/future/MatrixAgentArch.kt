@@ -30,7 +30,7 @@ class MatrixAgentArch (
 
         val agent = ts.ag as ForeseeProblemAgent
         //alreadyVisited = agent.originalAgent?.visited?.unzip()?.first?.contains(newState)?:false // TODO: optimise this
-        alreadyVisited = agent.originalAgent?.visited?.contains(newState)?:false
+        alreadyVisited = agent.originalAgent?.visitedStates?.contains(newState)?:false
         //alreadyVisited = !(agent.originalAgent?.visited?.add(newState)?:true)
         //println("        visited ${agent.originalAgent?.visited}")
         hasLoop = history.contains(newState)
@@ -45,7 +45,7 @@ class MatrixAgentArch (
     fun run(evt: Event) {
         val intention = evt.intention
         var rcCounter = 0
-        while (!intention.isFinished && !hasProblem() && rcCounter < 40) { // TODO: give a way to set this number
+        while (!intention.isFinished && !hasProblem() && rcCounter < 100) { // TODO: give a way to set this number
             rcCounter++
 
             ts.sense()
