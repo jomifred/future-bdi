@@ -5,10 +5,10 @@
 +destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
 // NOT NEEDED: +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
-@[preference(0)] +!pos(X,Y) : pos(X,Y) <-  .print(done).
+@[preference(0)] +!pos(X,Y) : pos(X,Y).// <-  .print(done).
 @[preference(D)] +!pos(X,Y) : ok(s, D) <- s;  !pos(X,Y).
-//@[preference(D)] +!pos(X,Y) : ok(sw,D) <- sw; !pos(X,Y).
-//@[preference(D)] +!pos(X,Y) : ok(se,D) <- se; !pos(X,Y).
+@[preference(D)] +!pos(X,Y) : ok(sw,D) <- sw; !pos(X,Y).
+@[preference(D)] +!pos(X,Y) : ok(se,D) <- se; !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(w ,D) <- w;  !pos(X,Y).
 @[preference(D)] +!pos(X,Y) : ok(e ,D) <- e;  !pos(X,Y).
 //@[preference(D)] +!pos(X,Y) : ok(n ,D) <- n;  !pos(X,Y).

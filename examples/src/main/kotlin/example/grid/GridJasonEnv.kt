@@ -12,7 +12,10 @@ import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 class GridJasonEnv : Environment(), MatrixCapable<GridState> {
-    val model   = GridEnvModel(GridState(15,10), GridState(15,17))
+    val model   = GridEnvModel(
+        GridState(15, 7), // initial state
+        GridState(15,17)  // goal  state
+    )
     val view    = GridWorldView(model,  "Future!", 800)
 
     val log   = Logger.getLogger("grid-env")

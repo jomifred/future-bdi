@@ -13,13 +13,19 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var inMatrix = false
     private var firstSO  = true
     private var depth    = 0
+    private var originalOption : Option? = null
 
     var originalAgent : ForeseeProblemAgent? = null
 
     val explorationQueue = LinkedBlockingDeque<FutureOption>()
 
-    fun addToExplore(fo: FutureOption) {
+    val visited = mutableSetOf<State>()
+
+    fun addToExplore(fo: FutureOption, prune: Boolean = true) {
         if (depth != 0) println("!!!!!!!!")
+        //println("    add ${fo.state}, visited: $visited")
+        //if (prune && visited.contains(fo.state)) return
+        //visited.add(fo.state)
         explorationQueue.offerLast(fo)
     }
 
@@ -36,39 +42,50 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
         options.remove(defaultOption)
 
-//        if (depth >= 2)
-//            println("***************"+inMatrix+" $firstSO ${options.size} $originalAgent")
         if (inMatrix) {
             // store all options for further exploration (clone the agent and environment for each)
-            if (firstSO) {
+            if (firstSO && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
                 firstSO = false
+                val arch = ts.agArch as MatrixAgentArch
                 for (o in options) {
-                    //println("in matrix options ${originalAgent}")
+                    //println("in matrix options $depth")
                     originalAgent?.addToExplore(
-                        prepareSimulation( userEnv, o, this)
+                        prepareSimulation( arch.env.clone(), o, this)
                     )
                 }
+                // the default option state is visited
+                //visited.add( arch.env.currentState() )
             }
             // do not consider the future in matrix mode
             return defaultOption
         }
 
-        // simulates the future of default options
+        visited.clear()
+        visited.add( userEnv.getModel().currentState())
+        explorationQueue.clear()
+
+        // simulates the future of options
 
         // clone agent and environment mode and add them into exploration queue
 
         // add default option as the first to be explored
-        explorationQueue.offerLast( prepareSimulation(userEnv, defaultOption, this))
+        addToExplore( prepareSimulation(
+            userEnv.getModel().clone() as EnvironmentModel<State>,
+            defaultOption,
+            this), false) // do not prune first level search
 
         // add other options // TODO: only add other options if default option is not ok; or  use kind of  lazy creation of this exploration  points
         for (o in options) {
-            explorationQueue.offerLast( prepareSimulation(userEnv, o, this) )
+            addToExplore( prepareSimulation(
+                userEnv.getModel().clone() as EnvironmentModel<State>,
+                o,
+                this), false )
         }
 
         // explore options to see their future
         var nbE = 0
         var fo = explorationQueue.poll()
-        while (fo != null && nbE < 5000) { // TODO: add a parameter somewhere to define o max number os options to explore
+        while (fo != null && nbE < 1000) { // TODO: add a parameter somewhere to define o max number os options to explore
             nbE++
 
             println("starting simulation for ${fo.evt.trigger.literal} with ${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth = ${fo.ag.depth}")
@@ -82,9 +99,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
             if (!fo.arch.hasProblem()) {
                 println("found an option with a likely nice future! ${nbE} options tried.")
-                explorationQueue.clear()
-                // TODO: should not return fo.o (that is an option in the future, but the current option that produced that future option
-                return fo.o
+                return fo.ag.originalOption
             }
             fo = explorationQueue.poll()
         }
@@ -92,13 +107,14 @@ class ForeseeProblemAgent : PreferenceAgent() {
         return null
     }
 
-    fun prepareSimulation(userEnv: MatrixCapable<*>, opt: Option, ag: ForeseeProblemAgent) : FutureOption {
-        val envModel = userEnv.getModel().clone()
+    //fun prepareSimulation(userEnv: MatrixCapable<*>, opt: Option, ag: ForeseeProblemAgent) : FutureOption {
+    fun prepareSimulation(envModel: EnvironmentModel<State>, opt: Option, ag: ForeseeProblemAgent) : FutureOption {
+        //val envModel = userEnv.getModel().clone()
         //println("env $envModel ${RunLocalMAS.getRunner().environmentInfraTier.userEnvironment}")
 
         // clone agent model (based on this agent)
         val agArch = MatrixAgentArch(
-            envModel as EnvironmentModel<State>,
+            envModel, // as EnvironmentModel<State>,
             "${ts.agArch.agName}_matrix"
         )
         val agModel = ag.clone(agArch) as ForeseeProblemAgent
@@ -106,10 +122,23 @@ class ForeseeProblemAgent : PreferenceAgent() {
         agModel.ts.setLogger(agArch)
         agModel.originalAgent = ag.originalAgent?:ag
         agModel.depth = ag.depth+1
+        agModel.originalOption = ag.originalOption?:opt
 
-        return FutureOption(opt, agModel, agArch, ag.ts.c.selectedEvent.clone() as Event)
+        return FutureOption(
+            opt,
+            agModel,
+            agArch,
+            ag.ts.c.selectedEvent.clone() as Event,
+            envModel.currentState())
     }
 
+    fun curInt() = ts.c.selectedEvent.intention
 }
 
-data class FutureOption(val o: Option, val ag: ForeseeProblemAgent, val arch: MatrixAgentArch, val evt: Event)
+data class FutureOption(
+    val o: Option,
+    val ag: ForeseeProblemAgent,
+    val arch: MatrixAgentArch,
+    val evt: Event,
+    val state: State
+)
