@@ -11,12 +11,16 @@ import jason.future.State
 
 class GridEnvModel(
     var currentState: GridState,
-    var goalState: GridState
+    var goalState   : GridState
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
     init {
-        addWall(11,15,20,15)
+        addWall(12,15,20,15)
         //addWall(13,15,17,15)
+        setAgPos( 0, currentState.l)
+    }
+    fun setInitState(c: GridState) {
+        currentState = c;
         setAgPos( 0, currentState.l)
     }
 

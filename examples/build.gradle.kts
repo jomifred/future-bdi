@@ -1,5 +1,5 @@
 // run with
-//      ./gradlew :examples:run --args="grid.mas2j  --no-net"
+//      ./gradlew :examples:run --args="grid1.mas2j  --no-net"
 
 plugins {
     kotlin("jvm") version "1.7.21"

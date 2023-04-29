@@ -2,6 +2,8 @@ package example.grid
 
 // Environment code for project grid
 
+import jason.asSyntax.ASSyntax
+import jason.asSyntax.NumberTerm
 import jason.asSyntax.Structure
 import jason.environment.Environment
 import jason.environment.grid.GridWorldView
@@ -10,6 +12,7 @@ import jason.future.MatrixCapable
 import jason.runtime.RuntimeServicesFactory
 import java.util.logging.Logger
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 class GridJasonEnv : Environment(), MatrixCapable<GridState> {
     val model   = GridEnvModel(
@@ -20,9 +23,25 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
 
     val log   = Logger.getLogger("grid-env")
 
-    init {
+    override fun init(args: Array<String>?) {
         view.isVisible = true
 
+        if (args != null && args.size > 0) {
+            for (a in args) {
+                if (a.startsWith("init")) {
+                    val l = ASSyntax.parseLiteral(a)
+                    val x = (l.getTerm(0) as NumberTerm).solve().toInt()
+                    val y = (l.getTerm(1) as NumberTerm).solve().toInt()
+                    model.setInitState( GridState(x,y) )
+                }
+                if (a.startsWith("goal")) {
+                    val l = ASSyntax.parseLiteral(a)
+                    val x = (l.getTerm(0) as NumberTerm).solve().toInt()
+                    val y = (l.getTerm(1) as NumberTerm).solve().toInt()
+                    model.goalState = GridState(x,y)
+                }
+            }
+        }
         thread(start = true) {
                 // wait for some agent to be created
                 while (RuntimeServicesFactory.get().agentsNames.isEmpty())

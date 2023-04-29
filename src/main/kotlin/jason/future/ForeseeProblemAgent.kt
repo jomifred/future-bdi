@@ -3,7 +3,6 @@ package jason.future
 import jason.agent.PreferenceAgent
 import jason.asSemantics.Event
 import jason.asSemantics.Option
-import jason.environment.Environment
 import jason.infra.local.RunLocalMAS
 import java.util.concurrent.LinkedBlockingDeque
 
@@ -15,18 +14,27 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var depth    = 0
     private var originalOption : Option? = null
 
+    private val BSF = false
+    private val orderOptions = true
+
     var originalAgent : ForeseeProblemAgent? = null
 
     val explorationQueue = LinkedBlockingDeque<FutureOption>()
 
     val visited = mutableSetOf<State>()
 
+    fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
+        if (orderOptions)
+            super.sortedOptions(options,BSF)
+        else
+            options
+
     fun addToExplore(fo: FutureOption, prune: Boolean = true) {
         if (depth != 0) println("!!!!!!!!")
-        //println("    add ${fo.state}, visited: $visited")
-        //if (prune && visited.contains(fo.state)) return
-        //visited.add(fo.state)
-        explorationQueue.offerLast(fo)
+        if (BSF)
+            explorationQueue.offerLast(fo) // for BSF
+        else
+            explorationQueue.offerFirst(fo) // for DSF
     }
 
     override fun selectOption(options: MutableList<Option>): Option? {
@@ -34,24 +42,20 @@ class ForeseeProblemAgent : PreferenceAgent() {
         if (defaultOption == null)
             return null
 
-        val userEnv= RunLocalMAS.getRunner().environmentInfraTier.userEnvironment
-        if (userEnv !is MatrixCapable<*>) // the environment should be Matrixable
-            return defaultOption
         if (ts.c.selectedEvent.intention == null) // we are considering options only for an intention
             return defaultOption
-
-        options.remove(defaultOption)
 
         if (inMatrix) {
             // store all options for further exploration (clone the agent and environment for each)
             if (firstSO && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
                 firstSO = false
                 val arch = ts.agArch as MatrixAgentArch
-                for (o in options) {
-                    //println("in matrix options $depth")
-                    originalAgent?.addToExplore(
-                        prepareSimulation( arch.env.clone(), o, this)
-                    )
+                for (o in optionsCfParameter(options)) {
+                    if (o != defaultOption) {
+                        originalAgent?.addToExplore(
+                            prepareSimulation(arch.env.clone(), o, this)
+                        )
+                    }
                 }
                 // the default option state is visited
                 //visited.add( arch.env.currentState() )
@@ -59,6 +63,10 @@ class ForeseeProblemAgent : PreferenceAgent() {
             // do not consider the future in matrix mode
             return defaultOption
         }
+
+        val userEnv= RunLocalMAS.getRunner().environmentInfraTier.userEnvironment
+        if (userEnv !is MatrixCapable<*>) // the environment should be Matrixable
+            return defaultOption
 
         visited.clear()
         visited.add( userEnv.getModel().currentState())
@@ -68,18 +76,11 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
         // clone agent and environment mode and add them into exploration queue
 
-        // add default option as the first to be explored
-        addToExplore( prepareSimulation(
-            userEnv.getModel().clone() as EnvironmentModel<State>,
-            defaultOption,
-            this), false) // do not prune first level search
-
-        // add other options // TODO: only add other options if default option is not ok; or  use kind of  lazy creation of this exploration  points
-        for (o in options) {
-            addToExplore( prepareSimulation(
-                userEnv.getModel().clone() as EnvironmentModel<State>,
-                o,
-                this), false )
+        // add (sorted) option to be explored
+        // TODO: only add other options if default option is not ok; or use kind of lazy creation of this exploration  points
+        for (o in optionsCfParameter(options)) {
+            addToExplore(
+                prepareSimulation( userEnv.getModel().clone() as EnvironmentModel<State>, o,this) )
         }
 
         // explore options to see their future
