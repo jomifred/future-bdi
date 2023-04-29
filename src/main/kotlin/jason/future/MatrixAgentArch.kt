@@ -13,7 +13,7 @@ class MatrixAgentArch (
 
     private val history = mutableListOf<State>()
     private var hasLoop = false
-    //private var alreadyVisited = false // if I've got to a state explored by other options
+    //private var alreadyVisited = false // if I've got to a state explored by other options // TODO: remove since visited options does the same job
 
     override fun getAgName(): String {
         return agName
@@ -29,7 +29,6 @@ class MatrixAgentArch (
         val newState = env.execute( env.structureToAction(action.actionTerm) )
 
         //val agent = ts.ag as ForeseeProblemAgent
-        //alreadyVisited = agent.originalAgent?.visited?.unzip()?.first?.contains(newState)?:false // TODO: optimise this
         //alreadyVisited = agent.originalAgent?.visitedStates?.contains(newState)?:false
         //alreadyVisited = !(agent.originalAgent?.visited?.add(newState)?:true)
         //println("        visited ${agent.originalAgent?.visited}")
@@ -40,7 +39,7 @@ class MatrixAgentArch (
     }
 
     /** returns true if the simulated history has problem */
-    fun hasProblem() = hasLoop // || alreadyVisited
+    fun hasProblem() = hasLoop //|| alreadyVisited
 
     fun run(evt: Event) {
         val intention = evt.intention

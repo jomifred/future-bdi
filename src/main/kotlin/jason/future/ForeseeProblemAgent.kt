@@ -13,7 +13,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var firstSO  = true
     private var depth    = 0
 
-    private val BSF = false
+    private val BSF = true
     private val orderOptions = true
 
     var originalAgent : ForeseeProblemAgent? = null
@@ -70,15 +70,12 @@ class ForeseeProblemAgent : PreferenceAgent() {
                         originalAgent?.addToExplore( prepareSimulation( o ))
                 }
             }
-            // the default option state is visited
-            //visitedStates.add( envModel().currentState())
 
             // do not consider the future in matrix mode
             return defaultOption
         }
 
         //visitedStates.clear()
-        //visitedStates.add( envModel().currentState())
         visitedOption.clear()
         explorationQueue.clear()
 
