@@ -13,7 +13,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var firstSO  = true
     private var depth    = 0
 
-    private val BSF = true
+    private val BSF = false
     private val orderOptions = true
 
     var originalAgent : ForeseeProblemAgent? = null
@@ -95,7 +95,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
         while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
             nbE++
 
-            println("starting simulation for ${fo.evt.trigger.literal} with ${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth = ${fo.ag.depth}")
+            println("\nstarting simulation for goal ${fo.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth=${fo.ag.depth}")
 
             // run agent
 
@@ -105,7 +105,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
             fo.arch.run(fo.evt)
 
             if (!fo.arch.hasProblem()) {
-                println("found an option with a likely nice future! ${nbE} options tried.")
+                println("found an option with a likely nice future! $nbE options tried. plan=@${fo.ag.originalOption?.plan?.label?.functor}")
                 return fo.ag.originalOption
             }
             fo = explorationQueue.poll()
