@@ -14,7 +14,7 @@ class GridEnvModel(
     var goalState   : GridState
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
-    val DEST = 16 // represent destination
+    val DEST = 16 // represent the destination
 
     init {
         addWall(12,15,20,15)

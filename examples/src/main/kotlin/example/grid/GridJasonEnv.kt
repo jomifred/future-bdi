@@ -55,7 +55,7 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
         val prePos = model.getAgPos(0)
         model.execute( model.structureToAction(action) )
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
-        Thread.sleep(300)
+        Thread.sleep(100)
         updateAgPercept(agName)
         informAgsEnvironmentChanged()
         return true // the action was executed with success

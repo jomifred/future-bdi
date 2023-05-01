@@ -18,7 +18,6 @@ class MatrixAgentArch (
     private var lastOpt : Option? = null
 
     private var hasLoop = false
-    //private var alreadyVisited = false // if I've got to a state explored by other options // TODO: remove since visited options does the same job
 
     override fun getAgName(): String {
         return agName
@@ -35,11 +34,6 @@ class MatrixAgentArch (
             historyO.add(lastOpt!!)
 
         val newState = env.execute( env.structureToAction(action.actionTerm) )
-
-        //val agent = ts.ag as ForeseeProblemAgent
-        //alreadyVisited = agent.originalAgent?.visitedStates?.contains(newState)?:false
-        //alreadyVisited = !(agent.originalAgent?.visited?.add(newState)?:true)
-        //println("        visited ${agent.originalAgent?.visited}")
         hasLoop = historyS.contains(newState)
         historyS.add(newState)
         action.result = true

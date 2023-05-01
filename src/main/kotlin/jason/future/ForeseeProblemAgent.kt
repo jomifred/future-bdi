@@ -15,9 +15,10 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var depth    = 0
     private var myFO     : FutureOption? = null // in case of matrix agent, it has the FO being tried
 
-    enum class Exploration { BFS, DFS, ONE, LEVEL1}
-    private val explorationStrategy : Exploration = Exploration.BFS
+    enum class Exploration { NONE, ONE, LEVEL1, DFS, BFS }
+    private var explorationStrategy : Exploration = defaultStrategy()
     private val orderOptions = true // whether options are ordered before explored
+    fun strategy() = explorationStrategy
 
     var originalAgent : ForeseeProblemAgent? = null
     var originalOption : Option? = null
@@ -53,9 +54,10 @@ class ForeseeProblemAgent : PreferenceAgent() {
         //println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
         if (visitedOptions.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
             when (explorationStrategy) {
-                Exploration.BFS -> explorationQueue.offerLast(fo)
-                Exploration.DFS -> explorationQueue.offerFirst(fo)
+                Exploration.BFS    -> explorationQueue.offerLast(fo)
+                Exploration.DFS    -> explorationQueue.offerFirst(fo)
                 Exploration.LEVEL1 -> explorationQueue.offerLast(fo)
+                Exploration.ONE    -> explorationQueue.offerLast(fo)
                 else -> {}
             }
         }
@@ -66,19 +68,18 @@ class ForeseeProblemAgent : PreferenceAgent() {
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
-        if (curInt() == null || explorationStrategy == Exploration.ONE) // we are considering options only for an intention
+        if (curInt() == null || explorationStrategy == Exploration.NONE) // we are considering options only for an intention
             return defaultOption
 
         if (inMatrix) {
             // store all options for further exploration (clone the agent and environment for each)
-            if (firstSO
-                && explorationStrategy != Exploration.LEVEL1
-                && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
+            if (firstSO && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
                 firstSO = false
-                for (o in optionsCfParameter(options)) {
-                    if (o != defaultOption && explore(o))
-                        originalAgent?.addToExplore( prepareSimulation( o ))
-                }
+                if (explorationStrategy == Exploration.BFS || explorationStrategy == Exploration.DFS)
+                    for (o in optionsCfParameter(options)) {
+                        if (o != defaultOption && explore(o))
+                            originalAgent?.addToExplore( prepareSimulation( o ))
+                    }
             }
 
             // do not consider the future in matrix mode
@@ -86,6 +87,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
         }
 
         // selection for non-matrix agent
+        setInstance(this) // for the GUI interface to change strategy
 
         // if I found a good option while checking futures... use it here
         val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
@@ -96,12 +98,16 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
         // simulates the future of options
 
-        // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-        for (o in optionsCfParameter(options)) {
-            addToExplore(prepareSimulation(o))
-        }
-
         try {
+            // clone agent, environment, options ... building FutureOptions to be added into exploration queue
+            if (explorationStrategy == Exploration.ONE) {
+                addToExplore(prepareSimulation(defaultOption))
+            } else {
+                for (o in optionsCfParameter(options)) {
+                    addToExplore(prepareSimulation(o))
+                }
+            }
+
             // explore future options to see their future
             var nbE = 0
             var fo = explorationQueue.poll()
@@ -183,6 +189,19 @@ class ForeseeProblemAgent : PreferenceAgent() {
             envModel().currentState())
         agModel.myFO = fo
         return fo
+    }
+
+    companion object {
+        @Volatile
+        private var instance: ForeseeProblemAgent? = null
+
+        fun getInstance() = instance
+        fun setInstance(a: ForeseeProblemAgent) { instance = a }
+        fun defaultStrategy() =  Exploration.BFS
+        fun setStrategy(e: Exploration) {
+            instance?.explorationStrategy = e
+            println("exploration set to "+e)
+        }
     }
 }
 

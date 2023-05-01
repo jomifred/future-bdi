@@ -1,4 +1,4 @@
-+destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
++destination(X,Y) <- .drop_all_desires; !pos(X,Y). // create a goal when my destination is perceived
 +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
 @[preference(0)] +!pos(X,Y) : pos(X,Y) <-  .print(done).

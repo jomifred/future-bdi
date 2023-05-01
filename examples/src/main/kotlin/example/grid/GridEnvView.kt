@@ -1,12 +1,18 @@
 package example.grid
 
 import jason.environment.grid.GridWorldView
+import jason.future.ForeseeProblemAgent
+import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.FlowLayout
 import java.awt.Graphics
+import java.awt.event.ItemEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
+import javax.swing.JComboBox
+import javax.swing.JPanel
 
-/** class that implements the View of the Game of Life application  */
+/** class that implements the View of Grid Env */
 class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model, "Future!", 800) {
     var hmodel: GridEnvModel
 
@@ -30,6 +36,25 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
             override fun mousePressed(e: MouseEvent) {}
             override fun mouseReleased(e: MouseEvent) {}
         })
+    }
+
+    override fun initComponents(width: Int) {
+        super.initComponents(width)
+        val scenarios = JComboBox<ForeseeProblemAgent.Exploration>()
+        for (s in ForeseeProblemAgent.Exploration.values())
+            scenarios.addItem(s)
+        scenarios.selectedItem = ForeseeProblemAgent.defaultStrategy()
+        scenarios.apply {
+            addItemListener {
+                if (it.stateChange == ItemEvent.SELECTED) {
+                    //println("select ${it.item}")
+                    ForeseeProblemAgent.setStrategy(it.item as ForeseeProblemAgent.Exploration)
+                }
+            }
+        }
+        val bot = JPanel(FlowLayout())
+        bot.add( scenarios)
+        getContentPane().add(BorderLayout.SOUTH, bot)
     }
 
     override fun draw(g: Graphics, x: Int, y: Int, obj: Int) {
