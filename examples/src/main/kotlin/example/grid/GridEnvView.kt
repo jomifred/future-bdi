@@ -1,6 +1,7 @@
 package example.grid
 
 import jason.environment.grid.GridWorldView
+import jason.future.ExplorationStrategy
 import jason.future.ForeseeProblemAgent
 import java.awt.BorderLayout
 import java.awt.Color
@@ -40,15 +41,15 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
 
     override fun initComponents(width: Int) {
         super.initComponents(width)
-        val scenarios = JComboBox<ForeseeProblemAgent.Exploration>()
-        for (s in ForeseeProblemAgent.Exploration.values())
+        val scenarios = JComboBox<ExplorationStrategy>()
+        for (s in ExplorationStrategy.values())
             scenarios.addItem(s)
         scenarios.selectedItem = ForeseeProblemAgent.defaultStrategy()
         scenarios.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
                     //println("select ${it.item}")
-                    ForeseeProblemAgent.setStrategy(it.item as ForeseeProblemAgent.Exploration)
+                    ForeseeProblemAgent.setStrategy(it.item as ExplorationStrategy)
                 }
             }
         }

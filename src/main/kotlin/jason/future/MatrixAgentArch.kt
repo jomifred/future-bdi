@@ -43,6 +43,8 @@ class MatrixAgentArch (
     /** returns true if the simulated history has problem */
     fun hasProblem() = hasLoop //|| alreadyVisited
 
+    //fun myAgent() = ts.ag as MatrixAgent
+
     fun run(evt: Event) {
         historyS.add( env.currentState() )
         val intention = evt.intention
@@ -57,6 +59,7 @@ class MatrixAgentArch (
             //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
             //println("    history: ${history}")
         }
-        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}. history=$historyS")
+        println("    simulation finished in $rcCounter reasoning cycles. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
+        println("    history=$historyS")
     }
 }

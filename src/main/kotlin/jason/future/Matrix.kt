@@ -37,12 +37,6 @@ interface MatrixCapable <T: State> {
     fun getModel() : EnvironmentModel<T>
 }
 
-//class EmptyEnvModel : EnvironmentModel<State> {
-//    override fun actions(): List<Action> = emptyList()
-//    override fun currentState(): State =
-//    override fun next(s: State, a: Action): State = s
-//}
-
 interface State {
     /** get the current state as a list of perception */
     //fun asPerception(): MutableCollection<Literal>
