@@ -2,6 +2,7 @@ package jason.future
 
 import jason.agent.PreferenceAgent
 import jason.asSemantics.Event
+import jason.asSemantics.Intention
 import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
 import java.util.concurrent.LinkedBlockingDeque
@@ -12,18 +13,20 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var inMatrix = false
     private var firstSO  = true
     private var depth    = 0
+    private var myFO     : FutureOption? = null // in case of matrix agent, it has the FO being tried
 
-    private val BSF = false // TODO: use enum Exploration DFS, ONE, FIRST_LEVEL, NONE
+    private val BSF = true // TODO: use enum Exploration DFS, ONE, FIRST_LEVEL, NONE
     private val orderOptions = true // whether options are ordered before explored
 
     var originalAgent : ForeseeProblemAgent? = null
     var originalOption : Option? = null
 
+    // search data structure
     val explorationQueue = LinkedBlockingDeque<FutureOption>()
+    val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
 
-    //val visitedStates = mutableSetOf<State>()
-    val visitedOption = mutableSetOf< Pair<State,String> >()
-
+    // result of the search (based on a good future found during search)
+    val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
 
     fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
         if (orderOptions)
@@ -42,15 +45,12 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
     /** returns true of the option should be explored */
     fun explore(o: Option) : Boolean {
-        if (visitedOption.contains( Pair( envModel().currentState(), o.plan.label.functor)))
-            return false
-        return true
+        return visitedOptions.contains( Pair( envModel().currentState(), o.plan.label.functor))
     }
 
     fun addToExplore(fo: FutureOption) {
-//        println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
-        if (visitedOption.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
-            //visitedStates.add(fo.arch.env.currentState())
+        //println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
+        if (visitedOptions.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
             if (BSF)
                 explorationQueue.offerLast(fo) // for BSF
             else
@@ -58,15 +58,13 @@ class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
+    fun curInt() = ts.c.selectedEvent.intention
+
     override fun selectOption(options: MutableList<Option>): Option? {
-        val defaultOption = super.selectOption(options)
-        if (defaultOption == null)
-            return null
+        val defaultOption = super.selectOption(options) ?: return null
 
-        if (ts.c.selectedEvent.intention == null) // we are considering options only for an intention
+        if (curInt() == null) // we are considering options only for an intention
             return defaultOption
-
-//        println("options for ${ts.c.selectedEvent.trigger} in ${envModel().currentState()}" )
 
         if (inMatrix) {
             // store all options for further exploration (clone the agent and environment for each)
@@ -82,43 +80,80 @@ class ForeseeProblemAgent : PreferenceAgent() {
             return defaultOption
         }
 
-        //visitedStates.clear()
-        visitedOption.clear()
-        explorationQueue.clear()
+        // selection for non-matrix agent
+
+        // if I found a good option while checking futures... use it here
+        val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
+        if (goodOpt != null) {
+            println("reusing option ${goodOpt.plan.label.functor} for ${envModel().currentState()}")
+            return goodOpt
+        }
 
         // simulates the future of options
 
-        // clone agent and environment mode and add them into exploration queue
-
-        // add (sorted) option to be explored
-        // TODO: only add other options if default option is not ok; or use kind of lazy creation of this exploration  points
+        // clone agent, environment, options ... building FutureOptions to be added into exploration queue
         for (o in optionsCfParameter(options)) {
             addToExplore(prepareSimulation(o))
         }
 
-        // explore options to see their future
-        var nbE = 0
-        var fo = explorationQueue.poll()
-        while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
-            nbE++
+        try {
+            // explore future options to see their future
+            var nbE = 0
+            var fo = explorationQueue.poll()
+            while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
+                nbE++
 
-            println("\nstarting simulation for goal ${fo.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth=${fo.ag.depth}")
+                println("\nstarting simulation for goal ${fo.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth=${fo.ag.depth}")
 
-            // run agent
+                // run agent with event and option to be explored
+                fo.evt.option = fo.o // set the option to be used for the new event (jason selects this option for the event, if set)
+                fo.ag.ts.c.addEvent(fo.evt) // and add the event into the Jason queue
+                fo.arch.run(fo.evt)
 
-            // add event / current option in the clone, so it continues from here
-            fo.evt.option = fo.o
-            fo.ag.ts.c.addEvent(fo.evt)
-            fo.arch.run(fo.evt)
-
-            if (!fo.arch.hasProblem()) {
-                println("found an option with a likely nice future! $nbE options tried. plan=@${fo.ag.originalOption?.plan?.label?.functor}")
-                return fo.ag.originalOption
+                if (!fo.arch.hasProblem()) {
+                    println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption?.plan?.label?.functor}")
+                    printPlan(fo)
+                    storeGoodOptions(fo)
+                    return fo.ag.originalOption
+                }
+                fo = explorationQueue.poll()
             }
-            fo = explorationQueue.poll()
+            println("\nsorry, all options have an unpleasant future. aborting the intention! (tried $nbE options)\n")
+            return null
+        } finally {
+            visitedOptions.clear()
+            explorationQueue.clear()
         }
-        println("\nsorry, all options have an unpleasant future. aborting the intention! (tried $nbE options)\n")
-        return null
+    }
+
+    fun printPlan(fo: FutureOption) {
+        var f : FutureOption = fo
+        var s = ""
+        while (f.previousOption != null) {
+            s = "${f.state}->${f.o.plan.label.functor}, " + s
+            f = f.previousOption!!
+        }
+        s += " ---- "
+        val h = fo.arch.historyS
+        val o = fo.arch.historyO
+        for (i in 0 until minOf(h.size,o.size)) {
+            s += "${h[i]}->${o[i].plan.label.functor}, "
+        }
+        println("    plan is $s")
+    }
+
+    fun storeGoodOptions(fo: FutureOption) {
+        var f : FutureOption = fo
+        goodOptions.putIfAbsent(curInt(), mutableMapOf())
+        while (f.previousOption != null) {
+            goodOptions[curInt()]?.put( f.state, f.o)
+            f = f.previousOption!!
+        }
+        val h = fo.arch.historyS
+        val o = fo.arch.historyO
+        for (i in 0 until minOf(h.size,o.size)) {
+            goodOptions[curInt()]?.put(h[i], o[i])
+        }
     }
 
     fun prepareSimulation(opt: Option) : FutureOption {
@@ -134,19 +169,23 @@ class ForeseeProblemAgent : PreferenceAgent() {
         agModel.depth = this.depth+1
         agModel.originalOption = this.originalOption?:opt
 
-        return FutureOption(
+        val fo = FutureOption(
             opt,
             agModel,
             agArch,
-            this.ts.c.selectedEvent.clone() as Event)
+            this.ts.c.selectedEvent.clone() as Event,
+            this.myFO,
+            envModel().currentState())
+        agModel.myFO = fo
+        return fo
     }
-
-    fun curInt() = ts.c.selectedEvent.intention
 }
 
 data class FutureOption(
     val o: Option,
     val ag: ForeseeProblemAgent,
     val arch: MatrixAgentArch,
-    val evt: Event
+    val evt: Event,
+    val previousOption: FutureOption?,
+    val state: State
 )
