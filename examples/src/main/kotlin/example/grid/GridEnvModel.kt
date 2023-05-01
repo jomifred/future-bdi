@@ -10,7 +10,7 @@ import jason.future.EnvironmentModel
 import jason.future.State
 
 class GridEnvModel(
-    var currentState: GridState,
+    private var currentState: GridState,
     var goalState   : GridState
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
@@ -33,7 +33,7 @@ class GridEnvModel(
     }
 
 
-    public override fun clone(): GridEnvModel =
+    override fun clone(): GridEnvModel =
         GridEnvModel(
             GridState(currentState.l),
             GridState(goalState.l)
@@ -93,7 +93,7 @@ class GridEnvModel(
         return p
     }
 
-    val fixedPerception : List<Literal> by lazy {
+    private val fixedPerception : List<Literal> by lazy {
         listOf<Literal>(
             ASSyntax.createLiteral(
                 "w_size",
@@ -103,7 +103,7 @@ class GridEnvModel(
         )
     }
 
-    fun getAdjacent(s: GridState) : Map<String, GridState> {
+    private fun getAdjacent(s: GridState) : Map<String, GridState> {
         return mapOf(
             "n"  to GridState(s.l.x, s.l.y - 1),
             "nw" to GridState(s.l.x - 1, s.l.y - 1),

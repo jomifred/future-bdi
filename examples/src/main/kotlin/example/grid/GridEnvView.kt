@@ -5,20 +5,21 @@ import jason.future.ExplorationStrategy
 import jason.future.ForeseeProblemAgent
 import java.awt.BorderLayout
 import java.awt.Color
-import java.awt.FlowLayout
 import java.awt.Graphics
 import java.awt.event.ItemEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import javax.swing.JComboBox
+import javax.swing.JLabel
 import javax.swing.JPanel
+import kotlin.concurrent.thread
 
 /** class that implements the View of Grid Env */
 class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model, "Future!", 800) {
-    var hmodel: GridEnvModel
+    private var gModel: GridEnvModel
 
     init {
-        hmodel = model
+        gModel = model
         isVisible = true
         repaint()
         canvas.addMouseListener(object : MouseListener {
@@ -39,6 +40,8 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         })
     }
 
+    private var msgText : JLabel? = null
+
     override fun initComponents(width: Int) {
         super.initComponents(width)
         val scenarios = JComboBox<ExplorationStrategy>()
@@ -53,19 +56,28 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                 }
             }
         }
-        val bot = JPanel(FlowLayout())
-        bot.add( scenarios)
-        getContentPane().add(BorderLayout.SOUTH, bot)
+
+        msgText = JLabel("<msg>")
+        val bot = JPanel(BorderLayout())
+        bot.add( BorderLayout.EAST, scenarios )
+        bot.add( BorderLayout.WEST, msgText )
+        thread(start = true) {
+            while (true) {
+                msgText?.text = ForeseeProblemAgent.getMsg()
+                Thread.sleep(500)
+            }
+        }
+        contentPane.add(BorderLayout.SOUTH, bot)
     }
 
     override fun draw(g: Graphics, x: Int, y: Int, obj: Int) {
         when (obj) {
-            hmodel.DEST -> drawDest(g, x, y)
+            gModel.DEST -> drawDest(g, x, y)
             else -> super.draw(g, x, y, obj)
         }
     }
 
-    fun drawDest(g: Graphics, x: Int, y: Int) {
+    private fun drawDest(g: Graphics, x: Int, y: Int) {
         g.color = Color.gray
         g.fillRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH)
         g.color = Color.pink

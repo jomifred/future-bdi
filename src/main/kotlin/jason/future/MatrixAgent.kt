@@ -3,26 +3,27 @@ package jason.future
 import jason.agent.PreferenceAgent
 import jason.asSemantics.Agent
 import jason.asSemantics.Event
+import jason.asSemantics.Intention
 import jason.asSemantics.Option
 
 /** agent that run in the "matrix" */
 class MatrixAgent(
-    val originalAgent : ForeseeProblemAgent,
+    private val originalAgent : ForeseeProblemAgent,
     val originalOption : Option
 ) : PreferenceAgent() {
 
     private var firstSO  = true
     private var depth    = 1
-    var myFO     : FutureOption? = null // the FO being tried by this agent
+    private var myFO     : FutureOption? = null // the FO being tried by this agent
 
     fun depth() = depth
 
-    fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
+    private fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
 
-    fun envModel() : EnvironmentModel<State> =
+    private fun envModel() : EnvironmentModel<State> =
         myMatrixArch().env
 
-    fun curInt() = ts.c.selectedEvent.intention
+    private fun curInt() : Intention = ts.c.selectedEvent.intention
 
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
@@ -42,7 +43,7 @@ class MatrixAgent(
         return defaultOption
     }
 
-    fun prepareSimulation(opt: Option) : FutureOption {
+    private fun prepareSimulation(opt: Option) : FutureOption {
         // clone agent model (based on this agent)
         /*val agArch = MatrixAgentArch(
             envModel().clone(),

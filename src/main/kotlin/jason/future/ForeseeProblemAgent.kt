@@ -10,6 +10,7 @@ import java.util.concurrent.LinkedBlockingDeque
 enum class ExplorationStrategy { NONE, ONE, LEVEL1, DFS, BFS }
 
 /** agent that considers the future */
+@Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent() {
 
     private var explorationStrategy : ExplorationStrategy = defaultStrategy()
@@ -17,11 +18,12 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     fun strategy() = explorationStrategy
 
     // search data structure
-    val explorationQueue = LinkedBlockingDeque<FutureOption>()
-    val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
+    private val explorationQueue = LinkedBlockingDeque<FutureOption>()
+    private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
 
     // result of the search (based on a good future found during search)
-    val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
+    private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
+    private val nbExploredOptions = mutableMapOf< Intention, Int>() // number of options explored for some intention (used for the GUI)
 
     fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
         if (orderOptions)
@@ -29,9 +31,9 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         else
             options
 
-    fun userEnv() : MatrixCapable<*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*>
+    private fun userEnv() : MatrixCapable<*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*>
 
-    fun envModel() : EnvironmentModel<State> =
+    private fun envModel() : EnvironmentModel<State> =
         userEnv().getModel() as EnvironmentModel<State>
 
     /** returns true of the option should be explored */
@@ -52,17 +54,19 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
-    fun curInt() = ts.c.selectedEvent.intention
+    fun curInt() : Intention = ts.c.selectedEvent.intention
 
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
-        if (curInt() == null || explorationStrategy == ExplorationStrategy.NONE) // we are considering options only for an intention
+        if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
+            || options.size == 1 // nothing to chose
+            || explorationStrategy == ExplorationStrategy.NONE)
             return defaultOption
 
-        setInstance(this) // for the GUI interface to change strategy
+        setInstance(this) // for the GUI interface change strategy
 
-        // if I found a good option while checking futures... use it here
+        // if I found a good option while checking futures... reuse it here
         val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
         if (goodOpt != null) {
             println("reusing option ${goodOpt.plan.label.functor} for ${envModel().currentState()}")
@@ -95,14 +99,18 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 fo.arch.run(fo.evt)
 
                 if (!fo.arch.hasProblem()) {
-                    println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption?.plan?.label?.functor}")
+                    println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption.plan?.label?.functor}")
+                    nbExploredOptions[curInt()] = nbExploredOptions.getOrDefault( curInt(), 0 ) + nbE
+                    setMsg("explored ${nbExploredOptions[curInt()]} options to find a nice future")
                     printPlan(fo)
+
                     storeGoodOptions(fo)
                     return fo.ag.originalOption
                 }
                 fo = explorationQueue.poll()
             }
             println("\nsorry, all options have an unpleasant future. aborting the intention! (tried $nbE options)\n")
+            setMsg("explored $nbE options and ... no future")
             return null
         } finally {
             visitedOptions.clear()
@@ -110,7 +118,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
-    fun printPlan(fo: FutureOption) {
+    private fun printPlan(fo: FutureOption) {
         var f : FutureOption = fo
         var s = ""
         while (f.previousFO != null) {
@@ -126,7 +134,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         println("    plan is $s")
     }
 
-    fun storeGoodOptions(fo: FutureOption) {
+    private fun storeGoodOptions(fo: FutureOption) {
         var f : FutureOption = fo
         goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.previousFO != null) {
@@ -140,7 +148,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
-    fun prepareSimulation(opt: Option) : FutureOption {
+    private fun prepareSimulation(opt: Option) : FutureOption {
         // clone agent model (based on this agent)
         /*val agArch = MatrixAgentArch(
             envModel().clone(),
@@ -167,14 +175,19 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     companion object {
         @Volatile
         private var instance: ForeseeProblemAgent? = null
+        private var msg: String = ""
 
-        fun getInstance() = instance
+        //fun getInstance() = instance
         fun setInstance(a: ForeseeProblemAgent) { instance = a }
-        fun defaultStrategy() =  ExplorationStrategy.BFS
+        fun defaultStrategy() = ExplorationStrategy.BFS
         fun setStrategy(e: ExplorationStrategy) {
             instance?.explorationStrategy = e
-            println("exploration set to "+e)
+            println("exploration set to $e")
+            msg = ""
         }
+
+        fun setMsg(s: String) { msg = s }
+        fun getMsg() = msg
     }
 }
 

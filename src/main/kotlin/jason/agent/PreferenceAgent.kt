@@ -8,7 +8,7 @@ import jason.asSyntax.NumberTerm
 /** Agent class that select options based on preference */
 open class PreferenceAgent : Agent() {
 
-    fun optionPrefs(options: MutableList<Option>) : Map<Option, Double> =
+    open fun optionPrefs(options: MutableList<Option>) : Map<Option, Double> =
         options
             .associateWith {op ->
                 op.plan.label
@@ -22,7 +22,7 @@ open class PreferenceAgent : Agent() {
                     }
             }
 
-    fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
+    open fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
         optionPrefs(options)
             .toList()
             .sortedBy { (_,v) -> if (ascending) v else -v }

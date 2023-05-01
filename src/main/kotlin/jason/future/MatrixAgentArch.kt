@@ -43,8 +43,6 @@ class MatrixAgentArch (
     /** returns true if the simulated history has problem */
     fun hasProblem() = hasLoop //|| alreadyVisited
 
-    //fun myAgent() = ts.ag as MatrixAgent
-
     fun run(evt: Event) {
         historyS.add( env.currentState() )
         val intention = evt.intention

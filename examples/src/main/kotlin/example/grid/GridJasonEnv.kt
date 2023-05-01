@@ -13,18 +13,16 @@ import java.util.logging.Logger
 import kotlin.concurrent.thread
 
 class GridJasonEnv : Environment(), MatrixCapable<GridState> {
-    val model   = GridEnvModel(
+    private val model   = GridEnvModel(
         GridState(15, 7), // initial state
         GridState(15,17)  // goal  state
     )
-    val view  = GridEnvView(model, this)
-
-    val log   = Logger.getLogger("grid-env")
+    private val log :Logger  = Logger.getLogger("grid-env")
 
     override fun init(args: Array<String>?) {
-//        view.isVisible = true
+        GridEnvView(model, this)
 
-        if (args != null && args.size > 0) {
+        if (!args.isNullOrEmpty()) {
             for (a in args) {
                 if (a.startsWith("init")) {
                     val l = ASSyntax.parseLiteral(a)
