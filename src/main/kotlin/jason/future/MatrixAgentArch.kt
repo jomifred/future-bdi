@@ -42,9 +42,10 @@ class MatrixAgentArch (
     fun hasProblem() = hasLoop //|| alreadyVisited
 
     fun run(evt: Event) {
+        history.add( env.currentState() )
         val intention = evt.intention
         var rcCounter = 0
-        while (!intention.isFinished && !hasProblem() && rcCounter < 100) { // TODO: give a way to set this number
+        while (!intention.isFinished && !hasProblem() && rcCounter < 5000) { // TODO: give a way to set this number
             rcCounter++
 
             ts.sense()
@@ -53,6 +54,6 @@ class MatrixAgentArch (
             //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
             //println("    history: ${history}")
         }
-        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
+        println("    simulation finished in $rcCounter steps. intention finished=${intention.isFinished}. problem=${hasProblem()}. $history")
     }
 }

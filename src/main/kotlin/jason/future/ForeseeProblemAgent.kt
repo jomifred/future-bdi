@@ -13,8 +13,8 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var firstSO  = true
     private var depth    = 0
 
-    private val BSF = false
-    private val orderOptions = true
+    private val BSF = false // TODO: use enum Exploration DFS, ONE, FIRST_LEVEL, NONE
+    private val orderOptions = true // whether options are ordered before explored
 
     var originalAgent : ForeseeProblemAgent? = null
     var originalOption : Option? = null
@@ -39,6 +39,13 @@ class ForeseeProblemAgent : PreferenceAgent() {
             myMatrixArch().env
         else
             userEnv().getModel() as EnvironmentModel<State>
+
+    /** returns true of the option should be explored */
+    fun explore(o: Option) : Boolean {
+        if (visitedOption.contains( Pair( envModel().currentState(), o.plan.label.functor)))
+            return false
+        return true
+    }
 
     fun addToExplore(fo: FutureOption) {
 //        println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
@@ -66,7 +73,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
             if (firstSO && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
                 firstSO = false
                 for (o in optionsCfParameter(options)) {
-                    if (o != defaultOption)
+                    if (o != defaultOption && explore(o))
                         originalAgent?.addToExplore( prepareSimulation( o ))
                 }
             }
