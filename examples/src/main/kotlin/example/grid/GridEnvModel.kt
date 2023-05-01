@@ -14,15 +14,24 @@ class GridEnvModel(
     var goalState   : GridState
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
+    val DEST = 16 // represent destination
+
     init {
         addWall(12,15,20,15)
         //addWall(13,15,17,15)
         setAgPos( 0, currentState.l)
+        add( DEST, goalState.l)
     }
-    fun setInitState(c: GridState) {
-        currentState = c;
+    fun setInit(c: GridState) {
+        currentState = c
         setAgPos( 0, currentState.l)
     }
+    fun setGoal(c: GridState) {
+        remove( DEST, goalState.l)
+        goalState = c
+        add( DEST, goalState.l)
+    }
+
 
     public override fun clone(): GridEnvModel =
         GridEnvModel(

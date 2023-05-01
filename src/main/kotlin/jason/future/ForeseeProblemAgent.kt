@@ -15,7 +15,8 @@ class ForeseeProblemAgent : PreferenceAgent() {
     private var depth    = 0
     private var myFO     : FutureOption? = null // in case of matrix agent, it has the FO being tried
 
-    private val BSF = true // TODO: use enum Exploration DFS, ONE, FIRST_LEVEL, NONE
+    enum class Exploration { BFS, DFS, ONE, LEVEL1}
+    private val explorationStrategy : Exploration = Exploration.BFS
     private val orderOptions = true // whether options are ordered before explored
 
     var originalAgent : ForeseeProblemAgent? = null
@@ -30,7 +31,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
     fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
         if (orderOptions)
-            super.sortedOptions(options,BSF)
+            super.sortedOptions(options, explorationStrategy == Exploration.BFS || explorationStrategy == Exploration.LEVEL1)
         else
             options
 
@@ -51,10 +52,12 @@ class ForeseeProblemAgent : PreferenceAgent() {
     fun addToExplore(fo: FutureOption) {
         //println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
         if (visitedOptions.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
-            if (BSF)
-                explorationQueue.offerLast(fo) // for BSF
-            else
-                explorationQueue.offerFirst(fo) // for DSF
+            when (explorationStrategy) {
+                Exploration.BFS -> explorationQueue.offerLast(fo)
+                Exploration.DFS -> explorationQueue.offerFirst(fo)
+                Exploration.LEVEL1 -> explorationQueue.offerLast(fo)
+                else -> {}
+            }
         }
     }
 
@@ -63,12 +66,14 @@ class ForeseeProblemAgent : PreferenceAgent() {
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
-        if (curInt() == null) // we are considering options only for an intention
+        if (curInt() == null || explorationStrategy == Exploration.ONE) // we are considering options only for an intention
             return defaultOption
 
         if (inMatrix) {
             // store all options for further exploration (clone the agent and environment for each)
-            if (firstSO && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
+            if (firstSO
+                && explorationStrategy != Exploration.LEVEL1
+                && originalAgent?.curInt() == curInt()) { // consider only option for the original intention
                 firstSO = false
                 for (o in optionsCfParameter(options)) {
                     if (o != defaultOption && explore(o))
