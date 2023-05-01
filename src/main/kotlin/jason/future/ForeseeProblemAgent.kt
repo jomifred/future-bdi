@@ -45,7 +45,7 @@ class ForeseeProblemAgent : PreferenceAgent() {
 
     /** returns true of the option should be explored */
     fun explore(o: Option) : Boolean {
-        return visitedOptions.contains( Pair( envModel().currentState(), o.plan.label.functor))
+        return !visitedOptions.contains( Pair( envModel().currentState(), o.plan.label.functor))
     }
 
     fun addToExplore(fo: FutureOption) {
