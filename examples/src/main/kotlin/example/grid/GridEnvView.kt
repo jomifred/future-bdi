@@ -30,6 +30,7 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                     model.setGoal( GridState(col, lin))
                     env.updatePercept()
                     update(col, lin)
+                    repaint()
                 }
             }
 
@@ -47,7 +48,7 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         val scenarios = JComboBox<ExplorationStrategy>()
         for (s in ExplorationStrategy.values())
             scenarios.addItem(s)
-        scenarios.selectedItem = ForeseeProblemAgent.defaultStrategy()
+        scenarios.selectedItem = ForeseeProblemAgent.strategy()
         scenarios.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {

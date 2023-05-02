@@ -13,9 +13,7 @@ enum class ExplorationStrategy { NONE, ONE, LEVEL1, DFS, BFS }
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent() {
 
-    private var explorationStrategy : ExplorationStrategy = defaultStrategy()
     private val orderOptions = true // whether options are ordered before explored
-    fun strategy() = explorationStrategy
 
     // search data structure
     private val explorationQueue = LinkedBlockingDeque<FutureOption>()
@@ -176,12 +174,13 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         @Volatile
         private var instance: ForeseeProblemAgent? = null
         private var msg: String = ""
+        private var explorationStrategy = ExplorationStrategy.BFS
 
         //fun getInstance() = instance
         fun setInstance(a: ForeseeProblemAgent) { instance = a }
-        fun defaultStrategy() = ExplorationStrategy.BFS
+        fun strategy() = explorationStrategy
         fun setStrategy(e: ExplorationStrategy) {
-            instance?.explorationStrategy = e
+            explorationStrategy = e
             println("exploration set to $e")
             msg = ""
         }

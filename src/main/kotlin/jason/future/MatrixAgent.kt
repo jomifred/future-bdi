@@ -31,7 +31,7 @@ class MatrixAgent(
         // store all options for further exploration (clone the agent and environment for each)
         if (firstSO && originalAgent.curInt() == curInt()) { // consider only option for the original intention
             firstSO = false
-            if (originalAgent.strategy() == ExplorationStrategy.BFS || originalAgent.strategy() == ExplorationStrategy.DFS)
+            if (ForeseeProblemAgent.strategy() == ExplorationStrategy.BFS || ForeseeProblemAgent.strategy() == ExplorationStrategy.DFS)
                 for (o in originalAgent.optionsCfParameter(options)) {
                     if (o != defaultOption && originalAgent.explore(envModel().currentState(),o) ) {
                         originalAgent.addToExplore(prepareSimulation(o))
@@ -72,7 +72,7 @@ class MatrixAgent(
 
     companion object {
 
-        var agCounter = 0
+        private var agCounter = 0
 
         fun buildAg(opt : Option,
                     env: EnvironmentModel<State>,
