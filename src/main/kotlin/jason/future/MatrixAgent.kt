@@ -66,7 +66,14 @@ class MatrixAgent(
         return buildAg(opt, envModel(), originalAgent, originalOption, this)
     }
 
+    override fun addToMindInspectorWeb() {
+        // do not add
+    }
+
     companion object {
+
+        var agCounter = 0
+
         fun buildAg(opt : Option,
                     env: EnvironmentModel<State>,
                     originalAgent: ForeseeProblemAgent,
@@ -75,7 +82,7 @@ class MatrixAgent(
                     ) : FutureOption {
             val agArch = MatrixAgentArch(
                 env.clone(),
-                "${parent.ts.agArch.agName}_matrix"
+                "${parent.ts.agArch.agName}_matrix${agCounter++}"
             )
             val agModel = MatrixAgent(originalAgent, originalOption)
             parent.cloneInto(agArch, agModel)

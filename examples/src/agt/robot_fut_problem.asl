@@ -2,7 +2,8 @@
 // the problem in case is returning (in the future) to a visited location
 // (and so it does not need to maintain visited locations to avoid loops)
 
-+destination(X,Y) <- .drop_all_desires; !pos(X,Y). // create a goal when my destination is perceived
++destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
+-destination(X,Y) <- .drop_all_desires. // drop everything if my destination is removed
 // NOT NEEDED: +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
 @  [preference(0)] +!pos(X,Y) : pos(X,Y).
