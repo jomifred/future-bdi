@@ -18,16 +18,16 @@
 // checks if go to some direction is possible (free cell)
 // and computes the distance from goal to there
 //
-ok(s ,D) :- pos(X,Y) & unknown_free(X  ,Y+1) & distance(X  ,Y+1,D).
-ok(sw,D) :- pos(X,Y) & unknown_free(X-1,Y+1) & distance(X-1,Y+1,D).
-ok(se,D) :- pos(X,Y) & unknown_free(X+1,Y+1) & distance(X+1,Y+1,D).
-ok(w ,D) :- pos(X,Y) & unknown_free(X-1,Y)   & distance(X-1,Y  ,D).
-ok(e ,D) :- pos(X,Y) & unknown_free(X+1,Y)   & distance(X+1,Y  ,D).
-ok(n, D) :- pos(X,Y) & unknown_free(X  ,Y-1) & distance(X  ,Y-1,D).
-ok(nw,D) :- pos(X,Y) & unknown_free(X-1,Y-1) & distance(X-1,Y-1,D).
-ok(ne,D) :- pos(X,Y) & unknown_free(X+1,Y-1) & distance(X+1,Y-1,D).
+ok(s ,D) :- pos(X,Y) & free(X  ,Y+1) & distance(X  ,Y+1,D).
+ok(sw,D) :- pos(X,Y) & free(X-1,Y+1) & distance(X-1,Y+1,D).
+ok(se,D) :- pos(X,Y) & free(X+1,Y+1) & distance(X+1,Y+1,D).
+ok(w ,D) :- pos(X,Y) & free(X-1,Y)   & distance(X-1,Y  ,D).
+ok(e ,D) :- pos(X,Y) & free(X+1,Y)   & distance(X+1,Y  ,D).
+ok(n, D) :- pos(X,Y) & free(X  ,Y-1) & distance(X  ,Y-1,D).
+ok(nw,D) :- pos(X,Y) & free(X-1,Y-1) & distance(X-1,Y-1,D).
+ok(ne,D) :- pos(X,Y) & free(X+1,Y-1) & distance(X+1,Y-1,D).
 
-unknown_free(X,Y) :-
+free(X,Y) :-
     X >= 0 & Y >= 0 & w_size(W,H) & X < W & Y < H
     & not obstacle(X,Y).
 
