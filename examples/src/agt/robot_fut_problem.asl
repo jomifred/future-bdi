@@ -4,7 +4,6 @@
 
 +destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
 -destination(X,Y) <- .drop_all_desires. // drop everything if my destination is removed
-// NOT NEEDED: +pos(X,Y)     <- +visited(X,Y). // remember visited locations
 
 @  [preference(0)] +!pos(X,Y) : pos(X,Y).
 @s [preference(D)] +!pos(X,Y) : ok(s, D) <- s;  !pos(X,Y).
@@ -31,8 +30,5 @@ ok(ne,D) :- pos(X,Y) & unknown_free(X+1,Y-1) & distance(X+1,Y-1,D).
 unknown_free(X,Y) :-
     X >= 0 & Y >= 0 & w_size(W,H) & X < W & Y < H
     & not obstacle(X,Y).
-    // NOT NEEDED: & not visited(X,Y).
-
-//distance(X,Y,D) :- visited(X,Y) & destination(GX,GY) & D = 100+math.sqrt( (X-GX)**2 + (Y-GY)**2 ).
 
 distance(X,Y,D) :- destination(GX,GY) & D = math.sqrt( (X-GX)**2 + (Y-GY)**2 ).

@@ -174,7 +174,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         @Volatile
         private var instance: ForeseeProblemAgent? = null
         private var msg: String = ""
-        private var explorationStrategy = ExplorationStrategy.BFS
+        private var explorationStrategy = ExplorationStrategy.ONE
 
         //fun getInstance() = instance
         fun setInstance(a: ForeseeProblemAgent) { instance = a }
