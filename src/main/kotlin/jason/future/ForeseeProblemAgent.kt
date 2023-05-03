@@ -25,7 +25,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
         if (orderOptions)
-            super.sortedOptions(options, explorationStrategy == ExplorationStrategy.SOLVE_P || explorationStrategy == ExplorationStrategy.LEVEL1)
+            super.sortedOptions(options, solveStrategy == ExplorationStrategy.SOLVE_P || solveStrategy == ExplorationStrategy.LEVEL1)
         else
             options
 
@@ -42,11 +42,11 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     fun addToExplore(fo: FutureOption) {
         //println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
         if (visitedOptions.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
-            when (explorationStrategy) {
-                ExplorationStrategy.SOLVE_P    -> explorationQueue.offerLast(fo)
-                ExplorationStrategy.SOLVE_F    -> explorationQueue.offerFirst(fo)
-                ExplorationStrategy.LEVEL1 -> explorationQueue.offerLast(fo)
-                ExplorationStrategy.ONE    -> explorationQueue.offerLast(fo)
+            when (solveStrategy) {
+                ExplorationStrategy.SOLVE_P -> explorationQueue.offerLast(fo)
+                ExplorationStrategy.SOLVE_F -> explorationQueue.offerFirst(fo)
+                ExplorationStrategy.LEVEL1  -> explorationQueue.offerLast(fo)
+                ExplorationStrategy.ONE     -> explorationQueue.offerLast(fo)
                 else -> {}
             }
         }
@@ -59,7 +59,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
             || options.size == 1 // nothing to chose
-            || explorationStrategy == ExplorationStrategy.NONE)
+            || solveStrategy == ExplorationStrategy.NONE)
             return defaultOption
 
         // if I found a good option while checking futures... reuse it here
@@ -73,7 +73,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
         try {
             // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-            if (explorationStrategy == ExplorationStrategy.ONE) {
+            if (solveStrategy == ExplorationStrategy.ONE) {
                 addToExplore(prepareSimulation(defaultOption))
             } else {
                 for (o in optionsCfParameter(options)) {
@@ -171,20 +171,20 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     companion object {
         private var msg: String = ""
-        private var explorationStrategy = ExplorationStrategy.ONE
+        private var solveStrategy = ExplorationStrategy.ONE
 
         private val visitedStates = mutableSetOf<State>()
 
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
-        fun strategy() = explorationStrategy
+        fun strategy() = solveStrategy
         fun setStrategy(e: ExplorationStrategy) {
-            explorationStrategy = e
+            solveStrategy = e
             println("exploration set to $e")
             msg = ""
         }
 
-        fun setMsg(s: String) { msg = s }
+        private fun setMsg(s: String) { msg = s }
         fun getMsg() = msg
     }
 }
