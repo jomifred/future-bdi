@@ -29,8 +29,9 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                 if (col >= 0 && lin >= 0 && col < getModel().width && lin < getModel().height) {
                     model.setGoal( GridState(col, lin))
                     env.updatePercept()
-                    update(col, lin)
-                    repaint()
+                    gModel.removeAll( gModel.VISITED )
+                    ForeseeProblemAgent.clearVisited()
+                    update()
                 }
             }
 
@@ -65,7 +66,11 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         thread(start = true) {
             while (true) {
                 msgText?.text = ForeseeProblemAgent.getMsg()
-                Thread.sleep(500)
+                for (s in ForeseeProblemAgent.getVisited()) {
+                    s as GridState
+                    gModel.add( gModel.VISITED, s.l)
+                }
+                Thread.sleep(100)
             }
         }
         contentPane.add(BorderLayout.SOUTH, bot)
@@ -74,6 +79,7 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
     override fun draw(g: Graphics, x: Int, y: Int, obj: Int) {
         when (obj) {
             gModel.DEST -> drawDest(g, x, y)
+            gModel.VISITED -> drawVisited(g, x, y)
             else -> super.draw(g, x, y, obj)
         }
     }
@@ -87,4 +93,8 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         g.drawLine(x * cellSizeW + 2, (y + 1) * cellSizeH - 2, (x + 1) * cellSizeW - 2, y * cellSizeH + 2)
     }
 
+    private fun drawVisited(g: Graphics, x: Int, y: Int) {
+        g.color = Color.lightGray
+        g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4)
+    }
 }

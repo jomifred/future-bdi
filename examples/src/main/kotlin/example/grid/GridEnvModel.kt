@@ -15,6 +15,7 @@ class GridEnvModel(
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
     val DEST = 16 // represent the destination
+    val VISITED = 32
 
     init {
         addWall(12,15,20,15)

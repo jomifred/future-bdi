@@ -7,7 +7,7 @@ import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
 import java.util.concurrent.LinkedBlockingDeque
 
-enum class ExplorationStrategy { NONE, ONE, LEVEL1, DFS, BFS }
+enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F }
 
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
@@ -25,7 +25,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
         if (orderOptions)
-            super.sortedOptions(options, explorationStrategy == ExplorationStrategy.BFS || explorationStrategy == ExplorationStrategy.LEVEL1)
+            super.sortedOptions(options, explorationStrategy == ExplorationStrategy.SOLVE_P || explorationStrategy == ExplorationStrategy.LEVEL1)
         else
             options
 
@@ -43,8 +43,8 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         //println("+${fo.arch.env.currentState()}/${fo.o.plan.label.functor} in    $visitedOption")
         if (visitedOptions.add( Pair(fo.arch.env.currentState(), fo.o.plan.label.functor))) {
             when (explorationStrategy) {
-                ExplorationStrategy.BFS    -> explorationQueue.offerLast(fo)
-                ExplorationStrategy.DFS    -> explorationQueue.offerFirst(fo)
+                ExplorationStrategy.SOLVE_P    -> explorationQueue.offerLast(fo)
+                ExplorationStrategy.SOLVE_F    -> explorationQueue.offerFirst(fo)
                 ExplorationStrategy.LEVEL1 -> explorationQueue.offerLast(fo)
                 ExplorationStrategy.ONE    -> explorationQueue.offerLast(fo)
                 else -> {}
@@ -61,8 +61,6 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             || options.size == 1 // nothing to chose
             || explorationStrategy == ExplorationStrategy.NONE)
             return defaultOption
-
-        setInstance(this) // for the GUI interface change strategy
 
         // if I found a good option while checking futures... reuse it here
         val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
@@ -90,6 +88,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 nbE++
 
                 println("\nstarting simulation for goal ${fo.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.o.plan.label.functor}, I have ${explorationQueue.size} options still. Depth=${fo.ag.depth()}")
+                visitedStates.add( fo.state )
 
                 // run agent with event and option to be explored
                 fo.evt.option = fo.o // set the option to be used for the new event (jason selects this option for the event, if set)
@@ -171,13 +170,13 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
 
     companion object {
-        @Volatile
-        private var instance: ForeseeProblemAgent? = null
         private var msg: String = ""
         private var explorationStrategy = ExplorationStrategy.ONE
 
-        //fun getInstance() = instance
-        fun setInstance(a: ForeseeProblemAgent) { instance = a }
+        private val visitedStates = mutableSetOf<State>()
+
+        fun getVisited() : Set<State> = visitedStates
+        fun clearVisited() { visitedStates.clear() }
         fun strategy() = explorationStrategy
         fun setStrategy(e: ExplorationStrategy) {
             explorationStrategy = e
