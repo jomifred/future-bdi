@@ -29,8 +29,9 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                 if (col >= 0 && lin >= 0 && col < getModel().width && lin < getModel().height) {
                     model.setGoal( GridState(col, lin))
                     env.updatePercept()
-                    gModel.removeAll( gModel.VISITED )
                     ForeseeProblemAgent.clearVisited()
+                    gModel.removeAll( gModel.VISITED )
+                    gModel.removeAll( gModel.SOLUTION )
                     update()
                 }
             }
@@ -65,12 +66,20 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         bot.add( BorderLayout.WEST, msgText )
         thread(start = true) {
             while (true) {
-                msgText?.text = ForeseeProblemAgent.getMsg()
-                for (s in ForeseeProblemAgent.getVisited()) {
-                    s as GridState
-                    gModel.add( gModel.VISITED, s.l)
+                try {
+                    msgText?.text = ForeseeProblemAgent.getMsg()
+                    for (s in ForeseeProblemAgent.getVisited()) {
+                        s as GridState
+                        gModel.add(gModel.VISITED, s.l)
+                    }
+                    for (s in ForeseeProblemAgent.getSolution()) {
+                        s as GridState
+                        gModel.add(gModel.SOLUTION, s.l)
+                    }
+                    Thread.sleep(300)
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-                Thread.sleep(100)
             }
         }
         contentPane.add(BorderLayout.SOUTH, bot)
@@ -80,7 +89,8 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
         when (obj) {
             gModel.DEST -> drawDest(g, x, y)
             gModel.VISITED -> drawVisited(g, x, y)
-            else -> super.draw(g, x, y, obj)
+            gModel.SOLUTION -> drawSolution(g, x, y)
+            else -> { }
         }
     }
 
@@ -96,5 +106,9 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
     private fun drawVisited(g: Graphics, x: Int, y: Int) {
         g.color = Color.lightGray
         g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4)
+    }
+    private fun drawSolution(g: Graphics, x: Int, y: Int) {
+        g.color = Color.cyan
+        g.fillRect(x * cellSizeW + 4, y * cellSizeH + 4, cellSizeW - 8, cellSizeH - 8)
     }
 }

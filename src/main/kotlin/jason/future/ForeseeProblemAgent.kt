@@ -5,6 +5,7 @@ import jason.asSemantics.Event
 import jason.asSemantics.Intention
 import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.LinkedBlockingDeque
 
 enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F }
@@ -101,7 +102,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                     setMsg("explored ${nbExploredOptions[curInt()]} options to find a nice future")
                     printPlan(fo)
 
-                    storeGoodOptions(fo)
+                    solution = storeGoodOptions(fo) // gor GUI
                     return fo.ag.originalOption
                 }
                 fo = explorationQueue.poll()
@@ -131,18 +132,22 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         println("    plan is $s")
     }
 
-    private fun storeGoodOptions(fo: FutureOption) {
+    private fun storeGoodOptions(fo: FutureOption) : List<State> {
+        val path = mutableListOf<State>()
         var f : FutureOption = fo
         goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.previousFO != null) {
             goodOptions[curInt()]?.put( f.state, f.o)
+            path.add(0, f.state)
             f = f.previousFO!!
         }
         val h = fo.arch.historyS
         val o = fo.arch.historyO
         for (i in 0 until minOf(h.size,o.size)) {
             goodOptions[curInt()]?.put(h[i], o[i])
+            if (i>0) path.add( h[i])
         }
+        return path
     }
 
     private fun prepareSimulation(opt: Option) : FutureOption {
@@ -173,10 +178,12 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         private var msg: String = ""
         private var solveStrategy = ExplorationStrategy.ONE
 
-        private val visitedStates = mutableSetOf<State>()
+        private val visitedStates = ConcurrentHashMap.newKeySet<State>()
+        private var solution      : List<State> = mutableListOf()
 
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
+        fun getSolution() = solution
         fun strategy() = solveStrategy
         fun setStrategy(e: ExplorationStrategy) {
             solveStrategy = e

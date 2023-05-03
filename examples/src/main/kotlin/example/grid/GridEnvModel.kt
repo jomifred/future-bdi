@@ -16,6 +16,7 @@ class GridEnvModel(
 
     val DEST = 16 // represent the destination
     val VISITED = 32
+    val SOLUTION = 64
 
     init {
         addWall(12,15,20,15)
