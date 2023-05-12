@@ -99,9 +99,9 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                     println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
                         setMsg("explored $nbE options to find a nice future. cost=${fo.cost}, depth=${fo.depth}.")
-                    printPlan(fo)
+                    val planStr = storeGoodOptions(fo)
+                    println("    plan is $planStr")
 
-                    solution = storeGoodOptions(fo)
                     return fo.ag.originalOption
                 }
                 fo = getToExplore() // continue to explore
@@ -116,38 +116,30 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
-    private fun printPlan(fo: FutureOption) {
+    private fun storeGoodOptions(fo: FutureOption) : String {
+        solution.clear() // used by the GUI
         var f : FutureOption = fo
-        var s = ""
-        while (f.parent != null) {
-            s = "${f.state}->${f.opt.plan.label.functor}, " + s
-            f = f.parent!!
-        }
-        s += " ---- "
-        val h = fo.arch.historyS
-        val o = fo.arch.historyO
-        for (i in 0 until minOf(h.size,o.size)) {
-            s += "${h[i]}->${o[i].plan.label.functor}, "
-        }
-        println("    plan is $s")
-    }
+        var planStr = ""
 
-    private fun storeGoodOptions(fo: FutureOption) : List<State> {
-        val path = mutableListOf<State>()
-        var f : FutureOption = fo
         goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.parent != null) {
             goodOptions[curInt()]?.put( f.state, f.opt)
-            path.add(0, f.state)
+            solution.add(0, f.state)
+            planStr = "${f.state}->${f.opt.plan.label.functor}, " + planStr
             f = f.parent!!
         }
+        planStr = "${f.state}->${f.opt.plan.label.functor}, " + planStr
+
         val h = fo.arch.historyS
         val o = fo.arch.historyO
         for (i in 0 until minOf(h.size,o.size)) {
             goodOptions[curInt()]?.put(h[i], o[i])
-            if (i>0) path.add( h[i])
+            if (i>0) {
+                planStr += "${h[i]}->${o[i].plan.label.functor}, "
+                solution.add( h[i])
+            }
         }
-        return path
+        return planStr
     }
 
     private fun prepareSimulation(opt: Option) : FutureOption {
@@ -164,7 +156,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         )
 
         private val visitedStates = ConcurrentHashMap.newKeySet<State>()
-        private var solution      : List<State> = mutableListOf()
+        private var solution      : MutableList<State> = mutableListOf()
 
         fun getImplementedStrategies() = implementedStrategies
 
