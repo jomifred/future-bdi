@@ -1,6 +1,6 @@
 MAS grid1 {
 
-    environment: example.grid.GridJasonEnv(init(15,7),goal(15,17))
+    environment: example.grid.GridJasonEnv(init(15,5),goal(15,17))
 
     agents:
         // robot programmed in "normal" Jason (no future)

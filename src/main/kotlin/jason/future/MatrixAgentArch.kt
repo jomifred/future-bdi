@@ -23,6 +23,8 @@ class MatrixAgentArch (
         return agName
     }
 
+    fun getAg() = ts.ag as MatrixAgent
+
     override fun perceive(): MutableCollection<Literal> {
         //println("        matrix perception: ${env.agPerception(agName)}")
         return env.agPerception(agName)

@@ -8,7 +8,9 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
-enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F }
+enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F, SOLVE_M }
+
+fun Double.format(pre: Int, digits: Int) = "%${pre}.${digits}f".format(this)
 
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
@@ -17,6 +19,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     init {
         getImplementedStrategies().add(ExplorationStrategy.LEVEL1)
         getImplementedStrategies().add(ExplorationStrategy.SOLVE_P)
+        getImplementedStrategies().add(ExplorationStrategy.SOLVE_M)
     }
 
     //private val orderOptions = true // whether options are ordered before explored
@@ -72,17 +75,21 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
         try {
             // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-            if (solveStrategy == ExplorationStrategy.ONE) {
-                addToExplore(prepareSimulation(defaultOption))
-            } else {
-                for (o in optionsCfParameter(options)) {
-                    addToExplore(prepareSimulation(o))
+            when (solveStrategy) {
+                ExplorationStrategy.ONE -> addToExplore(prepareSimulation(defaultOption))
+
+                ExplorationStrategy.SOLVE_P, ExplorationStrategy.LEVEL1, ExplorationStrategy.SOLVE_M -> {
+                    for (o in optionsCfParameter(options)) {
+                        addToExplore(prepareSimulation(o))
+                    }
                 }
+                else -> {}
             }
 
             // explore future options to see their future
             var nbE = 0
             var fo = getToExplore()
+            fo?.arch?.getAg()?.inSolveMPhase1 = true // so that all future options are produced for default option (not just first level)
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
@@ -93,6 +100,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 // run agent with event and option to be explored
                 fo.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
                 fo.ag.ts.c.addEvent(fo.evt) // and add the event into the Jason queue
+                fo.ag.lastFO = fo
                 fo.arch.run(fo.evt)
 
                 if (!fo.arch.hasProblem()) {
@@ -103,6 +111,16 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                     println("    plan is $planStr")
 
                     return fo.ag.originalOption
+
+                } else if (solveStrategy == ExplorationStrategy.SOLVE_M && nbE == 1) {
+                    // I just tried the default option
+                    /*val planStr = storeGoodOptions(fo)
+                    println("    plan is $planStr")
+                    for (c  in explorationQueue) {
+                        println("   fo ${c.state} f=${c.eval().format(4,1)}=${c.cost.format(4,1)}+${c.heuristic.format(4,1)}. depth=${c.depth}")
+                    }
+                    println("    options=${explorationQueue.size}")*/
+                    //break
                 }
                 fo = getToExplore() // continue to explore
             }
@@ -118,17 +136,17 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     private fun storeGoodOptions(fo: FutureOption) : String {
         solution.clear() // used by the GUI
-        var f : FutureOption = fo
+        var f = fo
         var planStr = ""
 
         goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.parent != null) {
             goodOptions[curInt()]?.put( f.state, f.opt)
             solution.add(0, f.state)
-            planStr = "${f.state}->${f.opt.plan.label.functor}, " + planStr
+            planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
             f = f.parent!!
         }
-        planStr = "${f.state}->${f.opt.plan.label.functor}, " + planStr
+        planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
 
         val h = fo.arch.historyS
         val o = fo.arch.historyO
@@ -136,14 +154,16 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             goodOptions[curInt()]?.put(h[i], o[i])
             if (i>0) {
                 planStr += "${h[i]}->${o[i].plan.label.functor}, "
-                solution.add( h[i])
+                solution.add( h[i] )
             }
         }
         return planStr
     }
 
     private fun prepareSimulation(opt: Option) : FutureOption {
-        return MatrixAgent.buildAg(opt, envModel(), this, opt, this)
+        return MatrixAgent.buildAg(opt, envModel(), this, opt, this,
+            0.0,
+            null)
     }
 
 

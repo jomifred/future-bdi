@@ -17,6 +17,8 @@ class MatrixAgent(
     private var firstSO  = true
     private var myFO     : FutureOption? = null // the FO being tried by this agent
 
+    var inSolveMPhase1 = false
+
     private fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
 
     private fun envModel() : EnvironmentModel<State> =
@@ -24,13 +26,18 @@ class MatrixAgent(
 
     private fun curInt() : Intention = ts.c.selectedEvent.intention
 
+    var lastFO : FutureOption? = null
+
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
         // store all options for further exploration (clone the agent and environment for each)
-        if (firstSO && originalAgent.curInt() == curInt()) { // consider only option for the original intention
+        if ((firstSO || inSolveMPhase1)
+            && originalAgent.curInt() == curInt()) { // consider only option for the original intention
             firstSO = false
-            if (ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_P || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_F)
+            if (ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_P
+                || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_F
+                || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_M)
                 for (o in originalAgent.optionsCfParameter(options)) {
                     if (o != defaultOption && originalAgent.explore(envModel().currentState(),o) ) {
                         originalAgent.addToExplore(prepareSimulation(o))
@@ -38,12 +45,15 @@ class MatrixAgent(
                 }
         }
 
+        lastFO = prepareSimulation(defaultOption)
         // do not consider the future in matrix mode
         return defaultOption
     }
 
     private fun prepareSimulation(opt: Option) : FutureOption {
-        return buildAg(opt, envModel(), originalAgent, originalOption, this)
+        return buildAg(opt, envModel(), originalAgent, originalOption, this,
+            myFO?.cost?:0.0,
+            lastFO)
     }
 
     override fun addToMindInspectorWeb() {
@@ -59,7 +69,9 @@ class MatrixAgent(
                     env: EnvironmentModel<State>,
                     originalAgent: ForeseeProblemAgent,
                     originalOption: Option,
-                    parent: Agent
+                    parent: Agent,
+                    parentCost : Double,
+                    parentFO : FutureOption?
                     ) : FutureOption {
             val agArch = MatrixAgentArch(
                 env.clone(),
@@ -69,15 +81,6 @@ class MatrixAgent(
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)
 
-            var parentFO: FutureOption? = null
-            var parentDepth = 0
-            var parentCost  = 0.0
-            if (parent is MatrixAgent) {
-                parentFO    = parent.myFO
-                parentDepth = parent.myFO?.depth?:0
-                parentCost  = parent.myFO?.cost?:0.0
-            }
-
             agModel.myFO = FutureOption(
                 parent.ts.c.selectedEvent.clone() as Event,
                 opt,
@@ -85,7 +88,7 @@ class MatrixAgent(
                 agModel,
                 agModel.myMatrixArch(),
                 parentFO,
-                parentDepth + 1,
+                (parentFO?.depth?:0) + 1,
                 parentCost + opt.getCost(),
                 opt.getPreference()
             )
