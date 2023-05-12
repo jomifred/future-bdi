@@ -20,7 +20,8 @@ class GridEnvModel(
 
     init {
         addWall(12,15,20,15)
-        //addWall(13,15,17,15)
+        //addWall(12,7, 12, 15 )
+        //addWall(20,7, 20, 15 )
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
     }

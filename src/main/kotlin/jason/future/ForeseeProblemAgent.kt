@@ -10,7 +10,7 @@ import java.util.concurrent.PriorityBlockingQueue
 
 enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F, SOLVE_M }
 
-fun Double.format(pre: Int, digits: Int) = "%${pre}.${digits}f".format(this)
+//fun Double.format(pre: Int, digits: Int) = "%${pre}.${digits}f".format(this)
 
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
@@ -21,8 +21,6 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         getImplementedStrategies().add(ExplorationStrategy.SOLVE_P)
         getImplementedStrategies().add(ExplorationStrategy.SOLVE_M)
     }
-
-    //private val orderOptions = true // whether options are ordered before explored
 
     // search data structure
     private var explorationQueue  = PriorityBlockingQueue<FutureOption>()
@@ -75,21 +73,19 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
         try {
             // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-            when (solveStrategy) {
-                ExplorationStrategy.ONE -> addToExplore(prepareSimulation(defaultOption))
-
-                ExplorationStrategy.SOLVE_P, ExplorationStrategy.LEVEL1, ExplorationStrategy.SOLVE_M -> {
-                    for (o in optionsCfParameter(options)) {
-                        addToExplore(prepareSimulation(o))
-                    }
+            if (solveStrategy == ExplorationStrategy.ONE) {
+                addToExplore(prepareSimulation(defaultOption))
+            } else {
+                for (o in optionsCfParameter(options)) {
+                    addToExplore(prepareSimulation(o))
                 }
-                else -> {}
             }
 
             // explore future options to see their future
             var nbE = 0
             var fo = getToExplore()
-            fo?.arch?.getAg()?.inSolveMPhase1 = true // so that all future options are produced for default option (not just first level)
+            if (solveStrategy == ExplorationStrategy.SOLVE_M)
+                fo?.arch?.getAg()?.inSolveMPhase1 = true // so that all future options are produced for default option (not just first level)
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
@@ -106,21 +102,12 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 if (!fo.arch.hasProblem()) {
                     println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
-                        setMsg("explored $nbE options to find a nice future. cost=${fo.cost}, depth=${fo.depth}.")
+                        setMsg("explored $nbE options to find a nice future. depth=${fo.depth}+${fo.arch.historyS.size-1}.") // cost=${fo.cost},
                     val planStr = storeGoodOptions(fo)
                     println("    plan is $planStr")
 
                     return fo.ag.originalOption
 
-                } else if (solveStrategy == ExplorationStrategy.SOLVE_M && nbE == 1) {
-                    // I just tried the default option
-                    /*val planStr = storeGoodOptions(fo)
-                    println("    plan is $planStr")
-                    for (c  in explorationQueue) {
-                        println("   fo ${c.state} f=${c.eval().format(4,1)}=${c.cost.format(4,1)}+${c.heuristic.format(4,1)}. depth=${c.depth}")
-                    }
-                    println("    options=${explorationQueue.size}")*/
-                    //break
                 }
                 fo = getToExplore() // continue to explore
             }
@@ -169,7 +156,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     companion object {
         private var msg: String = ""
-        private var solveStrategy = ExplorationStrategy.ONE
+        private var solveStrategy = ExplorationStrategy.SOLVE_M
         private var implementedStrategies = mutableSetOf(
             ExplorationStrategy.NONE,
             ExplorationStrategy.ONE

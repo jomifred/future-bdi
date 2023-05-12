@@ -9,6 +9,7 @@ open class ForeseeProblemAgentSolveF : ForeseeProblemAgent() {
     init {
         getImplementedStrategies().add(ExplorationStrategy.SOLVE_F)
         getImplementedStrategies().remove(ExplorationStrategy.SOLVE_P)
+        getImplementedStrategies().remove(ExplorationStrategy.SOLVE_M)
         getImplementedStrategies().remove(ExplorationStrategy.LEVEL1)
     }
 

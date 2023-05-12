@@ -52,7 +52,7 @@ class MatrixAgent(
 
     private fun prepareSimulation(opt: Option) : FutureOption {
         return buildAg(opt, envModel(), originalAgent, originalOption, this,
-            myFO?.cost?:0.0,
+            myFO?.cost?:0.0, // no cost for any FO in original default option
             lastFO)
     }
 
@@ -105,7 +105,7 @@ data class FutureOption(
     val arch: MatrixAgentArch, // and  its arch
     val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
     val depth: Int = 0,
-    val cost: Double,
+    val cost: Double, // accumulated cost until this FO
     val heuristic: Double = 0.0
 ) : Comparable<FutureOption> {
 
