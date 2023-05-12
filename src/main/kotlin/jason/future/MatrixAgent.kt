@@ -26,7 +26,7 @@ class MatrixAgent(
 
     private fun curInt() : Intention = ts.c.selectedEvent.intention
 
-    var lastFO : FutureOption? = null
+    var lastFO : FutureOption? = null // used to build chain of selected (future) options
 
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
