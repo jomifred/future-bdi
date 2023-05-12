@@ -30,6 +30,7 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                     model.setGoal( GridState(col, lin))
                     env.updatePercept()
                     ForeseeProblemAgent.clearVisited()
+                    ForeseeProblemAgent.setMsg("")
                     gModel.removeAll( gModel.VISITED )
                     gModel.removeAll( gModel.SOLUTION )
                     update()

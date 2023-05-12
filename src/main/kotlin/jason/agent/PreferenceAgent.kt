@@ -5,22 +5,30 @@ import jason.asSemantics.Option
 import jason.asSyntax.Literal
 import jason.asSyntax.NumberTerm
 
+/** gets the value of a property in the annotations of a plan (of an option) */
+fun Option.getProp(property: String, default: Double)  =
+    this.plan.label
+        .annots
+        .filter { it.isLiteral && it.toString().startsWith(property) }
+        .let {
+            if (it.isEmpty())
+                default
+            else
+                (((it.first().capply(this.unifier) as Literal).getTerm(0)) as NumberTerm).solve()
+        }
+fun Option.getCost() = this.getProp("cost", 1.0)
+fun Option.getPreference() = this.getProp("preference", Double.MAX_VALUE)
+
 /** Agent class that select options based on preference */
 open class PreferenceAgent : Agent() {
 
+    open fun optionProp(options: MutableList<Option>, property: String, default: Double) : Map<Option, Double> =
+        options.associateWith {op -> op.getProp(property, default) }
+
     open fun optionPrefs(options: MutableList<Option>) : Map<Option, Double> =
-        options
-            .associateWith {op ->
-                op.plan.label
-                    .annots
-                    .filter { it.isLiteral && it.toString().startsWith("preference") }
-                    .let {
-                        if (it.isEmpty())
-                            Double.MAX_VALUE
-                        else
-                            (((it.first().capply(op.unifier) as Literal).getTerm(0)) as NumberTerm).solve()
-                    }
-            }
+        optionProp(options, "preference", Double.MAX_VALUE)
+    //open fun optionCosts(options: MutableList<Option>) : Map<Option, Double> =
+    //    optionProp(options, "cost", 1.0)
 
     open fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
         optionPrefs(options)
@@ -31,8 +39,6 @@ open class PreferenceAgent : Agent() {
 
 
     override fun selectOption(options: MutableList<Option>): Option? =
-        /*sortedOptions(options,true)
-            .first()*/
         optionPrefs(options)
             .minByOrNull { it.value }
             ?. key

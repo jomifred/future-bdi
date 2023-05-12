@@ -8,7 +8,8 @@ MAS grid1 {
 
         // robot programmed in "future" Jason (problem case)
         //robot_fut_problem agentClass jason.agent.PreferenceAgent; // this case shows the problem
-        robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
+        //robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
+        robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent;
 
     aslSourcePath: "src/agt";
 }

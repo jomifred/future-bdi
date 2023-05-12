@@ -1,6 +1,8 @@
 package jason.future
 
 import jason.agent.PreferenceAgent
+import jason.agent.getCost
+import jason.agent.getPreference
 import jason.asSemantics.Agent
 import jason.asSemantics.Event
 import jason.asSemantics.Intention
@@ -13,10 +15,7 @@ class MatrixAgent(
 ) : PreferenceAgent() {
 
     private var firstSO  = true
-    private var depth    = 1
     private var myFO     : FutureOption? = null // the FO being tried by this agent
-
-    fun depth() = depth
 
     private fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
 
@@ -44,25 +43,6 @@ class MatrixAgent(
     }
 
     private fun prepareSimulation(opt: Option) : FutureOption {
-        // clone agent model (based on this agent)
-        /*val agArch = MatrixAgentArch(
-            envModel().clone(),
-            "${ts.agArch.agName}_matrix"
-        )
-        val agModel = MatrixAgent(originalAgent, originalOption)
-        this.cloneInto(agArch, agModel)
-        agModel.ts.setLogger(agArch)
-        agModel.depth = this.depth+1
-
-        agModel.myFO = FutureOption(
-            opt,
-            agModel,
-            agModel.myMatrixArch(),
-            this.ts.c.selectedEvent.clone() as Event,
-            this.myFO,
-            this.envModel().currentState()
-        )
-        return agModel.myFO!!*/
         return buildAg(opt, envModel(), originalAgent, originalOption, this)
     }
 
@@ -74,6 +54,7 @@ class MatrixAgent(
 
         private var agCounter = 0
 
+        /** build a future option, clone agent/env, ... */
         fun buildAg(opt : Option,
                     env: EnvironmentModel<State>,
                     originalAgent: ForeseeProblemAgent,
@@ -88,10 +69,13 @@ class MatrixAgent(
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)
 
-            var thisFO: FutureOption? = null
+            var parentFO: FutureOption? = null
+            var parentDepth = 0
+            var parentCost  = 0.0
             if (parent is MatrixAgent) {
-                agModel.depth = parent.depth + 1
-                thisFO = parent.myFO
+                parentFO    = parent.myFO
+                parentDepth = parent.myFO?.depth?:0
+                parentCost  = parent.myFO?.cost?:0.0
             }
 
             agModel.myFO = FutureOption(
@@ -100,9 +84,44 @@ class MatrixAgent(
                 env.currentState(),
                 agModel,
                 agModel.myMatrixArch(),
-                thisFO,
+                parentFO,
+                parentDepth + 1,
+                parentCost + opt.getCost(),
+                opt.getPreference()
             )
             return agModel.myFO!!
         }
+    }
+}
+
+data class FutureOption(
+    val evt: Event,     // event for which this FO was created
+    val opt: Option,      // option where this FO was created
+    val state: State,   // state where this FO was created
+    val ag: MatrixAgent, // agent that will handle/simulate this FO
+    val arch: MatrixAgentArch, // and  its arch
+    val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
+    val depth: Int = 0,
+    val cost: Double,
+    val heuristic: Double = 0.0
+) : Comparable<FutureOption> {
+
+    fun planId() : String = opt.plan.label.functor
+
+    fun getPairId() = Pair( arch.env.currentState(), planId())
+
+    fun eval() = cost + heuristic
+
+    override fun compareTo(other: FutureOption): Int =
+        eval().compareTo(other.eval())
+
+    override fun hashCode(): Int {
+        return state.hashCode() + (planId().hashCode()*31)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other)  return true
+        if (other is FutureOption) return state == other.state && planId() == other.planId()
+        return false
     }
 }
