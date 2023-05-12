@@ -6,9 +6,18 @@ MAS grid1 {
         // robot programmed in "normal" Jason (no future)
         //robot_base agentClass jason.agent.PreferenceAgent;
 
-        // robot programmed in "future" Jason (problem case)
-        //robot_fut_problem agentClass jason.agent.PreferenceAgent; // this case shows the problem
+        // robots programmed in "future" Jason (problem case)
+
+        // this case shows the problem
+        //robot_fut_problem agentClass jason.agent.PreferenceAgent;
+
+        // agent with preference (no cost)
         //robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
+
+        // SOLVE_F
+        //robot_fut_problem agentClass jason.future.ForeseeProblemAgentSolveF;
+
+        // agent with preference and cost (SOLVE_P mostly)
         robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent;
 
     aslSourcePath: "src/agt";

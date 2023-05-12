@@ -48,11 +48,12 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
 
     override fun initComponents(width: Int) {
         super.initComponents(width)
-        val scenarios = JComboBox<ExplorationStrategy>()
-        for (s in ExplorationStrategy.values())
-            scenarios.addItem(s)
-        scenarios.selectedItem = ForeseeProblemAgent.strategy()
-        scenarios.apply {
+        val strategies = JComboBox<ExplorationStrategy>()
+        for (s in ForeseeProblemAgent.getImplementedStrategies())
+            strategies.addItem(s)
+
+        strategies.selectedItem = ForeseeProblemAgent.strategy()
+        strategies.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
                     //println("select ${it.item}")
@@ -63,7 +64,7 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
 
         msgText = JLabel("<msg>")
         val bot = JPanel(BorderLayout())
-        bot.add( BorderLayout.EAST, scenarios )
+        bot.add( BorderLayout.EAST, strategies )
         bot.add( BorderLayout.WEST, msgText )
         thread(start = true) {
             while (true) {
@@ -77,6 +78,19 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                         s as GridState
                         gModel.add(gModel.SOLUTION, s.l)
                     }
+                    // add new strategies
+                    for (s in ForeseeProblemAgent.getImplementedStrategies()) {
+                        var has = false
+                        for (i in 0 until strategies.itemCount)
+                            if (strategies.getItemAt(i) == s) {
+                                has = true
+                                break
+                            }
+                        if (!has) {
+                            strategies.addItem(s)
+                        }
+                    }
+
                     Thread.sleep(300)
                 } catch (e: Exception) {
                     e.printStackTrace()

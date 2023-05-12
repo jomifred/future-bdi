@@ -6,7 +6,6 @@ import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.LinkedBlockingDeque
 import java.util.concurrent.PriorityBlockingQueue
 
 enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F }
@@ -15,14 +14,18 @@ enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F }
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent() {
 
+    init {
+        getImplementedStrategies().add(ExplorationStrategy.LEVEL1)
+        getImplementedStrategies().add(ExplorationStrategy.SOLVE_P)
+    }
+
     //private val orderOptions = true // whether options are ordered before explored
 
     // search data structure
     private var explorationQueue  = PriorityBlockingQueue<FutureOption>()
-    private val explorationQueueF = LinkedBlockingDeque<FutureOption>()
 
     private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
-    private val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
+    protected val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
 
     // result of the search (based on a good future found during search)
     private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
@@ -37,27 +40,16 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         return !visitedOptions.contains( Pair( s, o.plan.label.functor) )
     }
 
-    fun optionsCfParameter(options: MutableList<Option>) : List<Option> =
-        if (solveStrategy == ExplorationStrategy.SOLVE_F)
-            super.sortedOptions(options, false)
-        else
-            options
+    open fun optionsCfParameter(options: MutableList<Option>) : List<Option> =  options
 
-    fun addToExplore(fo: FutureOption) {
+    open fun addToExplore(fo: FutureOption) {
         val currentFO = inQueueOptions.getOrDefault(fo.getPairId(), Double.MAX_VALUE)
         if (fo.eval() < currentFO) { // if the new option is better (or new), add to explore
             inQueueOptions[fo.getPairId()] = fo.eval()
-            when (solveStrategy) {
-                ExplorationStrategy.SOLVE_F -> explorationQueueF.offerFirst(fo)
-                else -> { explorationQueue.add(fo) }
-            }
+            explorationQueue.add(fo)
         }
     }
-    private fun getToExplore() : FutureOption? =
-        when (solveStrategy) {
-            ExplorationStrategy.SOLVE_F -> explorationQueueF.poll()
-            else -> { explorationQueue.poll() }
-        }
+    open fun getToExplore() : FutureOption? = explorationQueue.poll()
 
     fun curInt() : Intention = ts.c.selectedEvent.intention
 
@@ -121,7 +113,6 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             visitedOptions.clear()
             inQueueOptions.clear()
             explorationQueue.clear()
-            explorationQueueF.clear()
         }
     }
 
@@ -167,9 +158,15 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     companion object {
         private var msg: String = ""
         private var solveStrategy = ExplorationStrategy.ONE
+        private var implementedStrategies = mutableSetOf(
+            ExplorationStrategy.NONE,
+            ExplorationStrategy.ONE
+        )
 
         private val visitedStates = ConcurrentHashMap.newKeySet<State>()
         private var solution      : List<State> = mutableListOf()
+
+        fun getImplementedStrategies() = implementedStrategies
 
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
