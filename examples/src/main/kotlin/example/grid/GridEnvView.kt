@@ -5,7 +5,9 @@ import jason.future.ExplorationStrategy
 import jason.future.ForeseeProblemAgent
 import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.FlowLayout
 import java.awt.Graphics
+import java.awt.Panel
 import java.awt.event.ItemEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -15,11 +17,13 @@ import javax.swing.JPanel
 import kotlin.concurrent.thread
 
 /** class that implements the View of Grid Env */
-class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model, "Future!", 800) {
-    private var gModel: GridEnvModel
+class GridEnvView(
+    val gModel: GridEnvModel,
+    val env: GridJasonEnv)
+    : GridWorldView(gModel, "Future!", 800) {
 
     init {
-        gModel = model
+        //gModel = model
         isVisible = true
         repaint()
         canvas.addMouseListener(object : MouseListener {
@@ -27,13 +31,8 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                 val col = e.x / cellSizeW
                 val lin = e.y / cellSizeH
                 if (col >= 0 && lin >= 0 && col < getModel().width && lin < getModel().height) {
-                    model.setGoal( GridState(col, lin))
-                    env.updatePercept()
-                    ForeseeProblemAgent.clearVisited()
-                    ForeseeProblemAgent.setMsg("")
-                    gModel.removeAll( gModel.VISITED )
-                    gModel.removeAll( gModel.SOLUTION )
-                    update()
+                    gModel.setGoal( GridState(col, lin))
+                    resetGUI()
                 }
             }
 
@@ -42,6 +41,15 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
             override fun mousePressed(e: MouseEvent) {}
             override fun mouseReleased(e: MouseEvent) {}
         })
+    }
+
+    fun resetGUI() {
+        env.updatePercept()
+        ForeseeProblemAgent.clearVisited()
+        ForeseeProblemAgent.setMsg("")
+        model.removeAll( gModel.VISITED )
+        model.removeAll( gModel.SOLUTION )
+        update()
     }
 
     private var msgText : JLabel? = null
@@ -62,10 +70,32 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
             }
         }
 
+        val scenarios = JComboBox<String>()
+        scenarios.addItem("--")
+        scenarios.addItem("U")
+        scenarios.addItem("H")
+        scenarios.apply {
+            addItemListener {
+                if (it.stateChange == ItemEvent.SELECTED) {
+                    when (it.item as String) {
+                        "--" -> gModel.setScenarioWalls(0)
+                        "U"  -> gModel.setScenarioWalls(1)
+                        "H"  -> gModel.setScenarioWalls(2)
+                    }
+                }
+                resetGUI()
+            }
+        }
+        val confPanel = Panel(FlowLayout())
+        confPanel.add(strategies)
+        confPanel.add(scenarios)
+
         msgText = JLabel("<msg>")
         val bot = JPanel(BorderLayout())
-        bot.add( BorderLayout.EAST, strategies )
+        bot.add( BorderLayout.EAST, confPanel )
         bot.add( BorderLayout.WEST, msgText )
+        contentPane.add(BorderLayout.SOUTH, bot)
+
         thread(start = true) {
             while (true) {
                 try {
@@ -97,7 +127,6 @@ class GridEnvView(model: GridEnvModel, env: GridJasonEnv) : GridWorldView(model,
                 }
             }
         }
-        contentPane.add(BorderLayout.SOUTH, bot)
     }
 
     override fun draw(g: Graphics, x: Int, y: Int, obj: Int) {

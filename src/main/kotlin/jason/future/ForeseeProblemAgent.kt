@@ -156,7 +156,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     companion object {
         private var msg: String = ""
-        private var solveStrategy = ExplorationStrategy.SOLVE_M
+        private var solveStrategy = ExplorationStrategy.ONE
         private var implementedStrategies = mutableSetOf(
             ExplorationStrategy.NONE,
             ExplorationStrategy.ONE

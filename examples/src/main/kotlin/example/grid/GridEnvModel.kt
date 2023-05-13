@@ -11,7 +11,8 @@ import jason.future.State
 
 class GridEnvModel(
     private var currentState: GridState,
-    var goalState   : GridState
+    var goalState   : GridState,
+    var scenario    : Int = 0
 ) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
 
     val DEST = 16 // represent the destination
@@ -19,9 +20,7 @@ class GridEnvModel(
     val SOLUTION = 64
 
     init {
-        addWall(12,15,20,15)
-        //addWall(12,7, 12, 15 )
-        //addWall(20,7, 20, 15 )
+        setScenarioWalls(scenario)
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
     }
@@ -35,11 +34,31 @@ class GridEnvModel(
         add( DEST, goalState.l)
     }
 
+    fun setScenarioWalls(i: Int) {
+        scenario = i
+        removeAll(OBSTACLE)
+        addWalls0()
+        if (scenario > 0) addWalls1()
+        if (scenario > 1) addWalls2()
+    }
+    fun addWalls0() {
+        addWall(12,15,20,15)
+    }
+    fun addWalls1() {
+        addWall(12,7, 12, 15 )
+        addWall(20,7, 20, 15 )
+    }
+    fun addWalls2() {
+        addWall(12,19,20,19)
+        addWall(12,19, 12, 23 )
+        addWall(20,19, 20, 23 )
+    }
 
     override fun clone(): GridEnvModel =
         GridEnvModel(
             GridState(currentState.l),
-            GridState(goalState.l)
+            GridState(goalState.l),
+            scenario
         )
 
     private val actions = listOf(
