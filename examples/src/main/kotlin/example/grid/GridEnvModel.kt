@@ -40,6 +40,7 @@ class GridEnvModel(
         addWalls0()
         if (scenario > 0) addWalls1()
         if (scenario > 1) addWalls2()
+        if (scenario > 2) addWalls3()
     }
     fun addWalls0() {
         addWall(12,15,20,15)
@@ -52,6 +53,9 @@ class GridEnvModel(
         addWall(12,19,20,19)
         addWall(12,19, 12, 23 )
         addWall(20,19, 20, 23 )
+    }
+    fun addWalls3() {
+        addWall(12,23,20,23)
     }
 
     override fun clone(): GridEnvModel =

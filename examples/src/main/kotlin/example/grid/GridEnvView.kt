@@ -74,6 +74,7 @@ class GridEnvView(
         scenarios.addItem("--")
         scenarios.addItem("U")
         scenarios.addItem("H")
+        scenarios.addItem("O")
         scenarios.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
@@ -81,6 +82,7 @@ class GridEnvView(
                         "--" -> gModel.setScenarioWalls(0)
                         "U"  -> gModel.setScenarioWalls(1)
                         "H"  -> gModel.setScenarioWalls(2)
+                        "O"  -> gModel.setScenarioWalls(3)
                     }
                 }
                 resetGUI()
