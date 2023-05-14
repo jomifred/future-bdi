@@ -19,7 +19,7 @@ import kotlin.concurrent.thread
 /** class that implements the View of Grid Env */
 class GridEnvView(
     val gModel: GridEnvModel,
-    val env: GridJasonEnv)
+    private val env: GridJasonEnv)
     : GridWorldView(gModel, "Future!", 800) {
 
     init {

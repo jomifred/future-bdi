@@ -20,7 +20,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     private var explorationQueue  = PriorityBlockingQueue<FutureOption>()
 
     private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
-    protected val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
+    private val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
 
     // result of the search (based on a good future found during search)
     private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future

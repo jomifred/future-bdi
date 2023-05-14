@@ -30,12 +30,12 @@ open class PreferenceAgent : Agent() {
     //open fun optionCosts(options: MutableList<Option>) : Map<Option, Double> =
     //    optionProp(options, "cost", 1.0)
 
-    open fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
+    /*open fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
         optionPrefs(options)
             .toList()
             .sortedBy { (_,v) -> if (ascending) v else -v }
             .unzip()
-            .first
+            .first*/
 
 
     override fun selectOption(options: MutableList<Option>): Option? =

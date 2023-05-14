@@ -1,0 +1,23 @@
+= Release notes
+
+== version 1.1
+
+- more scenarios: U, H, O and improved GUI
+- initial experiments
+- consider cost
+- uses priority queue (cost+preference)
+- new strategy: solve_m
+- notion of zone1: all "first level" options = first options (from default options) + options until failure using policy
+- cost weight: a number that distinguishes the 3 strategies (no more specific algorithms, just this parameter)
+
+== version 1.0
+
+- scenario line ok
+
+- type of problem: handles goal not achieved
+- considers preference
+
+- strategies: one, solve_(p|f), que normal queue
+
+- generic for any Jason program (given and environment model)
+- uses queue
