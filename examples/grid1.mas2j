@@ -1,7 +1,7 @@
 MAS grid1 {
 
-    environment: example.grid.GridJasonEnv(init(15,5),goal(15,17), scenario("--"))
-    //environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("U"))
+    //environment: example.grid.GridJasonEnv(init(15,5),goal(15,17), scenario("--"))
+    environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("U"))
     //environment: example.grid.GridJasonEnv(init(15,5),goal(15,20), scenario("H"))
 
     agents:
@@ -14,10 +14,10 @@ MAS grid1 {
         //robot_fut_problem agentClass jason.agent.PreferenceAgent;
 
         // agent with preference (no cost)
-        robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
+        //robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
 
         // agent with preference and cost
-        //robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent;
+        robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent("SOLVE_P");
 
     aslSourcePath: "src/agt";
 }

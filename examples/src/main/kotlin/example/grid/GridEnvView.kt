@@ -106,18 +106,8 @@ class GridEnvView(
                         s as GridState
                         gModel.add(gModel.SOLUTION, s.l)
                     }
-                    // add new strategies
-                    for (s in ForeseeProblemAgent.getImplementedStrategies()) {
-                        var has = false
-                        for (i in 0 until strategies.itemCount)
-                            if (strategies.getItemAt(i) == s) {
-                                has = true
-                                break
-                            }
-                        if (!has) {
-                            strategies.addItem(s)
-                        }
-                    }
+
+                    strategies.selectedItem = ForeseeProblemAgent.strategy()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

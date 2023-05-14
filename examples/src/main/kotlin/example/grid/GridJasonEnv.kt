@@ -21,8 +21,7 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
     private val log :Logger  = Logger.getLogger("grid-env")
 
     override fun init(args: Array<String>?) {
-        var view = GridEnvView(model, this)
-
+        var gui = true
         if (!args.isNullOrEmpty()) {
             for (a in args) {
                 if (a.startsWith("init")) {
@@ -46,8 +45,14 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
                         "O"  -> model.setScenarioWalls(3)
                     }
                 }
+                if (a.startsWith("no_gui")) {
+                    gui = false
+                }
             }
-            view.resetGUI()
+            if (gui) {
+                var view = GridEnvView(model, this)
+                view.resetGUI()
+            }
         }
         thread(start = true) {
                 // wait for some agent to be created

@@ -1,0 +1,36 @@
+= results of Future-BDI experiments
+
+== version 1.1
+
+Scenario line:: little "detour"
+
+Scenario U:: good for the agent policy, need to anticipate that entering the U is not a good option
+
+Scenario H:: bad for the policy
+
+[cols="1,1,>1,>1,>1,>1,>1"]
+|===
+|scenario | strategy | solve | #matrices | visited | steps to solution | steps in policy
+
+include::stats1.1a.txt[]
+
+
+|===
+
+// [cols="1,1,>1,>1,>1,>1"]
+// |===
+// |scenario | strategy | #matrices | steps to solution | steps out of polity | steps in policy
+//
+// |line| SOLVE_P|    419| _15_|  9|  6 (40%)
+// |    | SOLVE_M|    217| _15_|  4| 11 (73%)
+// |    | SOLVE_F|   _78_|   18|  4| 14 (_77%_)
+//
+// |U   | SOLVE_P|  _112_| _24_| 20|  4 (_16%_)
+// |    | SOLVE_M|    286| _24_| 20|  4 (_16%_)
+// |    | SOLVE_F|    374|   28| 24|  4 (14%)
+//
+// |H   | SOLVE_P|   2006| _26_| 22|  4 (_15%_)
+// |    | SOLVE_M|   2028| _26_| 22|  4 (_15%_)
+// |    | SOLVE_F|   2001|   28| 24|  4 (14%)
+// |===
+

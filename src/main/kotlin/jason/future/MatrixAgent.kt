@@ -130,6 +130,8 @@ data class FutureOption(
     override fun compareTo(other: FutureOption): Int =
         eval().compareTo(other.eval())
 
+    fun planSize() = depth + arch.historyS.size-1
+
     override fun hashCode(): Int {
         return state.hashCode() + (planId().hashCode()*31)
     }
@@ -138,5 +140,28 @@ data class FutureOption(
         if (this === other)  return true
         if (other is FutureOption) return state == other.state && planId() == other.planId()
         return false
+    }
+
+    fun states() : Pair<List<State>, Int> {
+        val states = mutableListOf<State>()
+        var f = this
+        while (f.parent != null) {
+            states.add(0, f.state)
+            f = f.parent!!
+        }
+
+        val beforePolicy = states.size
+        //states.add(M())
+        val h = arch.historyS
+        for (i in 1 until h.size) {
+            states.add( h[i] )
+        }
+        return Pair(states, beforePolicy)
+    }
+
+    class M : State {
+        override fun toString(): String {
+            return "---"
+        }
     }
 }

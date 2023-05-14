@@ -1,0 +1,9 @@
+MAS grid {
+
+    environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("U"), no_gui)
+
+    agents:
+        robot_fut_problem_cost_exit agentClass jason.future.ForeseeProblemAgent("ONE","U");
+
+    aslSourcePath: "src/agt";
+}

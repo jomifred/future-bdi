@@ -4,6 +4,9 @@ import jason.agent.PreferenceAgent
 import jason.asSemantics.Intention
 import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
+import jason.mas2j.AgentParameters
+import jason.runtime.Settings.PROJECT_PARAMETER
+import java.io.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
@@ -24,6 +27,27 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     // result of the search (based on a good future found during search)
     private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
+
+    var myStrategy = ExplorationStrategy.ONE
+    var myScenario   = ""
+    override fun initAg() {
+        super.initAg()
+        try {
+            val agC = (ts.settings.getUserParameters()[PROJECT_PARAMETER] as AgentParameters).agClass
+            if (agC.parameters.size>0) {
+                var sStrategy = agC.getParameter(0)
+                sStrategy = sStrategy.substring(1, sStrategy.length - 1)
+                myStrategy = ExplorationStrategy.valueOf(sStrategy)
+                solveStrategy = myStrategy
+            }
+            if (agC.parameters.size>1) {
+                myScenario = agC.getParameter(1)
+                myScenario = myScenario.substring(1, myScenario.length - 1)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     private fun userEnv() : MatrixCapable<*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*>
 
@@ -79,6 +103,8 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             var nbE = 0
             var fo = getToExplore()
             fo?.arch?.getAg()?.inZone1 = true // current options + those in the future of default options are in zone1
+            var visited = 0
+            var defaultPlan: Set<State>? = null
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
@@ -92,18 +118,25 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 fo.ag.lastFO = fo
                 fo.arch.run(fo.evt)
 
+                visited += fo.planSize()
+                if (nbE == 1)
+                    defaultPlan = fo.states().first.toSet()
+
                 if (!fo.arch.hasProblem()) {
                     println("found an option with a likely nice future! $nbE options tried. option=${envModel().currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
-                        setMsg("explored $nbE options to find a nice future. depth=${fo.depth}+${fo.arch.historyS.size-1}.") // cost=${fo.cost},
+                        setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     val planStr = storeGoodOptions(fo)
                     println("    plan is $planStr")
+                    storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
 
                     return fo.ag.originalOption
 
                 }
+
                 fo = getToExplore() // continue to explore
             }
+            storeStats(null, nbE, visited, defaultPlan?:setOf<State>())
             println("\nsorry, all options have an unpleasant future. aborting the intention! (tried $nbE options)\n")
             setMsg("explored $nbE options and ... no future")
             return null
@@ -146,6 +179,38 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             null, 1.0)
     }
 
+    fun storeStats(fo: FutureOption?, nbOptions: Int, statesVisited: Int, defaultPlan: Set<State>) {
+        try {
+            BufferedWriter(FileWriter("stats.txt", true)).use { out ->
+
+//                val defaultSet = mutableSetOf<State>()
+//                defaultSet.addAll(defaultPlan)
+//                val foSet = mutableSetOf<State>()
+//                foSet.addAll(foPlan)
+                val planSize = fo?.planSize()?:1
+                val foSt = fo?.states()
+                val foPlan = foSt?.first
+                println(defaultPlan)
+                println(foPlan)
+                val commonStates =
+                    if (planSize == 1 || fo == null)
+                        0
+                    else
+                        defaultPlan.intersect(foPlan!!).size
+                val inPolicy =
+                    if (fo == null)
+                        0
+                    else
+                        commonStates + (fo.planSize() - 1 - foSt!!.second)
+                println(defaultPlan)
+                println(foPlan)
+                println("$commonStates $inPolicy ${foSt?.second} ${foPlan?.size} ${fo?.planSize()}")
+                out.appendLine("| $myScenario | $myStrategy | ${if (fo==null) "no" else "yes" } | $nbOptions | $statesVisited | ${if (fo==null) "--" else planSize} | $inPolicy (${(100*inPolicy/planSize).toInt()}%)")
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 
     companion object {
         private var msg: String = ""
