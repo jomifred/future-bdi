@@ -23,7 +23,6 @@ class GridEnvView(
     : GridWorldView(gModel, "Future!", 800) {
 
     init {
-        //gModel = model
         isVisible = true
         repaint()
         canvas.addMouseListener(object : MouseListener {
@@ -78,12 +77,7 @@ class GridEnvView(
         scenarios.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
-                    when (it.item as String) {
-                        "--" -> gModel.setScenarioWalls(0)
-                        "U"  -> gModel.setScenarioWalls(1)
-                        "H"  -> gModel.setScenarioWalls(2)
-                        "O"  -> gModel.setScenarioWalls(3)
-                    }
+                    gModel.setScenarioWalls(scenarios.selectedIndex)
                 }
                 resetGUI()
             }
@@ -101,6 +95,8 @@ class GridEnvView(
         thread(start = true) {
             while (true) {
                 try {
+                    Thread.sleep(300)
+
                     msgText?.text = ForeseeProblemAgent.getMsg()
                     for (s in ForeseeProblemAgent.getVisited()) {
                         s as GridState
@@ -122,8 +118,6 @@ class GridEnvView(
                             strategies.addItem(s)
                         }
                     }
-
-                    Thread.sleep(300)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

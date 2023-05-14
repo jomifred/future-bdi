@@ -4,6 +4,7 @@ package example.grid
 
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.NumberTerm
+import jason.asSyntax.StringTerm
 import jason.asSyntax.Structure
 import jason.environment.Environment
 import jason.future.EnvironmentModel
@@ -20,7 +21,7 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
     private val log :Logger  = Logger.getLogger("grid-env")
 
     override fun init(args: Array<String>?) {
-        GridEnvView(model, this)
+        var view = GridEnvView(model, this)
 
         if (!args.isNullOrEmpty()) {
             for (a in args) {
@@ -34,9 +35,19 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
                     val l = ASSyntax.parseLiteral(a)
                     val x = (l.getTerm(0) as NumberTerm).solve().toInt()
                     val y = (l.getTerm(1) as NumberTerm).solve().toInt()
-                    model.goalState = GridState(x,y)
+                    model.setGoal( GridState(x,y) )
+                }
+                if (a.startsWith("scenario")) {
+                    val l = ASSyntax.parseLiteral(a)
+                    when ( (l.getTerm(0) as StringTerm).string) {
+                        "--" -> model.setScenarioWalls(0)
+                        "U"  -> model.setScenarioWalls(1)
+                        "H"  -> model.setScenarioWalls(2)
+                        "O"  -> model.setScenarioWalls(3)
+                    }
                 }
             }
+            view.resetGUI()
         }
         thread(start = true) {
                 // wait for some agent to be created
@@ -60,8 +71,10 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
     }
 
     fun updatePercept() {
-        updateAgPercept( RuntimeServicesFactory.get().agentsNames.first() )
-        informAgsEnvironmentChanged()
+        if (RuntimeServicesFactory.get().agentsNames.isNotEmpty()) {
+            updateAgPercept(RuntimeServicesFactory.get().agentsNames.first())
+            informAgsEnvironmentChanged()
+        }
     }
 
     private fun updateAgPercept(agName: String) {

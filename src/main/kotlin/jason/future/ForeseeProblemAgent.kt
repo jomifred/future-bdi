@@ -8,19 +8,13 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
-enum class ExplorationStrategy { NONE, ONE, LEVEL1, SOLVE_P, SOLVE_F, SOLVE_M }
+enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F }
 
 //fun Double.format(pre: Int, digits: Int) = "%${pre}.${digits}f".format(this)
 
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent() {
-
-    init {
-        getImplementedStrategies().add(ExplorationStrategy.LEVEL1)
-        getImplementedStrategies().add(ExplorationStrategy.SOLVE_P)
-        getImplementedStrategies().add(ExplorationStrategy.SOLVE_M)
-    }
 
     // search data structure
     private var explorationQueue  = PriorityBlockingQueue<FutureOption>()
@@ -84,8 +78,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
             // explore future options to see their future
             var nbE = 0
             var fo = getToExplore()
-            if (solveStrategy == ExplorationStrategy.SOLVE_M)
-                fo?.arch?.getAg()?.inSolveMPhase1 = true // so that all future options are produced for default option (not just first level)
+            fo?.arch?.getAg()?.inZone1 = true // current options + those in the future of default options are in zone1
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
@@ -150,22 +143,17 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     private fun prepareSimulation(opt: Option) : FutureOption {
         return MatrixAgent.buildAg(opt, envModel(), this, opt, this,
             0.0,
-            null)
+            null, 1.0)
     }
 
 
     companion object {
         private var msg: String = ""
         private var solveStrategy = ExplorationStrategy.ONE
-        private var implementedStrategies = mutableSetOf(
-            ExplorationStrategy.NONE,
-            ExplorationStrategy.ONE
-        )
-
         private val visitedStates = ConcurrentHashMap.newKeySet<State>()
         private var solution      : MutableList<State> = mutableListOf()
 
-        fun getImplementedStrategies() = implementedStrategies
+        fun getImplementedStrategies() = ExplorationStrategy.values()
 
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }

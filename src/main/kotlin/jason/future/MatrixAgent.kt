@@ -14,10 +14,10 @@ class MatrixAgent(
     val originalOption : Option
 ) : PreferenceAgent() {
 
-    private var firstSO  = true
+    private var firstSO  = true // if it is the first time this agent calls selectOption (in that cases, add FO)
     private var myFO     : FutureOption? = null // the FO being tried by this agent
 
-    var inSolveMPhase1 = false
+    var inZone1 = false
 
     private fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
 
@@ -32,7 +32,7 @@ class MatrixAgent(
         val defaultOption = super.selectOption(options) ?: return null
 
         // store all options for further exploration (clone the agent and environment for each)
-        if ((firstSO || inSolveMPhase1)
+        if ((firstSO || inZone1)
             && originalAgent.curInt() == curInt()) { // consider only option for the original intention
             firstSO = false
             if (ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_P
@@ -50,10 +50,21 @@ class MatrixAgent(
         return defaultOption
     }
 
+    fun costWeight() =
+        if (inZone1)
+            when (ForeseeProblemAgent.strategy()) {
+                ExplorationStrategy.SOLVE_M -> 0.7
+                ExplorationStrategy.SOLVE_F -> 0.0
+                else -> 1.0
+            }
+        else 1.0
+
+
     private fun prepareSimulation(opt: Option) : FutureOption {
         return buildAg(opt, envModel(), originalAgent, originalOption, this,
-            myFO?.cost?:0.0, // no cost for any FO in original default option
-            lastFO)
+            //myFO?.cost?:0.0, // no cost for any FO in original default option
+            lastFO?.cost?:0.0,
+            lastFO, costWeight())
     }
 
     override fun addToMindInspectorWeb() {
@@ -71,7 +82,8 @@ class MatrixAgent(
                     originalOption: Option,
                     parent: Agent,
                     parentCost : Double,
-                    parentFO : FutureOption?
+                    parentFO : FutureOption?,
+                    costWeight : Double
                     ) : FutureOption {
             val agArch = MatrixAgentArch(
                 env.clone(),
@@ -89,7 +101,7 @@ class MatrixAgent(
                 agModel.myMatrixArch(),
                 parentFO,
                 (parentFO?.depth?:0) + 1,
-                parentCost + opt.getCost(),
+                parentCost + costWeight * opt.getCost(),
                 opt.getPreference()
             )
             return agModel.myFO!!
