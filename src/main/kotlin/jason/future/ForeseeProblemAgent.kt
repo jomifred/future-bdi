@@ -190,8 +190,6 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                 val planSize = fo?.planSize()?:1
                 val foSt = fo?.states()
                 val foPlan = foSt?.first
-                println(defaultPlan)
-                println(foPlan)
                 val commonStates =
                     if (planSize == 1 || fo == null)
                         0
@@ -202,9 +200,9 @@ open class ForeseeProblemAgent : PreferenceAgent() {
                         0
                     else
                         commonStates + (fo.planSize() - 1 - foSt!!.second)
-                println(defaultPlan)
-                println(foPlan)
-                println("$commonStates $inPolicy ${foSt?.second} ${foPlan?.size} ${fo?.planSize()}")
+                //println(defaultPlan)
+                //println(foPlan)
+                //println("$commonStates $inPolicy ${foSt?.second} ${foPlan?.size} ${fo?.planSize()}")
                 out.appendLine("| $myScenario | $myStrategy | ${if (fo==null) "no" else "yes" } | $nbOptions | $statesVisited | ${if (fo==null) "--" else planSize} | $inPolicy (${(100*inPolicy/planSize).toInt()}%)")
             }
         } catch (e: IOException) {

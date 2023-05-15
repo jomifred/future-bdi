@@ -13,3 +13,8 @@ cd ../..
 ./gradlew :examples:run --args="run-all-grid/grid-hp.mas2j --no-net"
 ./gradlew :examples:run --args="run-all-grid/grid-hm.mas2j --no-net"
 ./gradlew :examples:run --args="run-all-grid/grid-hf.mas2j --no-net"
+
+./gradlew :examples:run --args="run-all-grid/grid-oo.mas2j --no-net"
+./gradlew :examples:run --args="run-all-grid/grid-op.mas2j --no-net"
+./gradlew :examples:run --args="run-all-grid/grid-om.mas2j --no-net"
+./gradlew :examples:run --args="run-all-grid/grid-of.mas2j --no-net"

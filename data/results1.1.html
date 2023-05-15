@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>results of Future-BDI experiments</title>
+<title>Results of Future-BDI experiments</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,7 +438,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>results of Future-BDI experiments</h1>
+<h1>Results of Future-BDI experiments</h1>
 </div>
 <div id="content">
 <div class="sect1">
@@ -448,17 +448,45 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dl>
 <dt class="hdlist1">Scenario line</dt>
 <dd>
-<p>little "detour"</p>
+<p>little "detour".</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="screens1.1/line-m.png" alt="line m"></span></p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">Scenario U</dt>
 <dd>
-<p>good for the agent policy, need to anticipate that entering the U is not a good option</p>
+<p>good for the agent policy, it needs to anticipate that entering inside the U, which is not a good option.</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="screens1.1/u-m.png" alt="u m"></span></p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">Scenario H</dt>
 <dd>
 <p>bad for the policy</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="screens1.1/h-m.png" alt="h m"></span></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Scenario O</dt>
+<dd>
+<p>no solution</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="screens1.1/o-o.png" alt="o o"></span></p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -475,13 +503,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <th class="tableblock halign-left valign-top">scenario</th>
 <th class="tableblock halign-left valign-top">strategy</th>
 <th class="tableblock halign-right valign-top">solve</th>
-<th class="tableblock halign-right valign-top">#matrices</th>
+<th class="tableblock halign-right valign-top">matrices</th>
 <th class="tableblock halign-right valign-top">visited</th>
-<th class="tableblock halign-right valign-top">steps to solution</th>
+<th class="tableblock halign-right valign-top">steps</th>
 <th class="tableblock halign-right valign-top">steps in policy</th>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">line</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NONE</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&infin;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&infin;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&infin; (100%)</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">line</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ONE</p></td>
@@ -590,14 +627,97 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <td class="tableblock halign-right valign-top"><p class="tableblock">27</p></td>
 <td class="tableblock halign-right valign-top"><p class="tableblock">6 (22%)</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ONE</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">12</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&#8201;&#8212;&#8201;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0 (0%)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOLVE_P</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">5238</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">131472</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&#8201;&#8212;&#8201;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0 (0%)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOLVE_M</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">5239</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">131504</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&#8201;&#8212;&#8201;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0 (0%)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">O</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOLVE_F</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">no</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">5254</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">137850</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">&#8201;&#8212;&#8201;</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0 (0%)</p></td>
+</tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p><strong>Columns</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>matrices: number of explored matrices</p>
+</li>
+<li>
+<p>visited: number of states mentally or concretely visited</p>
+</li>
+<li>
+<p>steps: steps performed (behavior after reasoning)</p>
+</li>
+<li>
+<p>in policy: among the steps, how many follows the policy  preference</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Remarks</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ONE: does not solve, as NONE, but does not spend energy for the goal. Discovers it in <strong>linear time</strong>!</p>
+</li>
+<li>
+<p>SOLVE_F stays more in policy in all scenarios.</p>
+</li>
+<li>
+<p>SOLVE_M stays in policy more than SOLVE_P, with the same number of steps (efficiency).  slower in  some scenarios, faster in  others. middle term strategy (of course)</p>
+</li>
+<li>
+<p>scenario line, SOLVE_F is faster, the agent policy works well here.</p>
+</li>
+<li>
+<p>scenario U, solve_P is faster, as soon as the bad option is taken, the better</p>
+</li>
+<li>
+<p>scenario H, does not add anything significant result. all strategies are equal. policy is not good in this scenario.</p>
+</li>
+<li>
+<p>scenario O, ONE is the best strategy in case of no solution in the agent policy.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-05-14 22:10:47 UTC
+Last updated 2023-05-15 07:55:08 UTC
 </div>
 </div>
 </body>
