@@ -14,10 +14,11 @@
 
 - scenario line ok
 
+- store solution found when looking ahead and use it (do not reconsider options every step)
+
 - type of problem: handles goal not achieved
 - considers preference
 
-- strategies: one, solve_(p|f), que normal queue
+- strategies: one, solve_(p|f), using a (no priority) queue
 
 - generic for any Jason program (given and environment model)
-- uses queue
