@@ -7,7 +7,7 @@ import jason.asSyntax.Literal
 
 /** agent that run in the "Matrix" (simulated world) */
 class MatrixAgentArch (
-    val env    : EnvironmentModel<State, Action>,
+    val env : EnvironmentModel<State, Action>,
     private val agName : String
 ) : AgArch() {
 
@@ -25,12 +25,12 @@ class MatrixAgentArch (
     fun getAg() = ts.ag as MatrixAgent
 
     override fun perceive(): MutableCollection<Literal> {
-        //println("        matrix perception: ${env.agPerception(agName)}")
+        //println("        matrix perception: ${env.agPerception(agName)} for $agName")
         return env.agPerception(agName)
     }
 
     override fun act(action: ActionExec) {
-        //println("        matrix action: ${action.actionTerm}")
+        //println("        matrix action: ${action.actionTerm} from ${agName}")
         historyO.add(ts.c.selectedOption)
 
         val newState = env.execute( env.structureToAction(agName, action.actionTerm) )

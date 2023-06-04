@@ -1,6 +1,7 @@
 package jason.future
 
 import jason.asSemantics.Option
+import jason.infra.local.RunLocalMAS
 import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.IOException
@@ -104,9 +105,10 @@ open class Search (
     }
 
     fun prepareSimulation(opt: Option) : FutureOption {
-        return MatrixAgent.buildAg(opt, envModel, mainAg, opt, mainAg,
+        return FutureOption.build(opt, envModel, mainAg, opt, mainAg,
             0.0,
-            null, 1.0, this)
+            null, 1.0, this,
+            RunLocalMAS.getRunner().ags)
     }
 
     fun rollout(fo: FutureOption) : MatrixRunner {
@@ -120,6 +122,7 @@ open class Search (
         fo.ag.lastFO = fo
         val m = MatrixRunner(fo.arch.env, mainAg, fo.evt.intention)
         m.addAg( fo.arch )
+        fo.otherAgs().values.forEach{m.addAg( it ) }
         m.run()
 
         println("    simulation finished in ${m.rcCounter} reasoning cycles. intention finished=${fo.evt.intention.isFinished}. problem=${m.hasProblem()}.")

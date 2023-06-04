@@ -24,12 +24,18 @@ class MatrixRunner (
         while (!intention.isFinished && !hasProblem() && rcCounter < 5000) { // TODO: give a way to set this number
             rcCounter++
 
+            // run one step of each agent (percept/deliberate), so all see the same state
+            for (ag in ags) {
+                //println("Running one step for ${ag.agName}")
+                ag.ts.sense()
+                //println("${ag.agName} events = ${ag.ts.c.events}")
+                ag.ts.deliberate()
+            }
+
             var someAct = false
             // run one step of each agent
             for (ag in ags) {
-                ag.ts.sense()
-                ag.ts.deliberate()
-                //if (ag.ts.c.selectedOption != null) ag.lastOpt = ag.ts.c.selectedOption
+                //println("performing action for ${ag.agName}")
                 ag.ts.act()
                 someAct = someAct || ag.ts.c.action != null
             }
