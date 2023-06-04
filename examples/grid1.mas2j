@@ -1,6 +1,6 @@
 MAS grid1 {
 
-    environment: example.grid.GridJasonEnv(init(15,5),goal(15,17), scenario("--"))
+    environment: example.grid.GridJasonEnv(init(15,5),goal(15,12), scenario("--"))
     //environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("U"))
     //environment: example.grid.GridJasonEnv(init(15,5),goal(15,20), scenario("H"))
     //environment: example.grid.GridJasonEnv(init(15,5),goal(15,21), scenario("O"))

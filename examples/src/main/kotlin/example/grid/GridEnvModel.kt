@@ -24,7 +24,17 @@ class GridEnvModel(
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
     }
-    fun setInit(c: GridState) {
+
+    override fun id() =
+        when (scenario) {
+            0 -> "line"
+            1 -> "U"
+            2 -> "H"
+            3 -> "O"
+            else -> "none"
+        }
+
+    fun setInitState(c: GridState) {
         currentState = c
         setAgPos( 0, currentState.l)
     }

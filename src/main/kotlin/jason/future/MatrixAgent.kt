@@ -8,10 +8,11 @@ import jason.asSemantics.Event
 import jason.asSemantics.Intention
 import jason.asSemantics.Option
 
-/** agent that run in the "matrix" */
+/** (main) agent running in the "matrix" */
 class MatrixAgent(
     private val originalAgent : ForeseeProblemAgent,
-    val originalOption : Option
+    val originalOption : Option,
+    val search: Search
 ) : PreferenceAgent() {
 
     private var firstSO  = true // if it is the first time this agent calls selectOption (in that cases, add FO)
@@ -38,14 +39,14 @@ class MatrixAgent(
             if (ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_P
                 || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_F
                 || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_M)
-                for (o in originalAgent.optionsCfParameter(options)) {
-                    if (o != defaultOption && originalAgent.explore(envModel().currentState(),o) ) {
-                        originalAgent.addToExplore(prepareSimulation(o))
+                for (o in options) {
+                    if (o != defaultOption && search.shouldExplore(envModel().currentState(),o) ) {
+                        search.expand(prepareSimulation(o, search))
                     }
                 }
         }
 
-        lastFO = prepareSimulation(defaultOption)
+        lastFO = prepareSimulation(defaultOption, search)
         // do not consider the future in matrix mode
         return defaultOption
     }
@@ -60,11 +61,11 @@ class MatrixAgent(
         else 1.0
 
 
-    private fun prepareSimulation(opt: Option) : FutureOption {
+    private fun prepareSimulation(opt: Option, search: Search) : FutureOption {
         return buildAg(opt, envModel(), originalAgent, originalOption, this,
             //myFO?.cost?:0.0, // no cost for any FO in original default option
             lastFO?.cost?:0.0,
-            lastFO, costWeight())
+            lastFO, costWeight(), search)
     }
 
     override fun addToMindInspectorWeb() {
@@ -83,13 +84,14 @@ class MatrixAgent(
                     parent: Agent,
                     parentCost : Double,
                     parentFO : FutureOption?,
-                    costWeight : Double
+                    costWeight : Double,
+                    search: Search
                     ) : FutureOption {
             val agArch = MatrixAgentArch(
                 env.clone(),
                 "${parent.ts.agArch.agName}_matrix${agCounter++}"
             )
-            val agModel = MatrixAgent(originalAgent, originalOption)
+            val agModel = MatrixAgent(originalAgent, originalOption, search)
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)
 
@@ -105,63 +107,6 @@ class MatrixAgent(
                 opt.getPreference()
             )
             return agModel.myFO!!
-        }
-    }
-}
-
-data class FutureOption(
-    val evt: Event,     // event for which this FO was created
-    val opt: Option,      // option where this FO was created
-    val state: State,   // state where this FO was created
-    val ag: MatrixAgent, // agent that will handle/simulate this FO
-    val arch: MatrixAgentArch, // and  its arch
-    val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
-    val depth: Int = 0,
-    val cost: Double, // accumulated cost until this FO
-    val heuristic: Double = 0.0
-) : Comparable<FutureOption> {
-
-    fun planId() : String = opt.plan.label.functor
-
-    fun getPairId() = Pair( arch.env.currentState(), planId())
-
-    fun eval() = cost + heuristic
-
-    override fun compareTo(other: FutureOption): Int =
-        eval().compareTo(other.eval())
-
-    fun planSize() = depth + arch.historyS.size-1
-
-    override fun hashCode(): Int {
-        return state.hashCode() + (planId().hashCode()*31)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other)  return true
-        if (other is FutureOption) return state == other.state && planId() == other.planId()
-        return false
-    }
-
-    fun states() : Pair<List<State>, Int> {
-        val states = mutableListOf<State>()
-        var f = this
-        while (f.parent != null) {
-            states.add(0, f.state)
-            f = f.parent!!
-        }
-
-        val beforePolicy = states.size
-        //states.add(M())
-        val h = arch.historyS
-        for (i in 1 until h.size) {
-            states.add( h[i] )
-        }
-        return Pair(states, beforePolicy)
-    }
-
-    class M : State {
-        override fun toString(): String {
-            return "---"
         }
     }
 }

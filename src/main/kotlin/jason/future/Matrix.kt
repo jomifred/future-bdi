@@ -22,6 +22,8 @@ class Simulator<S : State> (
 }
 
 interface EnvironmentModel<T : State> : Cloneable {
+    fun id() : String
+
     fun actions(): Collection<Action>
     fun next(s:T, a:Action): T
     fun currentState(): State

@@ -28,7 +28,7 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
                     val l = ASSyntax.parseLiteral(a)
                     val x = (l.getTerm(0) as NumberTerm).solve().toInt()
                     val y = (l.getTerm(1) as NumberTerm).solve().toInt()
-                    model.setInit( GridState(x,y) )
+                    model.setInitState( GridState(x,y) )
                 }
                 if (a.startsWith("goal")) {
                     val l = ASSyntax.parseLiteral(a)
