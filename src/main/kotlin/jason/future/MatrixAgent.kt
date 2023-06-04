@@ -22,7 +22,7 @@ class MatrixAgent(
 
     private fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
 
-    private fun envModel() : EnvironmentModel<State> =
+    private fun envModel() : EnvironmentModel<State, Action> =
         myMatrixArch().env
 
     private fun curInt() : Intention = ts.c.selectedEvent.intention
@@ -78,7 +78,7 @@ class MatrixAgent(
 
         /** build a future option, clone agent/env, ... */
         fun buildAg(opt : Option,
-                    env: EnvironmentModel<State>,
+                    env: EnvironmentModel<State, Action>,
                     originalAgent: ForeseeProblemAgent,
                     originalOption: Option,
                     parent: Agent,

@@ -33,10 +33,10 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
     }
 
-    private fun userEnv() : MatrixCapable<*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*>
+    private fun userEnv() : MatrixCapable<*,*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*,*>
 
-    private fun envModel() : EnvironmentModel<State> =
-        userEnv().getModel() as EnvironmentModel<State>
+    private fun envModel() : EnvironmentModel<State, Action> =
+        userEnv().getModel() as EnvironmentModel<State, Action>
 
     fun curInt() : Intention = ts.c.selectedEvent.intention
 

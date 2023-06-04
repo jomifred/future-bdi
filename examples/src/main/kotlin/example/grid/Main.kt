@@ -33,7 +33,7 @@ class Robot : AgentModel<GridState> {
 
     private val visited = mutableSetOf<GridState>()
 
-    override fun decide(e: EnvironmentModel<GridState>, s:GridState, goal:GridState): Action {
+    override fun decide(e: EnvironmentModel<GridState, Action>, s:GridState, goal:GridState): Action {
         //println("deciding for $s "+visited)
         visited.add(s)
 

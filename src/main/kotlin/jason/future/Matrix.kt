@@ -5,7 +5,7 @@ import jason.asSyntax.Structure
 
 /** simulates the future for an Intention */
 class Simulator<S : State> (
-    private val env: EnvironmentModel<S>,
+    private val env: EnvironmentModel<S, Action>,
     private val ag : AgentModel<S>
 ) {
 
@@ -21,22 +21,23 @@ class Simulator<S : State> (
     }
 }
 
-interface EnvironmentModel<T : State> : Cloneable {
+interface EnvironmentModel<T : State, A : Action> : Cloneable {
     fun id() : String
 
-    fun actions(): Collection<Action>
-    fun next(s:T, a:Action): T
+    fun actions(): Collection<A>
+    fun next(s:T, a:A): T
     fun currentState(): State
     fun agPerception(agName: String) : MutableCollection<Literal>
-    fun execute(a:Action): State
+    fun execute(a:A): State
     /** translates jason action as structure to Action of the model */
-    fun structureToAction(jasonAction: Structure) : Action
 
-    public override fun clone(): EnvironmentModel<T>
+    fun structureToAction(agName: String, jasonAction: Structure) : Action
+
+    public override fun clone(): EnvironmentModel<T, A>
 }
 
-interface MatrixCapable <T: State> {
-    fun getModel() : EnvironmentModel<T>
+interface MatrixCapable <T: State, A: Action> {
+    fun getModel() : EnvironmentModel<T, A>
 }
 
 interface State {
@@ -44,11 +45,11 @@ interface State {
     //fun asPerception(): MutableCollection<Literal>
 }
 
-class Action(val name: String) {
+open class Action(val name: String) {
     override fun toString(): String = name
 }
 
 interface AgentModel<T : State> {
-    fun decide(e: EnvironmentModel<T>, s:T, goal:T): Action
+    fun decide(e: EnvironmentModel<T, Action>, s:T, goal:T): Action
 }
 

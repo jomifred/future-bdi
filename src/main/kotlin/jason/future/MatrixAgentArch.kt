@@ -7,7 +7,7 @@ import jason.asSyntax.Literal
 
 /** agent that run in the "Matrix" (simulated world) */
 class MatrixAgentArch (
-    val env    : EnvironmentModel<State>,
+    val env    : EnvironmentModel<State, Action>,
     private val agName : String
 ) : AgArch() {
 
@@ -33,7 +33,7 @@ class MatrixAgentArch (
         //println("        matrix action: ${action.actionTerm}")
         historyO.add(ts.c.selectedOption)
 
-        val newState = env.execute( env.structureToAction(action.actionTerm) )
+        val newState = env.execute( env.structureToAction(agName, action.actionTerm) )
         historyS.add(newState)
         action.result = true
         actionExecuted(action)

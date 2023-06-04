@@ -12,7 +12,7 @@ enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F }
 open class Search (
     val mainAg  : ForeseeProblemAgent,
     val strategy: ExplorationStrategy,
-    val envModel: EnvironmentModel<State>) {
+    val envModel: EnvironmentModel<State, Action>) {
 
     // search data structure
     private var explorationQueue  = PriorityBlockingQueue<FutureOption>()

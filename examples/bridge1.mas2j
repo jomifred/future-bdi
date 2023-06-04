@@ -1,0 +1,19 @@
+/*
+
+Two agents trying to cross a river
+
+one uses future,
+the other is normal agent
+
+*/
+MAS bridge1 {
+
+    environment: example.bridge.BridgeJasonEnv()
+
+    agents:
+        bridge_fut agentClass jason.future.ForeseeProblemAgent("ONE");
+
+        bridge_r2  agentClass jason.agent.PreferenceAgent;
+
+    aslSourcePath: "src/agt";
+}

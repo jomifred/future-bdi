@@ -4,7 +4,7 @@ import jason.asSemantics.Intention
 
 /** Executes the matrix (simulated world) */
 class MatrixRunner (
-    val env    : EnvironmentModel<State>,
+    val env    : EnvironmentModel<State, Action>,
     val mainAg : ForeseeProblemAgent, // the agent that is interested in this matrix
     val intention: Intention // the target intention of this matrix
 )  {

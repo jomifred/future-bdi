@@ -13,7 +13,7 @@ class GridEnvModel(
     private var currentState: GridState,
     var goalState   : GridState,
     var scenario    : Int = 0
-) : EnvironmentModel<GridState>, GridWorldModel(30, 30, 1) {
+) : EnvironmentModel<GridState, Action>, GridWorldModel(30, 30, 1) {
 
     val DEST = 16 // represent the destination
     val VISITED = 32
@@ -90,7 +90,7 @@ class GridEnvModel(
 
     override fun actions() = actions.values
 
-    override fun structureToAction(jasonAction: Structure): Action {
+    override fun structureToAction(agName: String, jasonAction: Structure): Action {
         return actions.getOrDefault( jasonAction.functor, skip) // here, only functor is relevant
     }
     override fun currentState(): GridState = currentState

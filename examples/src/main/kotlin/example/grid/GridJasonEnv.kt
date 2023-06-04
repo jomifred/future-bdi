@@ -7,13 +7,14 @@ import jason.asSyntax.NumberTerm
 import jason.asSyntax.StringTerm
 import jason.asSyntax.Structure
 import jason.environment.Environment
+import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.MatrixCapable
 import jason.runtime.RuntimeServicesFactory
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-class GridJasonEnv : Environment(), MatrixCapable<GridState> {
+class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     private val model   = GridEnvModel(
         GridState(15, 5), // initial state
         GridState(15,17)  // goal  state
@@ -49,10 +50,10 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
                     gui = false
                 }
             }
-            if (gui) {
-                var view = GridEnvView(model, this)
-                view.resetGUI()
-            }
+        }
+        if (gui) {
+            val view = GridEnvView(model, this)
+            view.resetGUI()
         }
         thread(start = true) {
                 // wait for some agent to be created
@@ -63,11 +64,11 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState> {
         }
     }
 
-    override fun getModel(): EnvironmentModel<GridState> = model
+    override fun getModel(): EnvironmentModel<GridState, Action> = model
 
     override fun executeAction(agName: String, action: Structure): Boolean {
         val prePos = model.getAgPos(0)
-        model.execute( model.structureToAction(action) )
+        model.execute( model.structureToAction(agName, action) )
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
         Thread.sleep(100)
         updateAgPercept(agName)
