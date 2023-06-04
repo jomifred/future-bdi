@@ -8,7 +8,10 @@ import jason.asSemantics.Agent
 import jason.asSemantics.Event
 import jason.asSemantics.Option
 import jason.infra.local.LocalAgArch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /** the state for the search */
 data class FutureOption(
@@ -120,13 +123,17 @@ data class FutureOption(
                         oArch.ts.ag.cloneInto(newArch, newModel)
                     } else { // it is an agent with its own thread and we cannot clone while running its reasoning cycle
                         val done = AtomicBoolean(false)
+                        val lock = ReentrantLock()
+                        val condition = lock.newCondition()
                         oArch.ts.runAtBeginOfNextCycle({
                             oArch.ts.ag.cloneInto(newArch, newModel)
                             done.set(true)
+                            lock.withLock { condition.signalAll() }
                         })
-                        while (!done.get()) {
-                            println("in wait")
-                            Thread.sleep(100) // TODO: use wait notify
+                        lock.withLock {
+                            while (!done.get()) {
+                                condition.await(50, TimeUnit.MILLISECONDS)
+                            }
                         }
                     }
 
