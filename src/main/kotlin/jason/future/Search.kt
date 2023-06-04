@@ -5,8 +5,6 @@ import java.io.BufferedWriter
 import java.io.FileWriter
 import java.io.IOException
 import java.util.concurrent.PriorityBlockingQueue
-import kotlin.math.max
-import kotlin.math.sign
 
 enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F }
 
@@ -120,10 +118,12 @@ open class Search (
         fo.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
         fo.ag.ts.c.addEvent(fo.evt) // and add the event into the Jason queue
         fo.ag.lastFO = fo
-        //fo.arch.run((fo.evt)
         val m = MatrixRunner(fo.arch.env, mainAg, fo.evt.intention)
         m.addAg( fo.arch )
         m.run()
+
+        println("    simulation finished in ${m.rcCounter} reasoning cycles. intention finished=${fo.evt.intention.isFinished}. problem=${m.hasProblem()}.")
+        println("    history=${m.historyS}")
         return m
     }
 
@@ -146,7 +146,7 @@ open class Search (
                         0
                     else
                         commonStates + (fo.planSize() - foSt!!.second)
-                val inPolicyP = if (planSize>0) 100*inPolicy/planSize.toInt() else 0
+                val inPolicyP = if (planSize>0) 100*inPolicy/planSize else 0
                 //println(defaultPlan)
                 //println(foPlan.toString() + " " + foSt?.second)
                 //println("preFo="+foPrePlan)
@@ -159,6 +159,5 @@ open class Search (
             e.printStackTrace()
         }
     }
-
 }
 

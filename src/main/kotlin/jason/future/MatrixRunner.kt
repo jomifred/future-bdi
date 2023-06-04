@@ -24,7 +24,7 @@ class MatrixRunner (
         while (!intention.isFinished && !hasProblem() && rcCounter < 5000) { // TODO: give a way to set this number
             rcCounter++
 
-            var someAct = false;
+            var someAct = false
             // run one step of each agent
             for (ag in ags) {
                 ag.ts.sense()
@@ -42,8 +42,8 @@ class MatrixRunner (
             //println("    $rcCounter: act = ${ts.c.action?.actionTerm}.  int size=${intention.size()}. se=${ts.c.selectedEvent?.trigger}. ints=${ts.c.runningIntentions.size}")
             //println("    history: ${history}")
         }
-        println("    simulation finished in $rcCounter reasoning cycles. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
-        println("    history=$historyS")
+        //println("    simulation finished in $rcCounter reasoning cycles. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
+        //println("    history=$historyS")
         return historyS
     }
 }
