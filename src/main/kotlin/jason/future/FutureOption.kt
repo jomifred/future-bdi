@@ -127,24 +127,16 @@ data class FutureOption(
                         val lock = ReentrantLock()
                         val condition = lock.newCondition()
                         val code = RunnableSerializable {
-                            //println("FBA = ${oArch.ts.c.feedbackActions.size}")
-                            //if (oArch.ts.c.pendingActions.isEmpty()) { // the agent should not have pending actions (!)
-                                oArch.ts.ag.cloneInto(newArch, newModel)
-                                done.set(true)
-                            //}
+                            oArch.ts.ag.cloneInto(newArch, newModel)
+                            done.set(true)
                             lock.withLock { condition.signalAll() }
                         }
                         oArch.ts.runAtBeginOfNextCycle( code )
                         lock.withLock {
                             while (!done.get()) {
-                                //println("waiting.. ")
                                 condition.await(50, TimeUnit.MILLISECONDS)
-                                //println("done = $done")
-                                //if (!done.get())
-                                //    oArch.ts.runAtBeginOfNextCycle( code )
                             }
                         }
-                        //println("Cloned!! ${  oArch.ts.c.nbRunningIntentions} +${  oArch.ts.c.events} +${  oArch.ts.c.selectedEvent} +${  oArch.ts.c.pendingActions.size}")
                         //println("Cloned!! ${newArch.ts.c.nbRunningIntentions} +${newArch.ts.c.events} +${newArch.ts.c.selectedEvent} +${newArch.ts.c.pendingActions.size}")
 
                         // Work around: set all pending actions as Ok (!!!!) -- since the env will notify the original ag about the completion of the action and not the clone
