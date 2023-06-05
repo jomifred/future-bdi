@@ -125,7 +125,7 @@ open class Search (
         fo.otherAgs().values.forEach{m.addAg( it ) }
         m.run()
 
-        println("    simulation finished in ${m.rcCounter} reasoning cycles. intention finished=${fo.evt.intention.isFinished}. problem=${m.hasProblem()}.")
+        println("    simulation finished in ${m.steps} steps. intention finished=${fo.evt.intention.isFinished}. problem=${m.hasProblem()}.")
         println("    history=${m.historyS}")
         return m
     }

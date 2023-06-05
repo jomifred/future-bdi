@@ -46,7 +46,8 @@ class BridgeJasonEnv : Environment(1), MatrixCapable<BridgeState, BridgeAction> 
         model.execute( model.structureToAction(agName, action) )
         log.info("ag $ag executing: $action. from $prePos to ${model.getAgPos(ag)}")
         Thread.sleep(100)
-        updateAgPercept(agName)
+        //updateAgPercept(agName)
+        updatePercept()
         informAgsEnvironmentChanged()
         return true // the action was executed with success
     }

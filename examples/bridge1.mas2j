@@ -11,7 +11,7 @@ MAS bridge1 {
     environment: example.bridge.BridgeJasonEnv()
 
     agents:
-        bridge_fut agentClass jason.future.ForeseeProblemAgent("ONE");
+        bridge_fut agentClass jason.future.ForeseeProblemAgent("SOLVE_P");
 
         bridge_r2  agentClass jason.agent.PreferenceAgent;
 

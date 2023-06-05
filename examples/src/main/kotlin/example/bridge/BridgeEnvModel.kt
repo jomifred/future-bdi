@@ -133,6 +133,16 @@ class BridgeEnvModel(
                     )
                 )
             }
+            if (hasObject(AGENT, v.x, v.y) && (l.x != v.x || l.y != v.y)) {
+                p.add(
+                    ASSyntax.createLiteral(
+                        "agent",
+                        ASSyntax.createNumber(getAgAtPos(v.x,v.y).toDouble()),
+                        ASSyntax.createNumber(v.x.toDouble()),
+                        ASSyntax.createNumber(v.y.toDouble()),
+                    )
+                )
+            }
         }
         return p
     }

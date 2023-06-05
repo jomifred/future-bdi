@@ -17,12 +17,12 @@ class MatrixRunner (
 
     fun hasProblem() = mainAg.hasProblem(historyS, hasLoop)
 
-    var rcCounter = 0
+    var steps = 0
 
     fun run() : List<State> {
         historyS.add( env.currentState() )
-        while (!intention.isFinished && !hasProblem() && rcCounter < 5000) { // TODO: give a way to set this number
-            rcCounter++
+        while (!intention.isFinished && !hasProblem() && steps < 5000) { // TODO: give a way to set this number
+            steps++
 
             // run one step of each agent (percept/deliberate), so all see the same state
             for (ag in ags) {

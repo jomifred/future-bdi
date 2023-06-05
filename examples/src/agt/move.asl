@@ -9,7 +9,7 @@
 @n [preference(D),cost(1.0)] +!pos(X,Y) : ok(n) & distance(n ,D) <- n;  !pos(X,Y).
 @nw[preference(D),cost(1.4)] +!pos(X,Y) : ok(nw)& distance(nw,D) <- nw; !pos(X,Y).
 @ne[preference(D),cost(1.4)] +!pos(X,Y) : ok(ne)& distance(ne,D) <- ne; !pos(X,Y).
-@id[preference(200),cost(1.4)] +!pos(X,Y) <- idle; !pos(X,Y).
+@id[preference(D),cost(2.0)] +!pos(X,Y) :     distance(idle,D) <- idle; !pos(X,Y).
 
 // checks if go to some direction is possible (free cell)
 ok(D) :- next(D,X,Y) & free(X,Y).
@@ -22,7 +22,10 @@ next(e ,X+1,Y  ) :- pos(X,Y).
 next(n ,X  ,Y-1) :- pos(X,Y).
 next(nw,X-1,Y-1) :- pos(X,Y).
 next(ne,X+1,Y-1) :- pos(X,Y).
+next(idle,X,Y)   :- pos(X,Y).
 
-free(X,Y) :- X >= 0 & Y >= 0 & w_size(W,H) & X < W & Y < H & not obstacle(X,Y).
+free(X,Y) :- X >= 0 & Y >= 0 & w_size(W,H) & X < W & Y < H
+             & not obstacle(X,Y)
+             & not agent(_,X,Y).
 distance(Dir,Dist) :- next(Dir,X,Y) & destination(GX,GY) &
                       Dist = math.sqrt( (X-GX)**2 + (Y-GY)**2 ).
