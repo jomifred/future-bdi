@@ -121,7 +121,7 @@ data class FutureOption(
                     // clone agent
                     if (oArch is MatrixAgentArch) {
                         oArch.ts.ag.cloneInto(newArch, newModel)
-                    } else { // it is an agent with its own thread and we cannot clone while running its reasoning cycle
+                    } else if (oArch is LocalAgArch) { // it is an agent with its own thread and we cannot clone while running its reasoning cycle
                         val done = AtomicBoolean(false)
                         val lock = ReentrantLock()
                         val condition = lock.newCondition()
@@ -135,6 +135,9 @@ data class FutureOption(
                                 condition.await(50, TimeUnit.MILLISECONDS)
                             }
                         }
+                    } else {
+                        println("****** not sure clone works for arch class ${oArch.javaClass.name}")
+                        oArch.ts.ag.cloneInto(newArch, newModel)
                     }
 
                     agModel.myFO!!.otherAgs[newArch.agName] = newArch
