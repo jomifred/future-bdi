@@ -1,0 +1,22 @@
+/*
+
+Two agents trying to cross a river
+the bridge is narrow and only one agent can pass
+
+one uses future,
+the other is normal agent
+
+the future uses ONE strategy just to detect that it should run idle in case of problem
+
+*/
+MAS bridge1 {
+
+    environment: example.bridge.BridgeJasonEnv()
+
+    agents:
+        bridge_fut_recovery agentClass jason.future.ForeseeProblemAgent("ONE");
+
+        bridge_r2  agentClass jason.agent.PreferenceAgent;
+
+    aslSourcePath: "src/agt";
+}
