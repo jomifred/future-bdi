@@ -68,7 +68,7 @@ include::stats1.2.txt[]
 
 == version 1.3 (multi-agent)
 
-Scenario:: Bridge.
+Scenario:: Crossing bridge.
 
 image:screens1.3/b-p.png[]
 
@@ -76,9 +76,9 @@ image:screens1.3/b-p.png[]
 |===
 |scenario | strategy | solve | matrices | visited | steps | steps in policy
 
-| line | NONE | no | 0 | &infin; | &infin; | &infin; (100%)
+| bridge | NONE | no | 0 | &infin; | &infin; | &infin; (100%)
 | bridge | ONE | no | 1 | 25 | -- | 0 (0%)
-| bridge | SOLVE_P | yes | 789 | 26899 | 27 | 22 (81%)
+| bridge | SOLVE_P | yes | 942 | 8333 | 27 | 21 (77%)
 |===
 
 *Remarks*:

@@ -9,7 +9,7 @@ import java.util.concurrent.PriorityBlockingQueue
 
 enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F }
 
-/** search for good option for the agent */
+/** search for a good option for the agent */
 open class Search (
     val mainAg  : ForeseeProblemAgent,
     val strategy: ExplorationStrategy,

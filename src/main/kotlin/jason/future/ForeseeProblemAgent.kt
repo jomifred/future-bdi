@@ -41,8 +41,8 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     fun curInt() : Intention = ts.c.selectedEvent.intention
 
     // whether matrix should stop due to a problem
-    //open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
-    open fun hasProblem(history: List<State>, hasLoop : Boolean) = history.size > 50
+    open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
+    //open fun hasProblem(history: List<State>, hasLoop : Boolean) = history.size > 50
 
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null

@@ -3,6 +3,8 @@ package jason.future
 import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 
+/** general classes for the Matrix Model */
+
 /** simulates the future for an Intention */
 class Simulator<S : State> (
     private val env: EnvironmentModel<S, Action>,

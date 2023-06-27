@@ -18,7 +18,7 @@ MAS grid1 {
         //robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
 
         // agent with preference and cost
-        robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent("ONE");
+        robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent("SOLVE_M");
 
     aslSourcePath: "src/agt";
 }

@@ -33,7 +33,7 @@ class MatrixRunner (
             }
 
             var someAct = false
-            // run one step of each agent
+            // run one act step of each agent
             for (ag in ags) {
                 //println("performing action for ${ag.agName}")
                 ag.ts.act()
