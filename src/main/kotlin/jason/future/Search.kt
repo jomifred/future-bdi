@@ -52,6 +52,8 @@ open class Search (
     // whether matrix should stop due to a problem
     //fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
 
+    lateinit var matrix : MatrixRunner
+
     fun run() : Option? {
         try {
             // explore future options to see their future
@@ -63,7 +65,7 @@ open class Search (
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
-                val matrix = rollout(fo)
+                matrix = rollout(fo)
 
                 visited += fo.planSize()
                 if (nbE == 1)

@@ -2,7 +2,9 @@ package jason.future
 
 import jason.agent.PreferenceAgent
 import jason.asSemantics.Intention
+import jason.asSemantics.NoOptionException
 import jason.asSemantics.Option
+import jason.asSyntax.ASSyntax
 import jason.infra.local.RunLocalMAS
 import jason.mas2j.AgentParameters
 import jason.runtime.Settings.PROJECT_PARAMETER
@@ -44,6 +46,8 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
     //open fun hasProblem(history: List<State>, hasLoop : Boolean) = history.size > 50
 
+
+    @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
@@ -62,7 +66,11 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         // simulates the future of options
         val search = Search(this, solveStrategy, envModel())
         search.init(defaultOption, options)
-        return search.run()
+        val opt = search.run()
+        if (opt == null) {
+            throw NoOptionException("there will be a failure to handle ${curInt().peek()?.trigger?:"this intention"} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
+        }
+        return opt
     }
 
     fun storeGoodOptions(fo: FutureOption) : String {

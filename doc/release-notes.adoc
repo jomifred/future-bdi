@@ -1,5 +1,9 @@
 = Release notes
 
+== version 1.4
+
+- separation of problem _detection_ (based on strategy ONE in selectOption) and _recovery_ (based on internal action that produces a new plan)
+
 == version 1.3
 
 - multi-agent case: one agent is Jason(F) others are regular agents
@@ -13,7 +17,7 @@
 
 == version 1.1
 
-- more scenarios: U, H, O and improved GUI
+- more grid scenarios: U, H, O and improved GUI
 - initial experiments
 - consider cost
 - uses priority queue (cost+preference)
