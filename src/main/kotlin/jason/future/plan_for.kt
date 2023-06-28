@@ -3,13 +3,15 @@ package jason.future
 import jason.asSemantics.*
 import jason.asSyntax.*
 
-class plan_for : DefaultInternalAction() {
+class plan_for : DefaultInternalAction(), StopConditions {
 
     override fun getMaxArgs(): Int = 4
     override fun getMinArgs(): Int = 4
 
+    //var baseIntention : Intention? = null
+
     override fun execute(ts: TransitionSystem, un: Unifier, args: Array<out Term>): Any {
-        println("** start building plan for ${args[0]}")
+        //println("** start building plan for ${args[0]}")
         try {
             // prepare arguments
             val goal = args[0] as Literal
@@ -26,10 +28,10 @@ class plan_for : DefaultInternalAction() {
                 initialPlanStr += "; "
 
             // run search using matrix
-            val search = Search(ag, strategy, ag.envModel())
+            val search = Search(ag, this, strategy, ag.envModel())
 
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
-            val relPlans = ts.relevantPlans(te, Event(te, baseIntention(goal)))
+            val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
             val appPlans = ts.applicablePlans(relPlans)
 
             search.init(appPlans.get(0), appPlans)
@@ -38,8 +40,7 @@ class plan_for : DefaultInternalAction() {
             // build the new plan
             val newPlan = ASSyntax.parsePlan("${initialPlanStr} ${ag.planBodyFound}.")
             newPlan.setAsPlanTerm(true)
-
-            println("** created plan = ${newPlan}")
+            //println("** created plan = ${newPlan}")
 
             return un.unifies(args[2], newPlan)
         } catch (e: Exception) {
@@ -48,9 +49,9 @@ class plan_for : DefaultInternalAction() {
         }
     }
 
-    fun baseIntention(goal: Literal) : Intention {
-        val te1 = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, Atom("xxx"))
+    fun buildBaseIntention(goal: Literal) : Intention {
         val intention = Intention()
+        val te1 = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, Atom("xxx"))
         val evt = Event(te1,intention)
         intention.push(IntendedMeans(
             Option(ASSyntax.parsePlan("+!xxx <- !${goal}."), Unifier(), evt),

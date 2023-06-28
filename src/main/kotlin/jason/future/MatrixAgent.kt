@@ -1,7 +1,6 @@
 package jason.future
 
 import jason.agent.PreferenceAgent
-import jason.asSemantics.Intention
 import jason.asSemantics.Option
 
 /** (main) agent running in the "matrix" */

@@ -5,7 +5,7 @@ import jason.asSemantics.Intention
 /** Executes the matrix (simulated world) */
 class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
-    val mainAg : ForeseeProblemAgent, // the agent that is interested in this matrix
+    val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
     val intention: Intention // the target intention of this matrix
 )  {
     val historyS = mutableListOf<State>()
@@ -13,15 +13,20 @@ class MatrixRunner (
 
     // the list of agents in this matrix
     val ags = mutableListOf<MatrixAgentArch>()
+
     fun addAg(ag: MatrixAgentArch) { ags.add(ag) }
 
-    fun hasProblem() = mainAg.hasProblem(historyS, hasLoop)
+    fun success() = conds.success(historyS, steps, intention)
+    //fun success() = intention.isFinished
+
+    fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop)
 
     var steps = 0
+    var stepsWithoutAct = 0
 
     fun run() : List<State> {
         historyS.add( env.currentState() )
-        while (!intention.isFinished && !hasProblem() && steps < 5000) { // TODO: give a way to set this number
+        while (!success() && !failure()) {
             steps++
 
             // run one step of each agent (percept/deliberate), so all see the same state
@@ -39,7 +44,9 @@ class MatrixRunner (
                 ag.ts.act()
                 someAct = someAct || ag.ts.c.action != null
             }
+            stepsWithoutAct++
             if (someAct) {
+                stepsWithoutAct = 0
                 val newState = env.currentState()
                 hasLoop = historyS.contains(newState)
                 historyS.add(newState)

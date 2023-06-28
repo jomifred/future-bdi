@@ -1,5 +1,6 @@
 package jason.future
 
+import jason.asSemantics.Intention
 import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 
@@ -55,3 +56,11 @@ interface AgentModel<T : State> {
     fun decide(e: EnvironmentModel<T, Action>, s:T, goal:T): Action
 }
 
+/** stop conditions for the matrix */
+interface StopConditions {
+    fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
+        intention.isFinished
+    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean) : Boolean =
+        hasLoop || steps > 1000 || stepsWithoutAct > 100
+
+}

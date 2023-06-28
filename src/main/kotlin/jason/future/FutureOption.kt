@@ -5,7 +5,6 @@ import jason.agent.getCost
 import jason.agent.getPreference
 import jason.architecture.AgArch
 import jason.asSemantics.Agent
-import jason.asSemantics.Event
 import jason.asSemantics.Option
 import jason.asSyntax.Structure
 import jason.infra.local.LocalAgArch

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
-open class ForeseeProblemAgent : PreferenceAgent() {
+open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     // result of the search (based on a good future found during search)
     private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
@@ -44,9 +44,10 @@ open class ForeseeProblemAgent : PreferenceAgent() {
     fun curInt() : Intention = ts.c.selectedEvent.intention
 
     // whether matrix should stop due to a problem
-    open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
+    //open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
     //open fun hasProblem(history: List<State>, hasLoop : Boolean) = history.size > 50
 
+    //override fun success(history: List<State>, steps: Int): Boolean =  curInt().isFinished
 
     @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
@@ -65,7 +66,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         }
 
         // simulates the future of options
-        val search = Search(this, solveStrategy, envModel())
+        val search = Search(this, this, solveStrategy, envModel())
         //val search = Search(this, ExplorationStrategy.ONE, envModel())
         search.init(defaultOption, options)
         val opt = search.run()
