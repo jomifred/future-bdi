@@ -114,20 +114,20 @@ open class Search (
     }
 
     fun rollout(fo: FutureOption) : MatrixRunner {
-        println("\nstarting simulation for goal ${fo.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
+        println("\nstarting simulation for goal ${fo.opt.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
         ForeseeProblemAgent.visitedStates.add( fo.state ) // for GUI
         visitedOptions.add( fo.getPairId() )
 
         // run agent with event and option to be explored
-        fo.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
-        fo.ag.ts.c.addEvent(fo.evt) // and add the event into the Jason queue
+        fo.opt.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
+        fo.ag.ts.c.addEvent(fo.opt.evt) // and add the event into the Jason queue
         fo.ag.lastFO = fo
-        val m = MatrixRunner(fo.arch.env, mainAg, fo.evt.intention)
+        val m = MatrixRunner(fo.arch.env, mainAg, fo.opt.evt.intention)
         m.addAg( fo.arch )
         fo.otherAgs().values.forEach{m.addAg( it ) }
         m.run()
 
-        println("    simulation finished in ${m.steps} steps. intention finished=${fo.evt.intention.isFinished}. problem=${m.hasProblem()}.")
+        println("    simulation finished in ${m.steps} steps. intention finished=${fo.opt.evt.intention.isFinished}. problem=${m.hasProblem()}.")
         println("    history=${m.historyS}")
         return m
     }

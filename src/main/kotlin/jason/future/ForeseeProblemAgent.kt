@@ -9,6 +9,7 @@ import jason.infra.local.RunLocalMAS
 import jason.mas2j.AgentParameters
 import jason.runtime.Settings.PROJECT_PARAMETER
 import java.io.*
+import java.lang.StringBuilder
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -37,7 +38,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
     private fun userEnv() : MatrixCapable<*,*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*,*>
 
-    private fun envModel() : EnvironmentModel<State, Action> =
+    fun envModel() : EnvironmentModel<State, Action> =
         userEnv().getModel() as EnvironmentModel<State, Action>
 
     fun curInt() : Intention = ts.c.selectedEvent.intention
@@ -65,6 +66,7 @@ open class ForeseeProblemAgent : PreferenceAgent() {
 
         // simulates the future of options
         val search = Search(this, solveStrategy, envModel())
+        //val search = Search(this, ExplorationStrategy.ONE, envModel())
         search.init(defaultOption, options)
         val opt = search.run()
         if (opt == null) {
@@ -73,26 +75,36 @@ open class ForeseeProblemAgent : PreferenceAgent() {
         return opt
     }
 
+    // TODO: store action performed while in matrix
+    val planBodyFound = StringBuilder()
+    var latestFO : FutureOption? = null
+
     fun storeGoodOptions(fo: FutureOption) : String {
+        latestFO = fo
+
         solution.clear() // used by the GUI
         var f = fo
         var planStr = ""
+        planBodyFound.clear()
 
-        goodOptions.putIfAbsent(curInt(), mutableMapOf())
+        //goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.parent != null) {
-            goodOptions[curInt()]?.put( f.state, f.opt)
+            //goodOptions[curInt()]?.put( f.state, f.opt)
             solution.add(0, f.state)
             planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
+            planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
             f = f.parent!!
         }
         planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
+        planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
 
         val h = fo.arch.historyS
         val o = fo.arch.historyO
         for (i in 0 until minOf(h.size,o.size)) {
-            goodOptions[curInt()]?.put(h[i], o[i])
+            //goodOptions[curInt()]?.put(h[i], o[i])
             if (i>0) {
                 planStr += "${h[i]}->${o[i].plan.label.functor}, "
+                planBodyFound.append("${o[i].plan.label.functor}; ")
                 solution.add( h[i] )
             }
         }

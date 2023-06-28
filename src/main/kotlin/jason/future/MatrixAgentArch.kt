@@ -4,6 +4,7 @@ import jason.architecture.AgArch
 import jason.asSemantics.ActionExec
 import jason.asSemantics.Option
 import jason.asSyntax.Literal
+import jason.asSyntax.Structure
 
 /** agent that run in the "Matrix" (simulated world) */
 class MatrixAgentArch (
@@ -13,6 +14,7 @@ class MatrixAgentArch (
 
     val historyS = mutableListOf<State>()
     val historyO = mutableListOf<Option>()
+    val historyA = mutableListOf<Structure>()
 
     init {
         historyS.add( env.currentState() )
@@ -31,7 +33,9 @@ class MatrixAgentArch (
 
     override fun act(action: ActionExec) {
         //println("        matrix action: ${action.actionTerm} from ${agName}")
-        historyO.add(ts.c.selectedOption)
+        if (ts.c.selectedOption != null)
+            historyO.add(ts.c.selectedOption)
+        historyA.add(action.actionTerm)
 
         val newState = env.execute( env.structureToAction(agName, action.actionTerm) )
         historyS.add(newState)

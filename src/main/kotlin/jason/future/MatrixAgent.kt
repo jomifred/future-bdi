@@ -25,25 +25,28 @@ class MatrixAgent(
     private fun envModel() : EnvironmentModel<State, Action> =
         myMatrixArch().env
 
-    private fun curInt() : Intention = ts.c.selectedEvent.intention
+    //private fun curInt() : Intention = ts.c.selectedEvent.intention
 
     var lastFO : FutureOption? = null // used to build chain of selected (future) options
 
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
 
+        //println("original ${originalOption.evt.intention.id} current ${defaultOption.evt.intention.id}")
         // store all options for further exploration (clone the agent and environment for each)
         if ((firstSO || inZone1)
-            && originalAgent.curInt() == curInt()) { // consider only option for the original intention
+            //&& originalAgent.curInt() == curInt()) { // consider only option for the original intention
+            && originalOption.evt.intention == defaultOption.evt.intention) { // consider only option for the original intention
             firstSO = false
-            if (ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_P
-                || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_F
-                || ForeseeProblemAgent.strategy() == ExplorationStrategy.SOLVE_M)
+            if (search.strategy == ExplorationStrategy.SOLVE_P
+                || search.strategy == ExplorationStrategy.SOLVE_F
+                || search.strategy == ExplorationStrategy.SOLVE_M) {
                 for (o in options) {
-                    if (o != defaultOption && search.shouldExplore(envModel().currentState(),o) ) {
+                    if (o != defaultOption && search.shouldExplore(envModel().currentState(), o)) {
                         search.expand(prepareSimulation(o, search))
                     }
                 }
+            }
         }
 
         lastFO = prepareSimulation(defaultOption, search)

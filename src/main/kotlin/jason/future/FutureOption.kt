@@ -7,6 +7,7 @@ import jason.architecture.AgArch
 import jason.asSemantics.Agent
 import jason.asSemantics.Event
 import jason.asSemantics.Option
+import jason.asSyntax.Structure
 import jason.infra.local.LocalAgArch
 import jason.util.RunnableSerializable
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ import kotlin.concurrent.withLock
 
 /** the state for the search */
 data class FutureOption(
-    val evt: Event,     // event for which this FO was created
+    //val evt: Event,     // event for which this FO was created
     val opt: Option,    // option where this FO was created
     val state: State,   // env state where this FO was created
     val ag: MatrixAgent, // agent that will handle/simulate this FO
@@ -28,6 +29,8 @@ data class FutureOption(
 ) : Comparable<FutureOption> {
 
     val otherAgs : MutableMap<String,MatrixAgentArch> = mutableMapOf()
+
+    val thisActions = mutableListOf<Structure>()
 
     fun otherAgs() = otherAgs
 
@@ -70,6 +73,17 @@ data class FutureOption(
         return Pair(states, beforePolicy)
     }
 
+    fun allActions() : List<Structure> {
+        val actions = mutableListOf<Structure>()
+        var f = this
+        while (f.parent != null) {
+            actions.addAll(0, f.thisActions)
+            f = f.parent!!
+        }
+        actions.addAll(arch.historyA)
+        return actions
+    }
+
     /*class M : State {
         override fun toString(): String {
             return "---"
@@ -81,7 +95,7 @@ data class FutureOption(
         private var agCounter = 0
 
         /** build a future option, clone agent/env, ... */
-        fun build(opt : Option,
+        fun build(  opt : Option,
                     env: EnvironmentModel<State, Action>,
                     originalAgent: ForeseeProblemAgent,
                     originalOption: Option,
@@ -99,8 +113,8 @@ data class FutureOption(
             agModel.ts.setLogger(agArch)
 
             agModel.myFO = FutureOption(
-                parent.ts.c.selectedEvent.clone() as Event,
-                opt,
+                //opt.evt, //parent.ts.c.selectedEvent.clone() as Event,
+                opt.clone() as Option,
                 env.currentState(),
                 agModel,
                 agModel.myMatrixArch(),
