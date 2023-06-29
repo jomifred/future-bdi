@@ -14,9 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-/** the state for the search */
+/** the state class for the search: represent a possible option in the future (as a starting point for matrix execution) */
 data class FutureOption(
-    //val evt: Event,     // event for which this FO was created
     val opt: Option,    // option where this FO was created
     val state: State,   // env state where this FO was created
     val ag: MatrixAgent, // agent that will handle/simulate this FO
@@ -106,13 +105,12 @@ data class FutureOption(
                     otherAgs: Map<String, AgArch>
         ) : FutureOption {
             val envClone = env.clone()
-            val agArch = MatrixAgentArch(envClone,"${parent.ts.agArch.agName}_matrix${agCounter++}")
+            val agArch = MatrixAgentArch(envClone,"${originalAgent.ts.agArch.agName}_matrix${agCounter++}")
             val agModel = MatrixAgent(originalAgent, originalOption, search)
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)
 
             agModel.myFO = FutureOption(
-                //opt.evt, //parent.ts.c.selectedEvent.clone() as Event,
                 opt.clone() as Option,
                 env.currentState(),
                 agModel,

@@ -125,7 +125,7 @@ open class Search (
         fo.ag.lastFO = fo
         val m = MatrixRunner(fo.arch.env, conds, fo.opt.evt.intention)
         m.addAg( fo.arch )
-        fo.otherAgs().values.forEach{m.addAg( it ) }
+        fo.otherAgs().values.forEach{ m.addAg( it ) }
         m.run()
 
         println("    simulation finished in ${m.steps} steps. intention finished=${m.success()}. problem=${m.failure()}.")

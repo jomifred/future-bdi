@@ -4,7 +4,7 @@ import jason.asSemantics.Intention
 import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 
-/** general classes for the Matrix Model */
+/** general interfaces for the Matrix Model */
 
 /** simulates the future for an Intention */
 class Simulator<S : State> (

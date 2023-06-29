@@ -1,7 +1,6 @@
 package jason.future
 
 import jason.agent.PreferenceAgent
-import jason.asSemantics.Intention
 import jason.asSemantics.NoOptionException
 import jason.asSemantics.Option
 import jason.asSyntax.ASSyntax
@@ -9,7 +8,6 @@ import jason.infra.local.RunLocalMAS
 import jason.mas2j.AgentParameters
 import jason.runtime.Settings.PROJECT_PARAMETER
 import java.io.*
-import java.lang.StringBuilder
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -20,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     // result of the search (based on a good future found during search)
-    private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
+    //private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
 
     override fun initAg() {
         super.initAg()
@@ -41,7 +39,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     fun envModel() : EnvironmentModel<State, Action> =
         userEnv().getModel() as EnvironmentModel<State, Action>
 
-    fun curInt() : Intention = ts.c.selectedEvent.intention
+    //fun curInt() : Intention = ts.c.selectedEvent.intention
 
     // whether matrix should stop due to a problem
     //open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
@@ -54,16 +52,15 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         val defaultOption = super.selectOption(options) ?: return null
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || options.size == 1 // nothing to chose
             || solveStrategy == ExplorationStrategy.NONE)
             return defaultOption
 
         // if I found a good option while checking futures... reuse it here
-        val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
+        /*val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
         if (goodOpt != null) {
             println("reusing option ${goodOpt.plan.label.functor} for ${envModel().currentState()}")
             return goodOpt
-        }
+        }*/
 
         // simulates the future of options
         val search = Search(this, this, solveStrategy, envModel())
@@ -71,7 +68,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         search.init(defaultOption, options)
         val opt = search.run()
         if (opt == null) {
-            throw NoOptionException("there will be a failure to handle ${curInt().peek()?.trigger?:"this intention"} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
+            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
         }
         return opt
     }
