@@ -55,7 +55,7 @@ open class Search (
 
     lateinit var matrix : MatrixRunner
 
-    fun run() : Option? {
+    fun run() : FutureOption? {
         try {
             // explore future options to see their future
             var nbE = 0
@@ -76,11 +76,11 @@ open class Search (
                     println("found an option with a likely nice future! $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
                         ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
-                    val planStr = mainAg.storeGoodOptions(fo)
-                    println("    plan is $planStr")
+                    //val planStr = mainAg.storeGoodOptions(fo)
+                    println("    plan is ${fo.allActions()}")
                     storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
 
-                    return fo.ag.originalOption
+                    return fo //.ag.originalOption
                 }
 
                 fo = select() // continue to explore
@@ -123,7 +123,7 @@ open class Search (
         fo.opt.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
         fo.ag.ts.c.addEvent(fo.opt.evt) // and add the event into the Jason queue
         fo.ag.lastFO = fo
-        val m = MatrixRunner(fo.arch.env, conds, fo.opt.evt.intention)
+        val m = MatrixRunner(fo.arch.env, conds, fo)
         m.addAg( fo.arch )
         fo.otherAgs().values.forEach{ m.addAg( it ) }
         m.run()

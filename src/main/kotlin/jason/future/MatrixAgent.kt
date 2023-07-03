@@ -14,7 +14,7 @@ class MatrixAgent(
         setConsiderToAddMIForThisAgent(false)
     }
 
-    private var firstSO  = true // if it is the first time this agent calls selectOption (in that cases, add FO)
+    var firstSO  = true // if it is the first time this agent calls selectOption (in that cases, add FO)
     internal var myFO     : FutureOption? = null // the FO being tried by this agent
 
     var inZone1 = false

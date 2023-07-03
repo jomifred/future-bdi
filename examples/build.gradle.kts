@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.jason-lang:jason-interpreter:3.2.2")
+    implementation("io.github.jason-lang:jason-interpreter:3.3.0-SNAPSHOT")
     //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     implementation(project(":"))

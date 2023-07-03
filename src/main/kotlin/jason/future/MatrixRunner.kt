@@ -1,12 +1,10 @@
 package jason.future
 
-import jason.asSemantics.Intention
-
 /** Executes the matrix (simulated world) */
 class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
     val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
-    val intention: Intention // the target intention of this matrix
+    val fo     : FutureOption // future option that started this Matrix
 )  {
     val historyS = mutableListOf<State>()
     private var hasLoop = false
@@ -16,7 +14,7 @@ class MatrixRunner (
 
     fun addAg(ag: MatrixAgentArch) { ags.add(ag) }
 
-    fun success() = conds.success(historyS, steps, intention)
+    fun success() = conds.success(historyS, steps, fo.intention())
     //fun success() = intention.isFinished
 
     fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop)

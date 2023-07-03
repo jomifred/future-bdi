@@ -50,9 +50,11 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
         val defaultOption = super.selectOption(options) ?: return null
+        //println("In select option for ${defaultOption?.evt?.trigger}")
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || solveStrategy == ExplorationStrategy.NONE)
+            || solveStrategy == ExplorationStrategy.NONE
+            || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
         // if I found a good option while checking futures... reuse it here
@@ -68,13 +70,15 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         search.init(defaultOption, options)
         val opt = search.run()
         if (opt == null) {
-            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
+            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix?.historyS})", ASSyntax.createAtom("no_future"))
         }
-        return opt
+        return opt.ag.originalOption
     }
 
     // TODO: store action performed while in matrix
-    val planBodyFound = StringBuilder()
+    //val planBodyFound = StringBuilder()
+
+    /*
     var latestFO : FutureOption? = null
 
     fun storeGoodOptions(fo: FutureOption) : String {
@@ -83,18 +87,18 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         solution.clear() // used by the GUI
         var f = fo
         var planStr = ""
-        planBodyFound.clear()
+        //planBodyFound.clear()
 
         //goodOptions.putIfAbsent(curInt(), mutableMapOf())
         while (f.parent != null) {
             //goodOptions[curInt()]?.put( f.state, f.opt)
             solution.add(0, f.state)
             planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
-            planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
+            //planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
             f = f.parent!!
         }
         planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
-        planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
+        //planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
 
         val h = fo.arch.historyS
         val o = fo.arch.historyO
@@ -102,12 +106,13 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
             //goodOptions[curInt()]?.put(h[i], o[i])
             if (i>0) {
                 planStr += "${h[i]}->${o[i].plan.label.functor}, "
-                planBodyFound.append("${o[i].plan.label.functor}; ")
+                //planBodyFound.append("${o[i].plan.label.functor}; ")
                 solution.add( h[i] )
             }
         }
         return planStr
     }
+    */
 
 
     companion object {

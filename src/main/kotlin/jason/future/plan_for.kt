@@ -2,6 +2,7 @@ package jason.future
 
 import jason.asSemantics.*
 import jason.asSyntax.*
+import java.lang.StringBuilder
 
 class plan_for : DefaultInternalAction(), StopConditions {
 
@@ -34,11 +35,19 @@ class plan_for : DefaultInternalAction(), StopConditions {
             val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
             val appPlans = ts.applicablePlans(relPlans)
 
-            search.init(appPlans.get(0), appPlans)
-            search.run()
+            search.init(appPlans[0], appPlans)
+            val opt = search.run()
+            if (opt == null)
+                return false
 
+            val actionsStr = StringBuilder()
+            for (a in opt.allActions()) {
+                actionsStr.append(a)
+                actionsStr.append("; ")
+            }
             // build the new plan
-            val newPlan = ASSyntax.parsePlan("${initialPlanStr} ${ag.planBodyFound}.")
+            //val newPlan = ASSyntax.parsePlan("${initialPlanStr} ${ag.planBodyFound}.")
+            val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
             newPlan.setAsPlanTerm(true)
             //println("** created plan = ${newPlan}")
 

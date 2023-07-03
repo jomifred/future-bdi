@@ -1,4 +1,4 @@
-// like grid1, but agent has plan to recover from failure (due to no future)
+// like grid1, but agent has a plan to recover from failure (due to no future)
 
 MAS grid2 {
 

@@ -28,11 +28,14 @@ data class FutureOption(
 
     val otherAgs : MutableMap<String,MatrixAgentArch> = mutableMapOf()
 
-    val thisActions = mutableListOf<Structure>()
+    val actions = mutableListOf<Structure>()
 
     fun otherAgs() = otherAgs
 
     fun planId() : String = opt.plan.label.functor
+
+    fun goal() = opt.evt.trigger.literal
+    fun intention() = opt.evt.intention
 
     fun getPairId() = Pair( arch.env.currentState(), planId())
 
@@ -56,14 +59,12 @@ data class FutureOption(
     fun states() : Pair<List<State>, Int> {
         val states = mutableListOf<State>()
         var f = this
-        //states.add(0, f.state)
         while (f.parent != null) {
             states.add(0, f.state)
             f = f.parent!!
         }
 
         val beforePolicy = states.size
-        //states.add(M())
         val h = arch.historyS
         for (i in 1 until h.size) {
             states.add( h[i] )
@@ -72,14 +73,14 @@ data class FutureOption(
     }
 
     fun allActions() : List<Structure> {
-        val actions = mutableListOf<Structure>()
-        var f = this
-        while (f.parent != null) {
-            actions.addAll(0, f.thisActions)
-            f = f.parent!!
+        val result = mutableListOf<Structure>()
+        var f = this.parent
+        while (f != null) {
+            result.addAll(0, f.actions)
+            f = f.parent
         }
-        actions.addAll(arch.historyA)
-        return actions
+        result.addAll(arch.historyA)
+        return result
     }
 
     /*class M : State {
@@ -120,6 +121,7 @@ data class FutureOption(
                 parentCost + costWeight * opt.getCost(),
                 opt.getPreference()
             )
+            agArch.myFO = agModel.myFO
 
             // add other agents
             for (agName in otherAgs.keys) {
