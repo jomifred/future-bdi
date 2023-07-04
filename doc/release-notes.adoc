@@ -1,12 +1,20 @@
 = Release notes
 
+== version 1.5
+
+- _dynamic_ environment
+
+- `grid3.mas2j`
+
 == version 1.4
 
 - separation of problem _detection_ (based on strategy ONE in selectOption) and _recovery_ (based on internal action that produces a new plan)
 
+- `grid2.mas2j`
+
 == version 1.3
 
-- multi-agent case: one agent is Jason(F) others are regular agents
+- _multi-agent_ case: one agent is Jason(F) others are regular agents
 - matrix runs several agents (models) in a shared environment (model)
 - bridge scenario. the best solution is to use ONE strategy with recovery plan (see bridge2.mas2j and bridge_fut_recovery.asl). see also results1.3.adoc for more details
 

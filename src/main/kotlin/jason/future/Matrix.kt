@@ -61,6 +61,6 @@ interface StopConditions {
     fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
         intention.isFinished
     fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean) : Boolean =
-        hasLoop || steps > 1000 || stepsWithoutAct > 100
+        hasLoop || steps > 5000 || stepsWithoutAct > 200
 
 }

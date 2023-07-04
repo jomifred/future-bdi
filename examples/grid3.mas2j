@@ -5,7 +5,7 @@ MAS grid3 {
     environment: example.dyngrid.DynamicGridJasonEnv(init(15,1),goal(15,28))
 
     agents:
-        robot_fut_problem_recovery agentClass jason.future.ForeseeProblemAgent("ONE");
+        robot_fut_problem_recovery2 agentClass jason.future.ForeseeProblemAgent("ONE");
 
     aslSourcePath: "src/agt";
 }
