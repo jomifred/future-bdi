@@ -9,8 +9,8 @@ import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.State
 
-class GridEnvModel(
-    private var currentState: GridState,
+open class GridEnvModel(
+    protected var currentState: GridState,
     var goalState   : GridState,
     var scenario    : Int = 0
 ) : EnvironmentModel<GridState, Action>, GridWorldModel(30, 30, 1) {
@@ -47,10 +47,10 @@ class GridEnvModel(
     fun setScenarioWalls(i: Int) {
         scenario = i
         removeAll(OBSTACLE)
-        addWalls0()
-        if (scenario > 0) addWalls1()
-        if (scenario > 1) addWalls2()
-        if (scenario > 2) addWalls3()
+        if (scenario >= 0) addWalls0()
+        if (scenario >  0) addWalls1()
+        if (scenario >  1) addWalls2()
+        if (scenario >  2) addWalls3()
     }
     fun addWalls0() {
         addWall(12,15,20,15)
@@ -129,7 +129,7 @@ class GridEnvModel(
         return p
     }
 
-    private val fixedPerception : List<Literal> by lazy {
+    protected val fixedPerception : List<Literal> by lazy {
         listOf<Literal>(
             ASSyntax.createLiteral(
                 "w_size",
@@ -139,7 +139,7 @@ class GridEnvModel(
         )
     }
 
-    private fun getAdjacent(s: GridState) : Map<String, GridState> {
+    fun getAdjacent(s: GridState) : Map<String, GridState> {
         return mapOf(
             "n"  to GridState(s.l.x, s.l.y - 1),
             "nw" to GridState(s.l.x - 1, s.l.y - 1),
@@ -201,7 +201,7 @@ class GridEnvModel(
     }
 }
 
-class GridState : State {
+open class GridState : State {
     val l: Location // jason grid location
 
     constructor(x: Int, y: Int) {

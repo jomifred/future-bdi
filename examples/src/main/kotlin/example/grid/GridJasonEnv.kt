@@ -14,12 +14,13 @@ import jason.runtime.RuntimeServicesFactory
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
-class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
-    private val model   = GridEnvModel(
+open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
+    protected var model   = GridEnvModel(
         GridState(15, 5), // initial state
         GridState(15,17)  // goal  state
     )
-    private val log :Logger  = Logger.getLogger("grid-env")
+    protected val log :Logger  = Logger.getLogger("grid-env")
+    protected var view: GridEnvView? = null
 
     override fun init(args: Array<String>?) {
         var gui = true
@@ -52,8 +53,8 @@ class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
             }
         }
         if (gui) {
-            val view = GridEnvView(model, this)
-            view.resetGUI()
+            view = GridEnvView(model, this)
+            view?.resetGUI()
         }
         thread(start = true) {
                 // wait for some agent to be created

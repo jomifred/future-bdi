@@ -24,19 +24,19 @@ class Simulator<S : State> (
     }
 }
 
-interface EnvironmentModel<T : State, A : Action> : Cloneable {
+interface EnvironmentModel<S : State, A : Action> : Cloneable {
     fun id() : String
 
     fun actions(): Collection<A>
-    fun next(s:T, a:A): T
+    fun next(s:S, a:A): S
     fun currentState(): State
     fun agPerception(agName: String) : MutableCollection<Literal>
     fun execute(a:A): State
-    /** translates jason action as structure to Action of the model */
 
+    /** translates jason action as structure to Action of the model */
     fun structureToAction(agName: String, jasonAction: Structure) : Action
 
-    public override fun clone(): EnvironmentModel<T, A>
+    public override fun clone(): EnvironmentModel<S, A>
 }
 
 interface MatrixCapable <T: State, A: Action> {

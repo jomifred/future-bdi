@@ -8,11 +8,16 @@
 // recovery plan
 -!pos(X,Y)[error(no_future),error_msg(M)]
     : pos(CX,CY) // my location
-   <- .print("Failure for goal pos(",X,",",Y,"): ",M);
+   <- .print("Future failure for goal pos(",X,",",Y,"): ",M);
       jason.future.plan_for(pos(X,Y), { @[cost(0), preference(0)]+!pos(X,Y) : pos(CX,CY) }, Plan, "SOLVE_M");
       .print("New plan = ",Plan);
       .add_plan(Plan, chunking, begin);
       !pos(X,Y);
+   .
+
+-!pos(X,Y)[error(E),error_msg(M)]
+    : pos(CX,CY) // my location
+   <- .print("Failure ",E," for goal pos(",X,",",Y,"): ",M);
    .
 
 { include("move.asl") }
