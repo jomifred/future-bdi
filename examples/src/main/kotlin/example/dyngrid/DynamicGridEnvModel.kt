@@ -14,6 +14,10 @@ class DynamicGridEnvModel(
 
     private val wallSize = 7
     private val walls = mutableListOf<Pair<Int, Int>>()
+    val pChange = 0.4
+
+    /** certainty of the next state */
+    override fun gamma() = 1.0-(pChange*0.1) // * 8/(height*width))
 
     override fun clone(): DynamicGridEnvModel {
         val n = DynamicGridEnvModel(
@@ -51,7 +55,7 @@ class DynamicGridEnvModel(
         )
     }
 
-    private fun addWall(x: Int, y: Int) {
+    fun addWall(x: Int, y: Int) {
         for (i in x - 1..x + wallSize + 1)
             if (!isFree(i, y) || hasObject(DEST, i, y))
                 return

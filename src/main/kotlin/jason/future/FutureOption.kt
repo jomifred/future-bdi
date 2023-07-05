@@ -13,11 +13,13 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
+import kotlin.math.min
 
 /** the state class for the search: represent a possible option in the future (as a starting point for matrix execution) */
 data class FutureOption(
     val opt: Option,    // option where this FO was created
     val state: State,   // env state where this FO was created
+    val certainty : Double, // certainty of this state
     val ag: MatrixAgent, // agent that will handle/simulate this FO
     val arch: MatrixAgentArch, // and its arch
     val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
@@ -83,12 +85,6 @@ data class FutureOption(
         return result
     }
 
-    /*class M : State {
-        override fun toString(): String {
-            return "---"
-        }
-    }*/
-
     companion object {
 
         private var agCounter = 0
@@ -114,6 +110,8 @@ data class FutureOption(
             agModel.myFO = FutureOption(
                 opt.clone() as Option,
                 env.currentState(),
+                //(parentFO?.certainty?:1.0) * min(parentFO?.actions?.size?.toDouble()?:1.0,1.0) * env.gamma(), // the actions for parent FO may not be executed yet
+                (parentFO?.certainty?:1.0) * env.gamma(),
                 agModel,
                 agModel.myMatrixArch(),
                 parentFO,

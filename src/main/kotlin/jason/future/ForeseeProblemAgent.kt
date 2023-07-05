@@ -49,6 +49,9 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
+        solution.clear() // GUI
+        clearVisited()
+
         val defaultOption = super.selectOption(options) ?: return null
         //println("In select option for ${defaultOption?.evt?.trigger}")
 
@@ -70,8 +73,11 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         search.init(defaultOption, options)
         val opt = search.run()
         if (opt == null) {
-            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix?.historyS})", ASSyntax.createAtom("no_future"))
+            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
         }
+
+        solution.addAll(opt.states().first)  // show solution in GUI
+
         return opt.ag.originalOption
     }
 

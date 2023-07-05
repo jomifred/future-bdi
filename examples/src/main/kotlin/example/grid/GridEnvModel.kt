@@ -98,7 +98,7 @@ open class GridEnvModel(
     override fun execute(a: Action): State {
         currentState = next(currentState, a)
         setAgPos( 0, currentState.l)
-        return currentState()
+        return currentState
     }
 
     override fun agPerception(agName: String): MutableCollection<Literal> {

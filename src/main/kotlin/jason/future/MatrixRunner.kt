@@ -19,12 +19,16 @@ class MatrixRunner (
 
     fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop)
 
+    fun stop() = conds.stop(historyS, steps, stepsWithoutAct, hasLoop, certainty)
+
     var steps = 0
     var stepsWithoutAct = 0
 
+    var certainty = fo.certainty
+
     fun run() : List<State> {
         historyS.add( env.currentState() )
-        while (!success() && !failure()) {
+        while (!stop() && !success() && !failure()) {
             steps++
 
             // run one step of each agent (percept/deliberate), so all see the same state
@@ -45,6 +49,7 @@ class MatrixRunner (
             stepsWithoutAct++
             if (someAct) {
                 stepsWithoutAct = 0
+                certainty *= env.gamma()
                 val newState = env.currentState()
                 hasLoop = historyS.contains(newState)
                 historyS.add(newState)

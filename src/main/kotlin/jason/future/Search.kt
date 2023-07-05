@@ -72,8 +72,9 @@ open class Search (
                 if (nbE == 1)
                     defaultPlan = fo.states().first.toSet()
 
-                if (!matrix.failure()) {
-                    println("found an option with a likely nice future! $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
+                //if (!matrix.failure()) {
+                if (matrix.success()) {
+                    println("found an option with a likely nice future! ${"%.8f".format(matrix.certainty)} of certainty. $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
                         ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     //val planStr = mainAg.storeGoodOptions(fo)
@@ -122,13 +123,13 @@ open class Search (
         // run agent with event and option to be explored
         fo.opt.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
         fo.ag.ts.c.addEvent(fo.opt.evt) // and add the event into the Jason queue
-        fo.ag.lastFO = fo
+        //fo.ag.lastFO = fo
         val m = MatrixRunner(fo.arch.env, conds, fo)
         m.addAg( fo.arch )
         fo.otherAgs().values.forEach{ m.addAg( it ) }
         m.run()
 
-        println("    simulation finished in ${m.steps} steps. intention finished=${m.success()}. problem=${m.failure()}.")
+        println("    simulation finished in ${m.steps} steps and certainty ${"%.8f".format(m.certainty)}. intention finished=${m.success()}. problem=${m.failure()}.")
         println("    history=${m.historyS}")
         return m
     }

@@ -37,7 +37,7 @@ class MatrixAgentArch (
         //println("        matrix action: ${action.actionTerm} from ${agName}")
         if (ts.c.selectedOption != null)
             historyO.add(ts.c.selectedOption)
-        if (myFO?.ag?.firstSO == true)
+        if (myFO?.ag?.firstSO == true || myFO?.ag?.inZone1 == true)
             myFO?.actions?.add(action.actionTerm) // store action of the option (not is sub-options)
 
         historyA.add(action.actionTerm)

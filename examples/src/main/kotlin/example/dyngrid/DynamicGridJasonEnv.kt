@@ -12,8 +12,7 @@ import kotlin.random.Random
 
 class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
-    private val nbInitialWalls = 5
-    private val gamma = 0.4
+    private val nbInitialWalls = 6
 
     init {
         model = DynamicGridEnvModel(
@@ -23,29 +22,33 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
         for (i in 0 until nbInitialWalls)
             (model as DynamicGridEnvModel).addRandomWall()
-
+        //(model as DynamicGridEnvModel).addWall(12,15)
     }
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 
     override fun executeAction(agName: String, action: Structure): Boolean {
-
-        // add or remove some wall
         val dmodel = model as DynamicGridEnvModel
-        if (Random.nextDouble() > 0.5) {
-            if (Random.nextDouble() > gamma)
-                dmodel.addRandomWall()
-        } else {
-            if (Random.nextDouble() > gamma)
-                dmodel.remRandomWall()
-        }
-        view?.resetGUI()
 
         // test if action moves to a free location and produce action failure if not
         val a = dmodel.structureToAction(agName, action)
         val s = dmodel.currentState()
-        if (!dmodel.isFree( dmodel.getAdjacent(s).getOrDefault(a.name, s).l ))
+        if (!dmodel.isFree( dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
+            log.info("*** error trying action ${action} (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")
             return false
+        }
 
-        return super.executeAction(agName, action)
+        val r = super.executeAction(agName, action)
+
+        // add or remove some wall (after the agent move)
+        if (Random.nextDouble() > 0.5) {
+            if (Random.nextDouble() > dmodel.pChange)
+                dmodel.addRandomWall()
+        } else {
+            if (Random.nextDouble() > dmodel.pChange)
+                dmodel.remRandomWall()
+        }
+        //view?.resetGUI()
+
+        return r
     }
 }

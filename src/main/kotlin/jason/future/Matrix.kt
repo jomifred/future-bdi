@@ -33,6 +33,12 @@ interface EnvironmentModel<S : State, A : Action> : Cloneable {
     fun agPerception(agName: String) : MutableCollection<Literal>
     fun execute(a:A): State
 
+    /** the probability of going from s1 to s2 doing a */
+    //fun gamma(s1:S, a:A, s2: S) : Double = 1.0
+
+    /** certainty of next state */
+    fun gamma() : Double = 1.0
+
     /** translates jason action as structure to Action of the model */
     fun structureToAction(agName: String, jasonAction: Structure) : Action
 
@@ -61,6 +67,8 @@ interface StopConditions {
     fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
         intention.isFinished
     fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean) : Boolean =
-        hasLoop || steps > 5000 || stepsWithoutAct > 200
+        hasLoop || stepsWithoutAct > 200
+    fun stop(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, certainty: Double) : Boolean =
+        steps > 5000
 
 }
