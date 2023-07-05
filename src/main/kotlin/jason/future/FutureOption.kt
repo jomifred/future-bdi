@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.math.min
 
 /** the state class for the search: represent a possible option in the future (as a starting point for matrix execution) */
 data class FutureOption(
@@ -21,7 +20,7 @@ data class FutureOption(
     val state: State,   // env state where this FO was created
     val certainty : Double, // certainty of this state
     val ag: MatrixAgent, // agent that will handle/simulate this FO
-    val arch: MatrixAgentArch, // and its arch
+    //val arch: MatrixAgentArch, // and its arch
     val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
     val depth: Int = 0,
     val cost: Double, // accumulated cost until this FO
@@ -39,14 +38,16 @@ data class FutureOption(
     fun goal() = opt.evt.trigger.literal
     fun intention() = opt.evt.intention
 
-    fun getPairId() = Pair( arch.env.currentState(), planId())
+    fun agArch() = ag.myMatrixArch()
+
+    fun getPairId() = Pair( state, planId() )
 
     fun eval() = cost + heuristic
 
     override fun compareTo(other: FutureOption): Int =
         eval().compareTo(other.eval())
 
-    fun planSize() = depth + arch.historyS.size-2 // depth is steps before matrix, historyS is steps in matrix (minus initial state)
+    fun planSize() = depth + agArch().historyS.size-2 // depth is steps before matrix, historyS is steps in matrix (minus initial state)
 
     override fun hashCode(): Int {
         return state.hashCode() + (planId().hashCode()*31)
@@ -67,7 +68,7 @@ data class FutureOption(
         }
 
         val beforePolicy = states.size
-        val h = arch.historyS
+        val h = agArch().historyS
         for (i in 1 until h.size) {
             states.add( h[i] )
         }
@@ -81,7 +82,7 @@ data class FutureOption(
             result.addAll(0, f.actions)
             f = f.parent
         }
-        result.addAll(arch.historyA)
+        result.addAll(agArch().historyA)
         return result
     }
 
@@ -113,7 +114,7 @@ data class FutureOption(
                 //(parentFO?.certainty?:1.0) * min(parentFO?.actions?.size?.toDouble()?:1.0,1.0) * env.gamma(), // the actions for parent FO may not be executed yet
                 (parentFO?.certainty?:1.0) * env.gamma(),
                 agModel,
-                agModel.myMatrixArch(),
+                //agModel.myMatrixArch(),
                 parentFO,
                 (parentFO?.depth?:0) + 1,
                 parentCost + costWeight * opt.getCost(),

@@ -60,7 +60,7 @@ open class Search (
             // explore future options to see their future
             var nbE = 0
             var fo = select()
-            fo?.arch?.getAg()?.inZone1 = true // current options + those in the future of default options are in zone1
+            fo?.ag?.inZone1 = true // current options + those in the future of default options are in zone1
             var visited = 0
             var defaultPlan: Set<State>? = null // used for stats (compute how many stes are in the ag policy)
             while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
@@ -72,7 +72,6 @@ open class Search (
                 if (nbE == 1)
                     defaultPlan = fo.states().first.toSet()
 
-                //if (!matrix.failure()) {
                 if (matrix.success()) {
                     println("found an option with a likely nice future! ${"%.8f".format(matrix.certainty)} of certainty. $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
@@ -116,16 +115,16 @@ open class Search (
     }
 
     fun rollout(fo: FutureOption) : MatrixRunner {
-        println("\nstarting simulation for goal ${fo.opt.evt.trigger.literal}@${fo.arch.env.currentState()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
+        println("\nstarting simulation for goal ${fo.opt.evt.trigger.literal}@${fo.states()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
         ForeseeProblemAgent.visitedStates.add( fo.state ) // for GUI
         visitedOptions.add( fo.getPairId() )
 
         // run agent with event and option to be explored
         fo.opt.evt.option = fo.opt // set the option to be used for the new event (jason selects this option for the event, if set)
         fo.ag.ts.c.addEvent(fo.opt.evt) // and add the event into the Jason queue
-        //fo.ag.lastFO = fo
-        val m = MatrixRunner(fo.arch.env, conds, fo)
-        m.addAg( fo.arch )
+        fo.ag.lastFO = fo
+        val m = MatrixRunner(fo.agArch().env, conds, fo)
+        m.addAg( fo.agArch() )
         fo.otherAgs().values.forEach{ m.addAg( it ) }
         m.run()
 

@@ -1,7 +1,6 @@
 package jason.future
 
 import jason.agent.PreferenceAgent
-import jason.agent.getCost
 import jason.asSemantics.Option
 
 /** (main) agent running in the "matrix" */
@@ -24,13 +23,13 @@ class MatrixAgent(
 
     private fun envModel() : EnvironmentModel<State, Action> = myMatrixArch().env
 
-    //var lastFO : FutureOption? = null // used to build chain of selected (future) options
+    var lastFO : FutureOption? = null // used to build chain of selected (future) options
 
-    var acumCost = -1.0
+    //var acumCost = -1.0
 
     override fun selectOption(options: MutableList<Option>): Option? {
-        if (acumCost < 0) // fist time
-            acumCost = myFO?.cost?:0.0
+        //if (acumCost < 0) // fist time
+        //    acumCost = myFO?.cost?:0.0
 
         val defaultOption = super.selectOption(options) ?: return null
 
@@ -50,8 +49,9 @@ class MatrixAgent(
             }
         }
 
-        //lastFO = prepareSimulation(defaultOption) // just prepare, do not add for exploration, just to have lastFO
-        acumCost += (costWeight() * defaultOption.getCost())
+        lastFO = prepareSimulation(defaultOption) // just prepare, do not add for exploration, just to have lastFO
+        //acumCost += (costWeight() * defaultOption.getCost())
+
         // do not consider the future in matrix mode
         return defaultOption
     }
@@ -69,10 +69,10 @@ class MatrixAgent(
     private fun prepareSimulation(opt: Option) : FutureOption {
         //println("cost = "+acumCost+" ${lastFO?.cost}")
         return FutureOption.build(opt, envModel(), originalAgent, originalOption, this,
-            //lastFO?.cost?:0.0,
-            acumCost,
-            //lastFO,
-            myFO,
+            lastFO?.cost?:0.0,
+            //acumCost,
+            lastFO,
+            //myFO,
             costWeight(), search,
             myFO!!.otherAgs)
     }

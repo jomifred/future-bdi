@@ -37,8 +37,9 @@ class MatrixAgentArch (
         //println("        matrix action: ${action.actionTerm} from ${agName}")
         if (ts.c.selectedOption != null)
             historyO.add(ts.c.selectedOption)
-        if (myFO?.ag?.firstSO == true || myFO?.ag?.inZone1 == true)
-            myFO?.actions?.add(action.actionTerm) // store action of the option (not is sub-options)
+        if (getAg().firstSO || getAg().inZone1)
+            //myFO?.actions?.add(action.actionTerm) // store action of the option (not is sub-options)
+            getAg().lastFO?.actions?.add(action.actionTerm)
 
         historyA.add(action.actionTerm)
 
