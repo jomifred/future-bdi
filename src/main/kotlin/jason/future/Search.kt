@@ -22,9 +22,6 @@ open class Search (
     private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
     private val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
 
-    // result of the search (based on a good future found during search)
-    //private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
-
     /** select an option to explore */
     open fun select() : FutureOption? = explorationQueue.poll()
 
@@ -44,14 +41,6 @@ open class Search (
 
     //open fun optionsCfParameter(options: MutableList<Option>) : List<Option> =  options
 
-
-    //fun curInt() : Intention = ts.c.selectedEvent.intention
-
-    // whether the matrix should continue run
-    //fun continueRun() = !curInt().isFinished()
-
-    // whether matrix should stop due to a problem
-    //fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
 
     lateinit var matrix : MatrixRunner
 
@@ -98,14 +87,6 @@ open class Search (
             explorationQueue.clear()
         }
     }
-
-    /*fun init(defaultOption: Option, options: MutableList<Option>) {
-        // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-        if (strategy == ExplorationStrategy.ONE)
-            expand(prepareSimulation(defaultOption))
-        else
-            init(options)
-    }*/
 
     fun init(options: List<Option>) {
         for (o in options) {

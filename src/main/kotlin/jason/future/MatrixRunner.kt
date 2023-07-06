@@ -15,7 +15,6 @@ class MatrixRunner (
     fun addAg(ag: MatrixAgentArch) { ags.add(ag) }
 
     fun success() = conds.success(historyS, steps, fo.intention())
-    //fun success() = intention.isFinished
 
     fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop)
 

@@ -20,7 +20,6 @@ data class FutureOption(
     val state: State,   // env state where this FO was created
     val certainty : Double, // certainty of this state
     val ag: MatrixAgent, // agent that will handle/simulate this FO
-    //val arch: MatrixAgentArch, // and its arch
     val parent: FutureOption?, // FO that generated this one (to track back the root of exploration)
     val depth: Int = 0,
     val cost: Double, // accumulated cost until this FO

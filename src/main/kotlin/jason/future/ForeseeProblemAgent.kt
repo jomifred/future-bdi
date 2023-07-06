@@ -11,14 +11,9 @@ import java.io.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-//fun Double.format(pre: Int, digits: Int) = "%${pre}.${digits}f".format(this)
-
 /** agent that considers the future */
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
-
-    // result of the search (based on a good future found during search)
-    //private val goodOptions = mutableMapOf< Intention, MutableMap<State,Option>>() // store good options found while verifying the future
 
     /** required certainty to progress running matrix */
     var rCertainty = 0.0
@@ -62,15 +57,6 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         }
     }
 
-
-    //fun curInt() : Intention = ts.c.selectedEvent.intention
-
-    // whether matrix should stop due to a problem
-    //open fun hasProblem(history: List<State>, hasLoop : Boolean) = hasLoop
-    //open fun hasProblem(history: List<State>, hasLoop : Boolean) = history.size > 50
-
-    //override fun success(history: List<State>, steps: Int): Boolean =  curInt().isFinished
-
     @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
         if (envModel()?.hasGUI() == true) solution.clear() // GUI
@@ -84,16 +70,8 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
             || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
-        // if I found a good option while checking futures... reuse it here
-        /*val goodOpt = goodOptions[curInt()]?.get(envModel().currentState())
-        if (goodOpt != null) {
-            println("reusing option ${goodOpt.plan.label.functor} for ${envModel().currentState()}")
-            return goodOpt
-        }*/
-
         // simulates the future of options
         val search = Search(this, this, detectionStrategy, envModel()!!)
-        //val search = Search(this, ExplorationStrategy.ONE, envModel())
         if (detectionStrategy == ExplorationStrategy.ONE)
             search.init( listOf<Option>(defaultOption) )
         else
@@ -116,46 +94,6 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     // stop condition for matrix running
     override fun stop(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, certainty: Double) =
         steps > 5000 || certainty < rCertainty
-
-    // TODO: store action performed while in matrix
-    //val planBodyFound = StringBuilder()
-
-    /*
-    var latestFO : FutureOption? = null
-
-    fun storeGoodOptions(fo: FutureOption) : String {
-        latestFO = fo
-
-        solution.clear() // used by the GUI
-        var f = fo
-        var planStr = ""
-        //planBodyFound.clear()
-
-        //goodOptions.putIfAbsent(curInt(), mutableMapOf())
-        while (f.parent != null) {
-            //goodOptions[curInt()]?.put( f.state, f.opt)
-            solution.add(0, f.state)
-            planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
-            //planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
-            f = f.parent!!
-        }
-        planStr = "${f.state}-->${f.opt.plan.label.functor}, " + planStr
-        //planBodyFound.insert(0,"${f.opt.plan.label.functor}; ")
-
-        val h = fo.arch.historyS
-        val o = fo.arch.historyO
-        for (i in 0 until minOf(h.size,o.size)) {
-            //goodOptions[curInt()]?.put(h[i], o[i])
-            if (i>0) {
-                planStr += "${h[i]}->${o[i].plan.label.functor}, "
-                //planBodyFound.append("${o[i].plan.label.functor}; ")
-                solution.add( h[i] )
-            }
-        }
-        return planStr
-    }
-    */
-
 
     companion object {
         private var msg: String = ""
