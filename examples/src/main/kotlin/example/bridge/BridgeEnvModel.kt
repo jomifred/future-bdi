@@ -30,6 +30,8 @@ class BridgeEnvModel(
             else -> "none"
         }
 
+    override fun hasGUI() = view != null
+
     fun setInitState(c: BridgeState) {
         currentState = c
         setAgPos(0, currentState.l[0])

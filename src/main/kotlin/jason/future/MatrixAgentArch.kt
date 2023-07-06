@@ -47,5 +47,7 @@ class MatrixAgentArch (
         historyS.add(newState)
         action.result = true
         actionExecuted(action)
+
+        ForeseeProblemAgent.data.nbActions++ // stats
     }
 }

@@ -27,6 +27,8 @@ class MatrixRunner (
     var certainty = fo.certainty
 
     fun run() : List<State> {
+        ForeseeProblemAgent.data.nbMatrices++
+
         historyS.add( env.currentState() )
         while (!stop() && !success() && !failure()) {
             steps++

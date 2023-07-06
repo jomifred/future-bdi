@@ -28,30 +28,31 @@ class plan_for : DefaultInternalAction(), StopConditions {
             else
                 initialPlanStr += "; "
 
+            // stats
+            ForeseeProblemAgent.data.nbPlanFor++
+
             // run search using matrix
-            val search = Search(ag, this, strategy, ag.envModel())
+            val search = Search(ag, this, strategy, ag.envModel()!!)
 
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
             val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
             val appPlans = ts.applicablePlans(relPlans)
 
-            search.init(appPlans[0], appPlans)
+            search.init(appPlans)
             val opt = search.run()
-            if (opt == null)
-                return false
-
-            val actionsStr = StringBuilder()
-            for (a in opt.allActions()) {
-                actionsStr.append(a)
-                actionsStr.append("; ")
+            if (opt != null && search.matrix.success()) {
+                val actionsStr = StringBuilder()
+                for (a in opt.allActions()) {
+                    actionsStr.append(a)
+                    actionsStr.append("; ")
+                }
+                // build the new plan
+                val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
+                newPlan.setAsPlanTerm(true)
+                return un.unifies(args[2], newPlan)
             }
-            // build the new plan
-            //val newPlan = ASSyntax.parsePlan("${initialPlanStr} ${ag.planBodyFound}.")
-            val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
-            newPlan.setAsPlanTerm(true)
-            //println("** created plan = ${newPlan}")
-
-            return un.unifies(args[2], newPlan)
+            ts.ag.logger.info("No plan found.")
+            return un.unifies(args[2], Atom("no_plan"))
         } catch (e: Exception) {
             e.printStackTrace()
             return false

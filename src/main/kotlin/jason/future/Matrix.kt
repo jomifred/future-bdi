@@ -42,6 +42,8 @@ interface EnvironmentModel<S : State, A : Action> : Cloneable {
     /** translates jason action as structure to Action of the model */
     fun structureToAction(agName: String, jasonAction: Structure) : Action
 
+    fun hasGUI() : Boolean
+
     public override fun clone(): EnvironmentModel<S, A>
 }
 

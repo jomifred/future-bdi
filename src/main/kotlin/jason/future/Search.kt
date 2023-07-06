@@ -63,12 +63,15 @@ open class Search (
             fo?.ag?.inZone1 = true // current options + those in the future of default options are in zone1
             var visited = 0
             var defaultPlan: Set<State>? = null // used for stats (compute how many stes are in the ag policy)
-            while (fo != null && nbE < 10000) { // TODO: add a parameter somewhere to define o max number os options to explore
+            while (fo != null && nbE < 3000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
+                println("\nstarting simulation $nbE for goal ${fo.opt.evt.trigger.literal}@${fo.states()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
                 matrix = rollout(fo)
 
                 visited += fo.planSize()
+                ForeseeProblemAgent.data.nbVisitedStates += visited
+
                 if (nbE == 1)
                     defaultPlan = fo.states().first.toSet()
 
@@ -86,7 +89,7 @@ open class Search (
                 fo = select() // continue to explore
             }
             storeStats(null, nbE, visited, defaultPlan?:setOf<State>())
-            println("\nsorry, all options have an unpleasant future. aborting the intention! (tried $nbE options)\n")
+            println("\nsorry, all options have an unpleasant future!\n")
             ForeseeProblemAgent.setMsg("explored $nbE options and ... no future")
             return null
         } finally {
@@ -96,14 +99,18 @@ open class Search (
         }
     }
 
-    fun init(defaultOption: Option, options: MutableList<Option>) {
+    /*fun init(defaultOption: Option, options: MutableList<Option>) {
         // clone agent, environment, options ... building FutureOptions to be added into exploration queue
-        if (strategy == ExplorationStrategy.ONE) {
+        if (strategy == ExplorationStrategy.ONE)
             expand(prepareSimulation(defaultOption))
-        } else {
-            for (o in options) {
+        else
+            init(options)
+    }*/
+
+    fun init(options: List<Option>) {
+        for (o in options) {
+            if (shouldExplore(envModel.currentState(), o))
                 expand(prepareSimulation(o))
-            }
         }
     }
 
@@ -115,8 +122,7 @@ open class Search (
     }
 
     fun rollout(fo: FutureOption) : MatrixRunner {
-        println("\nstarting simulation for goal ${fo.opt.evt.trigger.literal}@${fo.states()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
-        ForeseeProblemAgent.visitedStates.add( fo.state ) // for GUI
+        if (envModel.hasGUI()) ForeseeProblemAgent.visitedStates.add( fo.state ) // for GUI
         visitedOptions.add( fo.getPairId() )
 
         // run agent with event and option to be explored

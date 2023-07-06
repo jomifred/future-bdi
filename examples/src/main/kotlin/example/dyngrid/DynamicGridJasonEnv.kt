@@ -8,16 +8,39 @@ import jason.asSyntax.Structure
 import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.MatrixCapable
+import jason.runtime.RuntimeServicesFactory
+import java.io.FileReader
+import java.util.Properties
+import kotlin.concurrent.thread
 import kotlin.random.Random
 
 class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
-    private val nbInitialWalls = 6
+    private val nbInitialWalls = 5
 
     init {
+        val conf = Properties()
+        var pChange = 0.4
+        try {
+            conf.load(FileReader("params.properties"))
+            pChange = conf.getOrDefault("pChange", pChange).toString().toDouble()
+
+            val maxTime = conf.getOrDefault("maxTime", 0).toString().toLong()
+            if (maxTime>0) {
+                thread(start = true) {
+                    Thread.sleep(maxTime)
+                    log.info("***** stop by time out *****")
+                    System.exit(0)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         model = DynamicGridEnvModel(
             GridState(15, 5), // default initial state
-            GridState(15,17)  // default goal  state
+            GridState(15,17),  // default goal  state
+            pChange
         )
 
         for (i in 0 until nbInitialWalls)
@@ -41,10 +64,10 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
         // add or remove some wall (after the agent move)
         if (Random.nextDouble() > 0.5) {
-            if (Random.nextDouble() > dmodel.pChange)
+            if (Random.nextDouble() < dmodel.pChange)
                 dmodel.addRandomWall()
         } else {
-            if (Random.nextDouble() > dmodel.pChange)
+            if (Random.nextDouble() < dmodel.pChange)
                 dmodel.remRandomWall()
         }
         //view?.resetGUI()

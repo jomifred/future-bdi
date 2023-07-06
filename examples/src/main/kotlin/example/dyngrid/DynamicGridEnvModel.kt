@@ -6,23 +6,34 @@ import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
 import jason.future.Action
 import jason.future.EnvironmentModel
+import jason.future.ForeseeProblemAgent
 
 class DynamicGridEnvModel(
     currentState: GridState,
     goalState   : GridState,
+    val pChange     : Double
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1) {
 
     private val wallSize = 7
     private val walls = mutableListOf<Pair<Int, Int>>()
-    val pChange = 0.4
+    //val pChange = 0.4
 
     /** certainty of the next state */
-    override fun gamma() = 1.0-(pChange*0.1) // * 8/(height*width))
+    override fun gamma() = 1.0-(pChange*0.2) // * 8/(height*width))
+
+    override fun id() = "dyngrid"
+
+    init {
+        ForeseeProblemAgent.data.scenario = id()
+        ForeseeProblemAgent.data.gamma = gamma()
+        ForeseeProblemAgent.data.pChange = pChange
+    }
 
     override fun clone(): DynamicGridEnvModel {
         val n = DynamicGridEnvModel(
             GridState(currentState.l),
-            GridState(goalState.l)
+            GridState(goalState.l),
+            pChange
         )
         for (p in walls)
             n.addWall(p.first, p.second)

@@ -55,6 +55,8 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
         if (gui) {
             view = GridEnvView(model, this)
             view?.resetGUI()
+        } else {
+            delay = 0
         }
         thread(start = true) {
                 // wait for some agent to be created
@@ -67,11 +69,13 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 
+    var delay : Long = 100
+
     override fun executeAction(agName: String, action: Structure): Boolean {
         val prePos = model.getAgPos(0)
         model.execute( model.structureToAction(agName, action) )
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
-        Thread.sleep(100)
+        Thread.sleep(delay)
         updateAgPercept(agName)
         informAgsEnvironmentChanged()
         return true // the action was executed with success

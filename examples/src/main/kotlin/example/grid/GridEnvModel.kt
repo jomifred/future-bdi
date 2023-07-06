@@ -34,6 +34,8 @@ open class GridEnvModel(
             else -> "none"
         }
 
+    override fun hasGUI() = view != null
+
     fun setInitState(c: GridState) {
         currentState = c
         setAgPos( 0, currentState.l)
