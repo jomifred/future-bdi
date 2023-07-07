@@ -5,12 +5,13 @@ package example.dyngrid
 import example.grid.GridJasonEnv
 import example.grid.GridState
 import jason.asSyntax.Structure
+import jason.environment.grid.GridWorldModel.OBSTACLE
 import jason.future.Action
 import jason.future.EnvironmentModel
+import jason.future.ForeseeProblemAgent
 import jason.future.MatrixCapable
-import jason.runtime.RuntimeServicesFactory
 import java.io.FileReader
-import java.util.Properties
+import java.util.*
 import kotlin.concurrent.thread
 import kotlin.random.Random
 
@@ -51,11 +52,12 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
     override fun executeAction(agName: String, action: Structure): Boolean {
         val dmodel = model as DynamicGridEnvModel
+        ForeseeProblemAgent.data.nbActions++ // stats
 
         // test if action moves to a free location and produce action failure if not
         val a = dmodel.structureToAction(agName, action)
         val s = dmodel.currentState()
-        if (!dmodel.isFree( dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
+        if (dmodel.hasObject(OBSTACLE, dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
             log.info("*** error trying action ${action} (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")
             return false
         }

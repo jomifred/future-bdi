@@ -17,12 +17,10 @@
     : pos(CX,CY) // my location
       & r_strategy(Sg)
    <- .print("Future failure for goal pos(",X,",",Y,"): ",M);
-      jason.future.plan_for(pos(X,Y), { @[cost(0), preference(0)]+!pos(X,Y) : pos(CX,CY) }, Plan, Sg);
+      jason.future.plan_for(pos(X,Y), { @[cost(0), preference(0)]+!pos(X,Y) : pos(CX,CY) }, Plan, Sg, stop_cond(ag));
       .print("New plan = ",Plan);
-      if (Plan \== no_plan) {
-         .add_plan(Plan, chunking, begin);
-         !pos(X,Y);
-      }
+      .add_plan(Plan, chunking, begin);
+      !pos(X,Y);
    .
 
 -!pos(X,Y)[error(action_failed),error_msg(M)]

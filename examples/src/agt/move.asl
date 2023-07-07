@@ -9,7 +9,7 @@
 @n [preference(D),cost(1.0)] +!pos(X,Y) : ok(n) & distance(n ,D) <- n;  !pos(X,Y).
 @nw[preference(D),cost(1.4)] +!pos(X,Y) : ok(nw)& distance(nw,D) <- nw; !pos(X,Y).
 @ne[preference(D),cost(1.4)] +!pos(X,Y) : ok(ne)& distance(ne,D) <- ne; !pos(X,Y).
-@id[preference(D),cost(2.0)] +!pos(X,Y) :     distance(idle,D) <- idle; !pos(X,Y).
+@id[preference(D),cost(1.9)] +!pos(X,Y) :     distance(idle,D) <- idle; !pos(X,Y).
 
 // checks if go to some direction is possible (free cell)
 ok(D) :- next(D,X,Y) & free(X,Y).

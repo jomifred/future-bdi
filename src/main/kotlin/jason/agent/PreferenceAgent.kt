@@ -22,24 +22,26 @@ fun Option.getPreference() = this.getProp("preference", Double.MAX_VALUE)
 /** Agent class that select options based on preference */
 open class PreferenceAgent : Agent() {
 
-    open fun optionProp(options: MutableList<Option>, property: String, default: Double) : Map<Option, Double> =
+    /*open fun optionProp(options: List<Option>, property: String, default: Double) : Map<Option, Double> =
         options.associateWith {op -> op.getProp(property, default) }
 
-    open fun optionPrefs(options: MutableList<Option>) : Map<Option, Double> =
-        optionProp(options, "preference", Double.MAX_VALUE)
+    open fun optionPrefs(options: List<Option>) : Map<Option, Double> =
+        optionProp(options, "preference", Double.MAX_VALUE)*/
     //open fun optionCosts(options: MutableList<Option>) : Map<Option, Double> =
     //    optionProp(options, "cost", 1.0)
 
-    /*open fun sortedOptions(options: MutableList<Option>, ascending: Boolean) : List<Option> =
-        optionPrefs(options)
+    open fun optionF(options: List<Option>) : Map<Option, Double> =
+        options.associateWith {op -> op.getCost() + op.getPreference() }
+
+    open fun sortedOptions(options: List<Option>, ascending: Boolean = true) : List<Option> =
+        optionF(options)
             .toList()
             .sortedBy { (_,v) -> if (ascending) v else -v }
             .unzip()
-            .first*/
-
+            .first
 
     override fun selectOption(options: MutableList<Option>): Option? =
-        optionPrefs(options)
+        optionF(options)
             .minByOrNull { it.value }
             ?. key
             ?: super.selectOption(options)

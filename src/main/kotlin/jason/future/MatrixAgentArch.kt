@@ -28,6 +28,9 @@ class MatrixAgentArch (
 
     fun getAg() = ts.ag as MatrixAgent
 
+    // main ag is the one starting the matrix to discover something
+    fun isMainAg() = ts.ag is MatrixAgent
+
     override fun perceive(): MutableCollection<Literal> {
         //println("        matrix perception: ${env.agPerception(agName)} for $agName")
         return env.agPerception(agName)
@@ -35,19 +38,20 @@ class MatrixAgentArch (
 
     override fun act(action: ActionExec) {
         //println("        matrix action: ${action.actionTerm} from ${agName}")
-        if (ts.c.selectedOption != null)
-            historyO.add(ts.c.selectedOption)
-        if (getAg().firstSO || getAg().inZone1)
-            //myFO?.actions?.add(action.actionTerm) // store action of the option (not is sub-options)
-            getAg().lastFO?.actions?.add(action.actionTerm)
-
-        historyA.add(action.actionTerm)
+        if (isMainAg()) {
+            if (ts.c.selectedOption != null)
+                historyO.add(ts.c.selectedOption)
+            if (getAg().firstSO || getAg().inZone1)
+                getAg().lastFO?.actions?.add(action.actionTerm)
+            historyA.add(action.actionTerm)
+        }
 
         val newState = env.execute( env.structureToAction(agName, action.actionTerm) )
-        historyS.add(newState)
         action.result = true
         actionExecuted(action)
 
-        ForeseeProblemAgent.data.nbActions++ // stats
+        if (isMainAg()) {
+            historyS.add(newState)
+        }
     }
 }

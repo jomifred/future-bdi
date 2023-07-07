@@ -7,7 +7,7 @@ import java.lang.StringBuilder
 class plan_for : DefaultInternalAction(), StopConditions {
 
     override fun getMaxArgs(): Int = 4
-    override fun getMinArgs(): Int = 4
+    override fun getMinArgs(): Int = 5
 
     //var baseIntention : Intention? = null
 
@@ -18,6 +18,9 @@ class plan_for : DefaultInternalAction(), StopConditions {
             val goal = args[0] as Literal
             val ag = ts.ag as ForeseeProblemAgent
             val strategy = ExplorationStrategy.valueOf((args[3] as StringTerm).string)
+            var searchConds : StopConditions = this
+            if (args.size > 4 && args[4].toString().equals("stop_cond(ag)"))
+                searchConds = ag
 
             val initialPlan = (args[1] as Plan).capply(un)
             initialPlan.setAsPlanTerm(false)
@@ -27,16 +30,21 @@ class plan_for : DefaultInternalAction(), StopConditions {
                 initialPlanStr += " <- "
             else
                 initialPlanStr += "; "
+            suspend = false
 
             // stats
             ForeseeProblemAgent.data.nbPlanFor++
 
             // run search using matrix
-            val search = Search(ag, this, strategy, ag.envModel()!!)
+            val search = Search(ag, searchConds, strategy, ag.envModel()!!)
 
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
             val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
             val appPlans = ts.applicablePlans(relPlans)
+            if (appPlans.isEmpty()) {
+                ts.ag.logger.info("No applicable plan for ${goal}! So, no plan considering the future.")
+                return false
+            }
 
             search.init(appPlans)
             val opt = search.run()
@@ -51,13 +59,27 @@ class plan_for : DefaultInternalAction(), StopConditions {
                 newPlan.setAsPlanTerm(true)
                 return un.unifies(args[2], newPlan)
             }
-            ts.ag.logger.info("No plan found.")
-            return un.unifies(args[2], Atom("no_plan"))
+
+            //val defOpt = ag.sortedOptions(appPlans).first() // may cause loop em behaviour
+            val defOpt = appPlans.random()
+
+            val intention = ts.c.selectedIntention
+            intention.pop() // remove the IM running this internal action (!!)
+            suspend = true // so that the TS will not change the intention
+            intention.push(IntendedMeans(defOpt, defOpt.evt.trigger)) // add default option on top
+            ts.c.addRunningIntention(intention)
+            //ts.ag.logger.info("No plan but first option is ${defOpt.plan.label.functor} for $intention")
+
+            ts.ag.logger.info("No plan found, using random option.")
+            return true //un.unifies(args[2], Atom("no_plan"))
         } catch (e: Exception) {
             e.printStackTrace()
             return false
         }
     }
+
+    var suspend = false
+    override fun suspendIntention(): Boolean = suspend
 
     fun buildBaseIntention(goal: Literal) : Intention {
         val intention = Intention()

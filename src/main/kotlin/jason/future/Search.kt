@@ -22,6 +22,8 @@ open class Search (
     private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
     private val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
 
+    fun emptyQueue() = explorationQueue.isEmpty()
+
     /** select an option to explore */
     open fun select() : FutureOption? = explorationQueue.poll()
 
@@ -39,9 +41,6 @@ open class Search (
         return !visitedOptions.contains( Pair( s, o.plan.label.functor) )
     }
 
-    //open fun optionsCfParameter(options: MutableList<Option>) : List<Option> =  options
-
-
     lateinit var matrix : MatrixRunner
 
     fun run() : FutureOption? {
@@ -55,8 +54,10 @@ open class Search (
             while (fo != null && nbE < 3000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
 
-                println("\nstarting simulation $nbE for goal ${fo.opt.evt.trigger.literal}@${fo.states()} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
+                println("starting simulation $nbE for goal ${fo.opt.evt.trigger.literal}@${fo.state} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
                 matrix = rollout(fo)
+                //println("    simulation finished in ${matrix.steps} steps and certainty ${"%.8f".format(matrix.certainty)}. intention finished=${matrix.success()}. problem=${matrix.failure()}.")
+                //println("    history=${matrix.historyS}")
 
                 visited += fo.planSize()
                 ForeseeProblemAgent.data.nbVisitedStates += visited
@@ -65,11 +66,11 @@ open class Search (
                     defaultPlan = fo.states().first.toSet()
 
                 if (matrix.success()) {
-                    println("found an option with a likely nice future! ${"%.8f".format(matrix.certainty)} of certainty. $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
+                    println("   found an option with a likely nice future! ${"%.8f".format(matrix.certainty)} of certainty. $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
                         ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     //val planStr = mainAg.storeGoodOptions(fo)
-                    println("    plan is ${fo.allActions()}")
+                    println("   plan is ${fo.allActions()}")
                     storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
 
                     return fo //.ag.originalOption
@@ -78,7 +79,8 @@ open class Search (
                 fo = select() // continue to explore
             }
             storeStats(null, nbE, visited, defaultPlan?:setOf<State>())
-            println("\nsorry, all options have an unpleasant future!\n")
+            if (!matrix.stop())
+                println("   sorry, all options have an unpleasant future!\n")
             ForeseeProblemAgent.setMsg("explored $nbE options and ... no future")
             return null
         } finally {
@@ -114,9 +116,6 @@ open class Search (
         m.addAg( fo.agArch() )
         fo.otherAgs().values.forEach{ m.addAg( it ) }
         m.run()
-
-        println("    simulation finished in ${m.steps} steps and certainty ${"%.8f".format(m.certainty)}. intention finished=${m.success()}. problem=${m.failure()}.")
-        println("    history=${m.historyS}")
         return m
     }
 
