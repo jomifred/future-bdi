@@ -1,3 +1,5 @@
+// detecting the problem (and not moving)
+
 MAS grid1 {
 
     environment: example.grid.GridJasonEnv(init(15,5),goal(15,20), scenario("--"))
@@ -6,19 +8,14 @@ MAS grid1 {
     //environment: example.grid.GridJasonEnv(init(15,5),goal(15,21), scenario("O"))
 
     agents:
-        // robot programmed in "normal" Jason (no future)
+        // robot programmed in "normal" Jason (no future) but that solves the problem
         //robot_base agentClass jason.agent.PreferenceAgent;
 
-        // robots programmed in "future" Jason (problem case)
-
         // this case shows the problem
-        //robot_fut_problem agentClass jason.agent.PreferenceAgent;
+        //grid_problem agentClass jason.agent.PreferenceAgent;
 
-        // agent with preference (no cost)
-        //robot_fut_problem agentClass jason.future.ForeseeProblemAgent;
-
-        // agent with preference and cost
-        robot_fut_problem_cost agentClass jason.future.ForeseeProblemAgent("SOLVE_M");
+        // this case detects the problem using Jason(F) ONE strategy
+        grid_problem   agentClass jason.future.ForeseeProblemAgent;
 
     aslSourcePath: "src/agt";
 }

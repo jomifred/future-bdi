@@ -5,7 +5,7 @@ MAS grid2 {
     environment: example.grid.GridJasonEnv(init(15,12),goal(15,17), scenario("--"))
 
     agents:
-        robot_fut_problem_recovery agentClass jason.future.ForeseeProblemAgent("ONE");
+        grid_recovery agentClass jason.future.ForeseeProblemAgent;
 
     aslSourcePath: "src/agt";
 }
