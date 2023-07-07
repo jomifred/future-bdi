@@ -52,7 +52,6 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         try {
             return userEnv().getModel() as EnvironmentModel<State, Action>
         } catch (e: NullPointerException) {
-            //e.printStackTrace()
             return null
         }
     }
@@ -71,23 +70,14 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
             return defaultOption
 
         // simulates the future of options
-        val search = Search(this, this, detectionStrategy, envModel()!!)
-        if (detectionStrategy == ExplorationStrategy.ONE)
-            search.init( listOf<Option>(defaultOption) )
-        else
-            search.init( options )
-        val rFO = search.run()
+        val search = Search(this, this, ExplorationStrategy.ONE, envModel()!!)
+        search.init( listOf<Option>(defaultOption) )
+        search.run()
 
-        if (rFO != null) { // a good plan was found
-            if (envModel()?.hasGUI() == true) solution.addAll(rFO.states().first)  // show solution in GUI
-            return rFO.ag.originalOption
-        }
-
-        // no future ... but returns default options
         if (search.matrix.failure())
             throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
-        if (search.matrix.stop())
-            if (envModel()?.hasGUI() == true) solution.addAll(search.matrix.fo.states().first) // GUI
+
+        if (envModel()?.hasGUI() == true) solution.addAll(search.matrix.fo.states().first) // GUI
         return defaultOption
     }
 

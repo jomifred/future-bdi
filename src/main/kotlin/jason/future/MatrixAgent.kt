@@ -14,8 +14,8 @@ class MatrixAgent(
         setConsiderToAddMIForThisAgent(false)
     }
 
-    var firstSO  = true // if it is the first time this agent calls selectOption (in that cases, add FO)
-    internal var myFO     : FutureOption? = null // the FO being tried by this agent
+    var firstSO = true // if it is the first time this agent calls selectOption (in that cases, add FO)
+    internal var myFO : FutureOption? = null // the FO being tried by this agent
 
     var inZone1 = false
 
@@ -36,7 +36,7 @@ class MatrixAgent(
         //println("original ${originalOption.evt.intention.id} current ${defaultOption.evt.intention.id}")
         // store all options for further exploration (clone the agent and environment for each)
         if ((firstSO || inZone1)
-            && originalOption.evt.intention == defaultOption.evt.intention) { // consider only option for the original intention
+            && originalOption.evt.intention == defaultOption.evt.intention) { // consider only options for the original intention
             firstSO = false
             if (search.strategy == ExplorationStrategy.SOLVE_P
                 || search.strategy == ExplorationStrategy.SOLVE_F

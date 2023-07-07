@@ -5,7 +5,7 @@ MAS grid3 {
     environment: example.dyngrid.DynamicGridJasonEnv(init(15,0),goal(15,29)) //, no_gui
 
     agents:
-        robot_fut_problem_recovery2_exit agentClass jason.future.ForeseeProblemAgent("ONE");
+        robot_fut_problem_recovery2_exit agentClass jason.future.ForeseeProblemAgent;
 
-    aslSourcePath: "src/agt";
+    aslSourcePath: "src/agt" ;"run-all-grid-3";
 }
