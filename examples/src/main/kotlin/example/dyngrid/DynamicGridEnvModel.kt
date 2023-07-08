@@ -59,18 +59,19 @@ class DynamicGridEnvModel(
     }
 
     fun addRandomWall() {
-        addWall(
+        while (!addWall(
             (1..width - wallSize - 2).random(),
             (1..height - 2).random()
-        )
+        )) {}
     }
 
-    fun addWall(x: Int, y: Int) {
+    fun addWall(x: Int, y: Int) : Boolean {
         for (i in x - 1..x + wallSize + 1)
             if (!isFree(i, y) || hasObject(DEST, i, y))
-                return
+                return false
         addWall(x, y, x + wallSize, y)
         walls.add(Pair(x, y))
+        return true
     }
 
     fun remRandomWall() {

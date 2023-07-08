@@ -22,6 +22,7 @@
 -!pos(X,Y)[error(action_failed),error_msg(M)]
     : pos(CX,CY) // my location
    <- .print("Action failure for goal pos(",X,",",Y,"): ",M);
+      idle;
       !pos(X,Y);
    .
 

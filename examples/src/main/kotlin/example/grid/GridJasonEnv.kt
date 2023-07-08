@@ -89,7 +89,7 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
         }
     }
 
-    private fun updateAgPercept(agName: String) {
+    internal fun updateAgPercept(agName: String) {
         clearPercepts(agName)
         addPercept(agName, *(model.agPerception(agName).toTypedArray()))
     }
