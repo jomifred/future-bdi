@@ -115,7 +115,7 @@ class ExperimentData {
     var pChange = 0.0
     var scenario = "none"
     var nbPlanFor = 0
-    var nbMatrices = 0
+    private var nbMatrices = 0
     var nbVisitedStates = 0
     var strategy = ExplorationStrategy.NONE
     var requiredCertainty = 0.0
@@ -124,13 +124,21 @@ class ExperimentData {
     init {
         startT = System.currentTimeMillis()
     }
+
+    fun addNbMatrices() {
+        nbMatrices++
+        if (nbMatrices > 5000) {
+            System.exit(0)
+        }
+    }
+
     fun storeStats() {
         try {
-            //val newf = ! File("stats.csv").exists()
+            val newf = ! File("stats.csv").exists()
             BufferedWriter(FileWriter("stats.csv", true)).use { out ->
-                //if (newf)
-                    //out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time")
-                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.2f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $nbActions, ${System.currentTimeMillis()-startT}")
+                if (newf)
+                    out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time")
+                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.4f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $nbActions, ${System.currentTimeMillis()-startT}")
             }
         } catch (e: IOException) {
             e.printStackTrace()

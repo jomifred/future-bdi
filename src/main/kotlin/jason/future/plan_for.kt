@@ -3,6 +3,7 @@ package jason.future
 import jason.asSemantics.*
 import jason.asSyntax.*
 import java.lang.StringBuilder
+import kotlin.random.Random
 
 class plan_for : DefaultInternalAction(), StopConditions {
 
@@ -63,7 +64,9 @@ class plan_for : DefaultInternalAction(), StopConditions {
 
             //val defOpt = ag.sortedOptions(appPlans).first() // may cause loop em behaviour
             //val defOpt = search.bestFO.ag.originalOption // takes the seen option
-            val defOpt = appPlans.random() // always works (!)
+            var defOpt = appPlans.random() // always works (!)
+            if (Random.nextDouble() < 0.7) // but prefer my policy anyway
+                defOpt = ag.sortedOptions(appPlans).first()
 
             val intention = ts.c.selectedIntention
             intention.pop() // remove the IM running this internal action (!!)

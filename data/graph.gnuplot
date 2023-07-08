@@ -12,7 +12,7 @@ set y2tics
 set ytics nomirror
 set yrange [120:27] reverse
 
-file="stats-g3-random-5walls.csv"
+file="stats-g3-solve-f90-5walls.csv"
 
 #eff(x)=120-x
 
@@ -28,11 +28,13 @@ plot file using 2:9 title "efficiency" smooth sbezier,\
 
 
 set output "g-solve-f-matrices.pdf"
-#  set y2range [0:20000]
+set y2range [10:40000]
 set y2label "# matrices"
+set logscale y2
+set xrange [0.0:0.9]
 plot file using 2:9 title "efficiency" smooth sbezier, \
      file using 2:7 title "cost" smooth sbezier axis x1y2,\
-
+     "stats-g3-random90-5walls-final.csv" using 2:9 title "random agent" smooth sbezier, \
 
 #     "stats-g3-solve-f-90.csv" using 2:9 title "actions"  smooth sbezier,\
 #     "data-j.csv"  title "Jason"    smooth sbezier,\

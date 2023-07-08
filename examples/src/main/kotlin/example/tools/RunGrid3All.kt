@@ -46,7 +46,10 @@ fun main(args: Array<String>) {
             //rCert += 0.1
         //}
 
-        pChange += 0.05
+        if (pChange < 0.2)
+            pChange += 0.02
+        else
+            pChange += 0.05
     }
 
 }
