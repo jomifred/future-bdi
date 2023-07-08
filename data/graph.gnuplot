@@ -1,7 +1,7 @@
 #!/opt/local/bin/gnuplot -persist
 set datafile separator ","
 #set title "Simulation Result"
-set xlabel "change probability (p)"
+set xlabel "probability of change (p)"
 set ylabel "# actions"
 set key top left
 
@@ -12,23 +12,23 @@ set y2tics
 set ytics nomirror
 set yrange [120:27] reverse
 
-file="stats-g3-solve-f-90-10walls.csv"
+file="stats-g3-random-5walls.csv"
 
 #eff(x)=120-x
 
-set output "solve-f-time.pdf"
+set output "g-solve-f-time.pdf"
 set y2label "# time"
 plot file using 2:9 title "efficiency" smooth sbezier,\
      file using 2:10 title "time" smooth sbezier axis x1y2
 
-set output "solve-f-states.pdf"
+set output "g-solve-f-states.pdf"
 set y2label "# states"
 plot file using 2:9 title "efficiency" smooth sbezier,\
      file using 2:8 title "states" smooth sbezier axis x1y2
 
 
-set output "solve-f-matrices.pdf"
-set y2range [0:20000]
+set output "g-solve-f-matrices.pdf"
+#  set y2range [0:20000]
 set y2label "# matrices"
 plot file using 2:9 title "efficiency" smooth sbezier, \
      file using 2:7 title "cost" smooth sbezier axis x1y2,\
