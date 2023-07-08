@@ -42,6 +42,7 @@ open class Search (
     }
 
     lateinit var matrix : MatrixRunner
+    lateinit var bestFO : FutureOption
 
     fun run() : FutureOption? {
         try {
@@ -53,11 +54,13 @@ open class Search (
             var defaultPlan: Set<State>? = null // used for stats (compute how many stes are in the ag policy)
             while (fo != null && nbE < 3000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
+                bestFO = fo!! // options are ordered by  G+H, so the most promising was the last taken
 
                 println("starting simulation $nbE for goal ${fo.opt.evt.trigger.literal}@${fo.state} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
                 matrix = rollout(fo)
                 //println("    simulation finished in ${matrix.steps} steps and certainty ${"%.8f".format(matrix.certainty)}. intention finished=${matrix.success()}. problem=${matrix.failure()}.")
                 //println("    history=${matrix.historyS}")
+
 
                 visited += fo.planSize()
                 ForeseeProblemAgent.data.nbVisitedStates += visited

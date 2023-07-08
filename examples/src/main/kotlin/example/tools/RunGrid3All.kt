@@ -1,6 +1,8 @@
 package example.tools
 
+import java.io.BufferedReader
 import java.io.FileWriter
+import java.io.InputStreamReader
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -22,16 +24,18 @@ fun main(args: Array<String>) {
             val process = Runtime.getRuntime()
                 .exec("./gradlew -q :examples:run --args=run-all-grid-3/grid3.mas2j")
 
-            //val `in` = BufferedReader(InputStreamReader(process.getInputStream()))
-            /*val `in` = BufferedReader(InputStreamReader(process.errorStream))
+            // I do not know way, but it is necessary to read the process stream until it ends, and then uses waitFor (!)
+            val `in` = BufferedReader(InputStreamReader(process.getInputStream()))
+            //val `in` = BufferedReader(InputStreamReader(process.errorStream))
             var line : String? = `in`.readLine()
             while (line != null) {
-                System.out.println(line)
+                //System.out.println(line)
                 line = `in`.readLine()
             }
-            `in`.close()*/
+            `in`.close()
+
             var failure = "ok"
-            process.waitFor(20, TimeUnit.SECONDS)
+            process.waitFor(10, TimeUnit.SECONDS)
             if (process.isAlive) {
                 process.destroyForcibly()
                 failure = "timeout"

@@ -61,7 +61,8 @@ class plan_for : DefaultInternalAction(), StopConditions {
             }
 
             //val defOpt = ag.sortedOptions(appPlans).first() // may cause loop em behaviour
-            val defOpt = appPlans.random()
+            //val defOpt = search.bestFO.ag.originalOption // takes the seen option
+            val defOpt = appPlans.random() // always works (!)
 
             val intention = ts.c.selectedIntention
             intention.pop() // remove the IM running this internal action (!!)

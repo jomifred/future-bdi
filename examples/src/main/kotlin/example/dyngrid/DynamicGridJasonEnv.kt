@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
-    private val nbInitialWalls = 7
+    private val nbInitialWalls = 10
 
     init {
         val conf = Properties()
@@ -65,7 +65,7 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
         // add or remove some wall (after the agent move)
         var change = false
-        if (Random.nextDouble() > 0.5) {
+        if (Random.nextDouble() >= 0.5) {
             if (Random.nextDouble() < dmodel.pChange) {
                 dmodel.addRandomWall()
                 change = true
