@@ -22,7 +22,7 @@ open class Search (
     private val visitedOptions = mutableSetOf< Pair<State,String> >() // to speed the search
     private val inQueueOptions = mutableMapOf< Pair<State,String>, Double> () // to speed the search: options and their evaluation/quality
 
-    fun emptyQueue() = explorationQueue.isEmpty()
+    //fun emptyQueue() = explorationQueue.isEmpty()
 
     /** select an option to explore */
     open fun select() : FutureOption? = explorationQueue.poll()
@@ -71,7 +71,7 @@ open class Search (
                         ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     //val planStr = mainAg.storeGoodOptions(fo)
                     println("   plan is ${fo.allActions()}")
-                    storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
+                    //storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
 
                     return fo //.ag.originalOption
                 }
@@ -145,7 +145,7 @@ open class Search (
                 //println("df-fo="+foPlan.minus(defaultPlan))
                 //println("$commonStates $inPolicy ${foSt?.second} ${foPlan?.size} ${fo?.planSize()}")
                 //println("| ${fo?.arch?.env?.id()} | ${ForeseeProblemAgent.strategy()} | ${if (fo==null) "no" else "yes" } | $nbOptions | $statesVisited | ${if (fo==null) "--" else planSize} | $inPolicy (${inPolicyP}%)")
-                out.appendLine("| ${envModel.id()} | ${ForeseeProblemAgent.strategy()} | ${if (fo==null) "no" else "yes" } | $nbOptions | $statesVisited | ${if (fo==null) "--" else planSize} | $inPolicy (${inPolicyP}%)")
+                out.appendLine("| ${envModel.id()} | $strategy | ${if (fo==null) "no" else "yes" } | $nbOptions | $statesVisited | ${if (fo==null) "--" else planSize} | $inPolicy (${inPolicyP}%)")
             }
         } catch (e: IOException) {
             e.printStackTrace()

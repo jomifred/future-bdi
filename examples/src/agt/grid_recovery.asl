@@ -8,11 +8,12 @@
 // recovery plan
 -!pos(X,Y)[error(no_future),error_msg(M)]
     : pos(CX,CY) // my location
+      & r_strategy(Sg)
    <- .print("Future failure for goal pos(",X,",",Y,"): ",M);
       jason.future.plan_for(
           pos(X,Y),
           { @[cost(0), preference(0)]+!pos(X,Y) : pos(CX,CY) },
-          Plan, "SOLVE_M", stop_cond(full)); // full or ag
+          Plan, Sg, stop_cond(full)); // full or ag
       .print("New plan = ",Plan);
       .add_plan(Plan, chunking, begin);
       !pos(X,Y);

@@ -58,7 +58,7 @@ class MatrixAgent(
 
     fun costWeight() =
         if (inZone1)
-            when (ForeseeProblemAgent.strategy()) {
+            when (search.strategy) {
                 ExplorationStrategy.SOLVE_M -> 0.7
                 ExplorationStrategy.SOLVE_F -> 0.0
                 else -> 1.0

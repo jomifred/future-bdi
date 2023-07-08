@@ -15,8 +15,7 @@ class DynamicGridEnvModel(
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1) {
 
     private val wallSize = 7
-    private val walls = mutableListOf<Pair<Int, Int>>()
-    //val pChange = 0.4
+    internal val walls = mutableListOf<Pair<Int, Int>>()
 
     /** certainty of the next state */
     override fun gamma() = 1.0-(pChange*0.2) // * 8/(height*width))

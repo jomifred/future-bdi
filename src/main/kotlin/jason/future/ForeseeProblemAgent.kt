@@ -25,7 +25,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
             if (agC.parameters.isNotEmpty()) {
                 var dStrategy = agC.getParameter(0)
                 dStrategy = dStrategy.substring(1, dStrategy.length - 1)
-                detectionStrategy = ExplorationStrategy.valueOf(dStrategy)
+                recoverStrategy = ExplorationStrategy.valueOf(dStrategy)
             }
 
             val conf = Properties()
@@ -36,6 +36,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
                 data.strategy = ExplorationStrategy.valueOf(
                     conf.getOrDefault("recover_strategy", "NONE").toString())
                 addBel(ASSyntax.parseLiteral("r_strategy(\"${data.strategy}\")"))
+                recoverStrategy = data.strategy
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -65,7 +66,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         //println("In select option for ${defaultOption?.evt?.trigger}")
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || detectionStrategy == ExplorationStrategy.NONE
+            || recoverStrategy == ExplorationStrategy.NONE
             || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
@@ -87,7 +88,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     companion object {
         private var msg: String = ""
-        private var detectionStrategy = ExplorationStrategy.ONE
+        private var recoverStrategy = ExplorationStrategy.SOLVE_M
         private var solution      : MutableList<State> = mutableListOf()
         val visitedStates = ConcurrentHashMap.newKeySet<State>()
         val data = ExperimentData()
@@ -97,9 +98,9 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
         fun getSolution() = solution
-        fun strategy() = detectionStrategy
+        fun strategy() = recoverStrategy
         fun setStrategy(e: ExplorationStrategy) {
-            detectionStrategy = e
+            recoverStrategy = e
             println("exploration set to $e")
             msg = ""
         }
@@ -125,11 +126,11 @@ class ExperimentData {
     }
     fun storeStats() {
         try {
-            val newf = ! File("stats.csv").exists()
+            //val newf = ! File("stats.csv").exists()
             BufferedWriter(FileWriter("stats.csv", true)).use { out ->
-                if (newf)
-                    out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time")
-                out.appendLine("$scenario, $pChange, $gamma, $strategy, $requiredCertainty, $nbPlanFor, $nbMatrices, $nbVisitedStates, $nbActions, ${System.currentTimeMillis()-startT}")
+                //if (newf)
+                    //out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time")
+                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.2f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $nbActions, ${System.currentTimeMillis()-startT}")
             }
         } catch (e: IOException) {
             e.printStackTrace()

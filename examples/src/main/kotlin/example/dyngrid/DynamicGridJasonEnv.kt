@@ -12,7 +12,6 @@ import jason.future.ForeseeProblemAgent
 import jason.future.MatrixCapable
 import java.io.FileReader
 import java.util.*
-import kotlin.concurrent.thread
 import kotlin.random.Random
 
 class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
@@ -26,14 +25,14 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
             conf.load(FileReader("params.properties"))
             pChange = conf.getOrDefault("pChange", pChange).toString().toDouble()
 
-            val maxTime = conf.getOrDefault("maxTime", 0).toString().toLong()
+            /*val maxTime = conf.getOrDefault("maxTime", 0).toString().toLong()
             if (maxTime>0) {
                 thread(start = true) {
                     Thread.sleep(maxTime)
                     log.info("***** stop by time out *****")
                     System.exit(0)
                 }
-            }
+            }*/
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -58,7 +57,7 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
         val a = dmodel.structureToAction(agName, action)
         val s = dmodel.currentState()
         if (dmodel.hasObject(OBSTACLE, dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
-            log.info("*** error trying action ${action} (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")
+            log.info("*** error trying action $action (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")
             return false
         }
 
@@ -72,8 +71,9 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
             if (Random.nextDouble() < dmodel.pChange)
                 dmodel.remRandomWall()
         }
+        return r
+
         //view?.resetGUI()
 
-        return r
     }
 }
