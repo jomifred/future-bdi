@@ -16,7 +16,7 @@ import kotlin.random.Random
 
 class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
-    private val nbInitialWalls = 10
+    private val nbInitialWalls = 5
 
     init {
         val conf = Properties()
@@ -49,6 +49,8 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
     }
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 
+    var lastAdd = true
+
     override fun executeAction(agName: String, action: Structure): Boolean {
         val dmodel = model as DynamicGridEnvModel
         ForeseeProblemAgent.data.nbActions++ // stats
@@ -65,7 +67,15 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
         // add or remove some wall (after the agent move)
         var change = false
-        if (Random.nextDouble() >= 0.5) {
+        if (Random.nextDouble() < dmodel.pChange) {
+            if (lastAdd)
+                dmodel.remRandomWall()
+            else
+                dmodel.addRandomWall()
+            change = true
+            lastAdd = !lastAdd
+        }
+        /*if (Random.nextDouble() >= 0.5) {
             if (Random.nextDouble() < dmodel.pChange) {
                 dmodel.addRandomWall()
                 change = true
@@ -75,7 +85,7 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
                 dmodel.remRandomWall()
                 change = true
             }
-        }
+        }*/
         if (change) {
             updateAgPercept(agName)
             informAgsEnvironmentChanged()

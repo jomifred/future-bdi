@@ -32,11 +32,8 @@ class plan_for : DefaultInternalAction(), StopConditions {
                 initialPlanStr += "; "
             suspend = false
 
-            // stats
-            ForeseeProblemAgent.data.nbPlanFor++
-
             // run search using matrix
-            val search = Search(ag, searchConds, strategy, ag.envModel()!!)
+            ForeseeProblemAgent.data.nbPlanFor++ // stats
 
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
             val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
@@ -46,18 +43,22 @@ class plan_for : DefaultInternalAction(), StopConditions {
                 return false
             }
 
-            search.init(appPlans)
-            val opt = search.run()
-            if (opt != null && search.matrix.success()) {
-                val actionsStr = StringBuilder()
-                for (a in opt.allActions()) {
-                    actionsStr.append(a)
-                    actionsStr.append("; ")
+            // run search using matrix
+            if (strategy  != ExplorationStrategy.RANDOM) {
+                val search = Search(ag, searchConds, strategy, ag.envModel()!!)
+                search.init(appPlans)
+                val opt = search.run()
+                if (opt != null && search.matrix.success()) {
+                    val actionsStr = StringBuilder()
+                    for (a in opt.allActions()) {
+                        actionsStr.append(a)
+                        actionsStr.append("; ")
+                    }
+                    // build the new plan
+                    val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
+                    newPlan.setAsPlanTerm(true)
+                    return un.unifies(args[2], newPlan)
                 }
-                // build the new plan
-                val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
-                newPlan.setAsPlanTerm(true)
-                return un.unifies(args[2], newPlan)
             }
 
             //val defOpt = ag.sortedOptions(appPlans).first() // may cause loop em behaviour

@@ -7,7 +7,7 @@ import java.io.FileWriter
 import java.io.IOException
 import java.util.concurrent.PriorityBlockingQueue
 
-enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F }
+enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F, RANDOM }
 
 /** search for a good option for the agent */
 open class Search (
@@ -42,7 +42,7 @@ open class Search (
     }
 
     lateinit var matrix : MatrixRunner
-    lateinit var bestFO : FutureOption
+    //lateinit var bestFO : FutureOption
 
     fun run() : FutureOption? {
         try {
@@ -54,7 +54,7 @@ open class Search (
             var defaultPlan: Set<State>? = null // used for stats (compute how many stes are in the ag policy)
             while (fo != null && nbE < 3000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
-                bestFO = fo!! // options are ordered by  G+H, so the most promising was the last taken
+                //bestFO = fo!! // options are ordered by  G+H, so the most promising was the last taken
 
                 println("starting simulation $nbE for goal ${fo.opt.evt.trigger.literal}@${fo.state} with plan @${fo.opt.plan.label.functor}, I still have ${explorationQueue.size} options. Depth=${fo.depth}")
                 matrix = rollout(fo)
