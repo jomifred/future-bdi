@@ -821,10 +821,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_version_1_5_dynamic_environment">version 1.5 (dynamic environment)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>(see slides with the basics for the dynamic environment <a href="#../doc/future-bdi-notes-5">here</a>)</p>
+<p>(see slides with the basics for the dynamic environment <a href="../doc/future-bdi-notes-5.pdf">here</a>)</p>
 </div>
 <div class="paragraph">
-<p>The <em>environment</em> is the same grid as above, with walls that can appear or disappear. The agent has to cross it, fom line 0 to line 29, as shown below.</p>
+<p>The <em>environment</em> is the same grid as above, but now  walls that can appear and disappear. The agent has to cross the grid, from line 0 to line 29, as shown below.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="screens1.5/d-env.png" alt="d env"></span></p>
@@ -835,7 +835,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>efficiency. We measure the <em>number of actions</em> the agent did to achieve its goal.</p>
+<p>efficiency. We measure the <em>number of actions</em> the agent does to achieve its goal.</p>
 </li>
 <li>
 <p>the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so <em>number of matrices</em> is used.</p>
@@ -848,18 +848,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>the environment dynamicity (<em>p</em>), from environments that do not change (value 0) to environments that change every cycle (value 1). Changes are implemented by adding or removing walls in the scenario, keeping an average number of 5 walls.</p>
+<p>the environment dynamicity (<em>p</em>), from environments that do not change (value 0) to environments that change every cycle (value 1). Changes are implemented by adding or removing walls in the scenario.</p>
 </li>
 <li>
-<p>how far the agent look ahead in the future. It is based on a required certainty (<em>rc</em>) of a future state in the matrix (computed by the stochastic properties of the environment). If the agent reaches a state with less than the required certainty, it stops the matrix. If <em>rc</em> = 1, the agent only consider future states with full certainty.</p>
+<p>how far the agent looks ahead in the future. It is based on a required certainty (<em>rc</em>) of a future state in the matrix (computed by the stochastic properties of the environment). If the agent reaches a state with less than the required certainty, it stops the matrix. If <em>rc</em> = 1, the agent only consider future states that it can be fully sure to be in.</p>
 </li>
 <li>
-<p>the agent strategy to find alternatives when its current policy will bring it to failure. solve_P, solve_M, and solve_F are considered.</p>
+<p>the agent strategy to find recovery plans when its current policy will bring it to failure. solve_P, solve_M, and solve_F are considered.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>It follows the result of agent using solve_F and <em>rc</em> = 0.9.</p>
+<p>It follows the result of an agent using solve_F and <em>rc</em> = 0.9. Average number of walls is 5.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="screens1.5/solve-f-matrices-90-5walls.png" alt="solve f matrices 90 5walls"></span></p>
@@ -897,7 +897,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-08 15:55:31 UTC
+Last updated 2023-07-08 16:11:58 UTC
 </div>
 </div>
 </body>

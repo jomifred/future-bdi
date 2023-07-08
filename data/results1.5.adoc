@@ -92,37 +92,37 @@ image:screens1.3/b-p.png[]
 
 == version 1.5 (dynamic environment)
 
-(see slides with the basics for the dynamic environment xref:../doc/future-bdi-notes-5[here])
+(see slides with the basics for the dynamic environment xref:../doc/future-bdi-notes-5.pdf[here])
 
-The _environment_ is the same grid as above, with walls that can appear or disappear. The agent has to cross it, fom line 0 to line 29, as shown below.
+The _environment_ is the same grid as above, but now  walls that can appear and disappear. The agent has to cross the grid, from line 0 to line 29, as shown below.
 
 image:screens1.5/d-env.png[]
 
 
 We *measure*:
 
-- efficiency. We measure the _number of actions_ the agent did to achieve its goal.
+- efficiency. We measure the _number of actions_ the agent does to achieve its goal.
 - the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so _number of matrices_ is used.
 
 We *vary*:
 
-- the environment dynamicity (_p_), from environments that do not change (value 0) to environments that change every cycle (value 1). Changes are implemented by adding or removing walls in the scenario, keeping an average number of 5 walls.
+- the environment dynamicity (_p_), from environments that do not change (value 0) to environments that change every cycle (value 1). Changes are implemented by adding or removing walls in the scenario.
 
-- how far the agent look ahead in the future. It is based on a required certainty (_rc_) of a future state in the matrix (computed by the stochastic properties of the environment). If the agent reaches a state with less than the required certainty, it stops the matrix. If _rc_ = 1, the agent only consider future states with full certainty.
+- how far the agent looks ahead in the future. It is based on a required certainty (_rc_) of a future state in the matrix (computed by the stochastic properties of the environment). If the agent reaches a state with less than the required certainty, it stops the matrix. If _rc_ = 1, the agent only consider future states that it can be fully sure to be in.
 
-- the agent strategy to find alternatives when its current policy will bring it to failure. solve_P, solve_M, and solve_F are considered.
+- the agent strategy to find recovery plans when its current policy will bring it to failure. solve_P, solve_M, and solve_F are considered.
 
-It follows the result of agent using solve_F and _rc_ = 0.9.
+It follows the result of an agent using solve_F and _rc_ = 0.9. Average number of walls is 5.
 
 image:screens1.5/solve-f-matrices-90-5walls.png[]
 
 Notes:
 
-- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.2), since the agent can compute a perfect recovery plan. It pays for that, of course. In this configuration, a lot of matrices were run to find that best plan. *we pay for efficiency*
+- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can compute a perfect recovery plan. It pays for that, of course. In this configuration, a lot of matrices were run to find that best plan. *we pay for efficiency*
 
-- With _p_ > 0.5, the agent has not enough certainty about its environment to produce recovery plans and thus no matrices are created. The agent then simply acts randomly since its policy can not be applied and no recovery plan was found. Either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal. *no cost, no gain*
+- With _p_ > 0.5, the agent has not enough certainty about its environment to produce recovery plans and thus few matrices are created. The agent then simply acts randomly since its policy can not be applied and no recovery plan was found. Either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal. *no cost, no gain*
 
-- Around _p_=0.3 we have the worst performance. The agent still can produce recovery plans that deviates from walls, that latter may disappear. So the agent move out of its policy to avoid walls that disappear, the costy build plan may be useless in the future where the considered walls will no be there or others added. *waist of energy (computational and actions) for an uncertainty environment*
+- Around _p_~0.3 we have the worst performance. The agent still can produce recovery plans that deviates from walls. So the agent moves out of its policy to avoid walls, but they will likely disappear. To deviate was thus unnecessary steps. The expensive recovery plan might be useless in the future where the considered walls will not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
 
-- Conclusion, Jason(F) for recovery is useful until _p_ ~ 0.8, after that, to selec actions randomly is better.
+- Conclusion, Jason(F) for recovery is useful until _p_ < 0.1, after that, it is better to select actions randomly when the policy has no future.
 
