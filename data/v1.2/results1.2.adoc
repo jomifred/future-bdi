@@ -16,6 +16,7 @@ Scenario O:: no solution
 
 image:../v1.1/screens1.1/o-o.png[]
 
+== Results
 
 [cols="1,1,>1,>1,>1,>1,>1"]
 |===
