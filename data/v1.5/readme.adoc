@@ -27,7 +27,7 @@ We *vary*:
 
 - _configuration_ : a combination of _p_, _rc_, _s_  used in the execution of an episode.
 
-=== Results
+== Results
 
 It follows the result of an agent using solve_F and _rc_ = 0.9. Number of walls is 5. 1031 episodes. Executions with more than 5000 matrices are aborted.
 
