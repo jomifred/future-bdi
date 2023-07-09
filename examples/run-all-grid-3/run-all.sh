@@ -3,7 +3,7 @@ cd ../..
 ./gradlew build
 
 SOURCE=examples/stats.csv
-RESULT=data/stats-g3-solve-f-90-10walls.csv
+RESULT=data/stats-g3-solve-f90-5walls.csv
 touch $SOURCE
 touch $RESULT
 rm $SOURCE
