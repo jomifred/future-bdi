@@ -22,7 +22,22 @@ image:../v1.1/screens1.1/o-o.png[]
 |scenario | strategy | solve | matrices | visited | steps | steps in policy
 
 | line | NONE | no | 0 | &infin; | &infin; | &infin; (100%)
-include::stats1.2.txt[]
+| line | ONE | no | 1 | 11 | -- | 0 (0%)
+| line | SOLVE_P | yes | 477 | 5516 | 14 | 6 (42%)
+| line | SOLVE_M | yes | 297 | 3373 | 14 | 11 (78%)
+| line | SOLVE_F | yes | 81 | 1053 | 17 | 15 (88%)
+| U | ONE | no | 1 | 14 | -- | 0 (0%)
+| U | SOLVE_P | yes | 230 | 3279 | 23 | 20 (86%)
+| U | SOLVE_M | yes | 371 | 5309 | 23 | 20 (86%)
+| U | SOLVE_F | yes | 379 | 5938 | 27 | 24 (88%)
+| H | ONE | no | 1 | 11 | -- | 0 (0%)
+| H | SOLVE_P | yes | 2058 | 37171 | 25 | 5 (20%)
+| H | SOLVE_M | yes | 2053 | 37071 | 25 | 5 (20%)
+| H | SOLVE_F | yes | 2036 | 38813 | 26 | 6 (23%)
+| O | ONE | no | 1 | 11 | -- | 0 (0%)
+| O | SOLVE_P | no | 5238 | 126234 | -- | 0 (0%)
+| O | SOLVE_M | no | 5239 | 126265 | -- | 0 (0%)
+| O | SOLVE_F | no | 5254 | 132596 | -- | 0 (0%)
 
 |===
 
