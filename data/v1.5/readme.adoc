@@ -43,7 +43,7 @@ Notes:
 
 - With _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that tries deviate less from the agent policy (that is not optimal in these experiments).
 
-- [Still thinking about the reasons for the best efficiency being related to small _p_ (!!!)]
+- [Still thinking about the reasons that efficiency improves after _p_=0 and then reduces. If my argument in the item above is correct, why isn't the efficiency monotonic from p=0 until p~0.3?]
 
 - Conclusion, in configurations (., 0.9, solve_f), it is useful to build recovery plans until _p_ < 0.1 (less than 35 actions), after that, it is better to select actions randomly when the policy has no future (around 43 actions).
 
