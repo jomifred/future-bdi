@@ -41,5 +41,9 @@ Notes:
 
 - Around _p_~0.3 we have the worst performance, both in terms of efficiency and cost. The agent still can produce recovery plans that deviates from walls. So the agent moves out of its policy to avoid walls, but they will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The expensive recovery plan might be useless in the future where the considered walls will not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
 
+- With _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that tries deviate less from the agent policy (that is not optimal in these experiments).
+
+- [Still thinking about the reasons for the best efficiency being related to small _p_ (!!!)]
+
 - Conclusion, in configurations (., 0.9, solve_f), it is useful to build recovery plans until _p_ < 0.1 (less than 35 actions), after that, it is better to select actions randomly when the policy has no future (around 43 actions).
 
