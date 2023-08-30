@@ -34,8 +34,6 @@ class plan_for : DefaultInternalAction(), StopConditions {
             suspend = false
 
             // run search using matrix
-            ForeseeProblemAgent.data.nbPlanFor++ // stats
-
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
             val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
             val appPlans = ts.applicablePlans(relPlans)
@@ -55,6 +53,9 @@ class plan_for : DefaultInternalAction(), StopConditions {
                         actionsStr.append(a)
                         actionsStr.append("; ")
                     }
+
+                    ForeseeProblemAgent.data.nbPlanFor++ // stats
+
                     // build the new plan
                     val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")
                     newPlan.setAsPlanTerm(true)

@@ -63,7 +63,7 @@ open class Search (
 
 
                 visited += fo.planSize()
-                ForeseeProblemAgent.data.nbVisitedStates += visited
+                //ForeseeProblemAgent.data.nbVisitedStates += visited // moved to each state the agent sees (in matrix mode)
 
                 if (nbE == 1)
                     defaultPlan = fo.states().first.toSet()

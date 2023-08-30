@@ -52,6 +52,7 @@ class MatrixAgentArch (
 
         if (isMainAg()) {
             historyS.add(newState)
+            ForeseeProblemAgent.data.nbVisitedStates++
         }
     }
 }

@@ -127,9 +127,9 @@ class ExperimentData {
 
     fun addNbMatrices() {
         nbMatrices++
-        if (nbMatrices > 5000) {
+        /*if (nbMatrices > 5000) {
             System.exit(0)
-        }
+        }*/
     }
 
     fun storeStats() {

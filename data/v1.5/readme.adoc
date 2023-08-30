@@ -37,7 +37,7 @@ We *vary*:
 
 == Results
 
-It follows the result of an agent using _s_ = solve_F and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. 1031 episodes. Executions with more than 5000 matrices are aborted.
+It follows the result of an agent using _s_ = solve_F and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. 1031 episodes. Executions that took more than 10 seconds were aborted.
 
 The objective is to evaluate the strategy to find recovery plans.
 

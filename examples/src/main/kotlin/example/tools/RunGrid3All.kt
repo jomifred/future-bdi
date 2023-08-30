@@ -25,17 +25,17 @@ fun main(args: Array<String>) {
                 .exec("./gradlew -q :examples:run --args=run-all-grid-3/grid3.mas2j")
 
             // I do not know way, but it is necessary to read the process stream until it ends, and then uses waitFor (!)
-            val `in` = BufferedReader(InputStreamReader(process.getInputStream()))
+            /*val `in` = BufferedReader(InputStreamReader(process.getInputStream()))
             //val `in` = BufferedReader(InputStreamReader(process.errorStream))
             var line : String? = `in`.readLine()
             while (line != null) {
                 //System.out.println(line)
                 line = `in`.readLine()
             }
-            `in`.close()
+            `in`.close()*/
 
             var failure = "ok"
-            process.waitFor(10, TimeUnit.SECONDS)
+            process.waitFor(5, TimeUnit.SECONDS)
             if (process.isAlive) {
                 process.destroyForcibly()
                 failure = "timeout"
