@@ -17,7 +17,9 @@ The agent *behaviour* is:
 We *measure*:
 
 - effectiveness. We measure whether the agent _successfully_ cross the grid before a timeout;
+
 - efficiency. We measure the _number of actions_ the agent does to achieve its goal; and
+
 - the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so the number of _visited states_ is used.
 
 We *vary*:
@@ -26,7 +28,7 @@ We *vary*:
 
 - how far the agent looks ahead in the future. It is based on a required certainty (_rc_) of a future state of the matrix (computed from the stochastic properties of the environment). If the matrix reaches a state with less than the required certainty, the agent stops the matrix. For instance, if _rc_=1, the agent only considers future states that it can be fully sure about. If _rc_=0, the agent does not care about certainty.
 
-- the agent recovery strategy (_s_) while searching for a recovery plan when its current policy select plans that bring it to a failure. _s_ = solve_P (other options now), solve_M, solve_F (other options latter), or random. Random strategy consists of selecting a random valid plan in place of the selected plan.
+- the agent recovery strategy (_s_) while searching for a recovery plan when its current policy selects plans that bring it to a failure. _s_ = solve_P, solve_M, solve_F, or random. Random strategy consists of selecting a random valid plan in place of the selected plan.
 
 *Terminology*:
 
@@ -38,7 +40,11 @@ We *vary*:
 
 == Results
 
-It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. 895 episodes. Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved. (to read the effectiveness in the graph, the y line for 100000 visited states corresponds to the fact that the agent is effective 100% of the executions.)
+It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. We run 895 episodes.
+
+//Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved.
+
+_Effectiveness_ is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) _Efficiency_ is measured by the mean of the number of actions used to cross the grid. _Cost_ is measure by the mean of the number of states visited in the search for recovery plans.
 
 The objective is to evaluate _rc_ in the search for recovery plans. (it is not the use of matrix to detect future failures.)
 
@@ -47,9 +53,9 @@ image:graphs/solve-m-states-0.9.pdf.png[]
 
 Notes:
 
-- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, a several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
+- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
 
-- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
+- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappears or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
 
 - Around _p_~0.2 we have the worst performance in terms of efficiency and cost, also not great in terms of effectiveness. Given this dynamicity, the agent can still dedicate time in the search for recovery plans. Using these plans, the agent moves out of its policy to avoid walls, but these walls will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The recovery plans (expensive to find) might be inefficient in the future when the walls may not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
 
@@ -57,27 +63,25 @@ Notes:
 
 - The efficiency of the random strategy gets better as the environment becomes more dynamic. With _p_ > 0.3, its efficiency is almost the same as solve_M. Notice that there is no cost in this strategy.
 
-//- With _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that avoids to deviate from the agent policy (that is not optimal in these experiments). When _p_ increases a bit, recovery plans tend to select more efficient plans.
+//- With solve_p and _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that avoids deviating from the agent policy (that is not optimal in these experiments). When _p_ increases a bit, recovery plans tend to select more efficient plans.
 
-- For _rc_~0.9, better results can be achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
+- For _rc_~0.9, better results are achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in an environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
 
 - Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.2, after that, it is better to select actions randomly when the policy has no future.
 
-== Choosing _rc_
+= Choosing _rc_
 
-It follows the result of an agent using _s_ = solve_M. The environment dynamicity (_p_) varies from 0 to 1 (x-axis). Number of walls is 5. 4737 episodes. Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved.
+The objective here is to evaluate different required certainties (_rc_) on different environments (with different dynamicity). Solve_M is used as the recovery strategy. We run 4737 episodes, 950 for rc=1.0 + 950 for rc=0.9 ...
 
-The objective is to evaluate different required certainties (_rc_) on different environments, with different dynamicity (_p_).
-
-The following graph shows how effective is the agent for different _rc_, measured by percentage of executions where the agent has crossed the grid before 10 seconds. *As _rc_ decreases, the overall effectiveness decreases*. [overall means for all _p_; the area above each line.]
+The following graph shows how effective is the agent for different _rc_. *As _rc_ decreases, the overall effectiveness decreases*. [overall means for all _p_; the area above each line.]
 
 image:graphs/solve-m-a-success.pdf.png[]
 
-The following graph shows the behaviour of efficiency, measured by the mean of the number of actions used to cross the grid. *As _rc_ decreases, the overall efficiency increases*.
+The following graph shows how the efficiency evolves as dynamicity increases. *As _rc_ decreases, the overall efficiency increases*.
 
 image:graphs/solve-m-a-eff.pdf.png[]
 
-The following graph shows the behaviour of cost, measure by the mean of the number of states visited to select recovery choices. *As _rc_ decreases, the overall cost increases*.
+The following graph presents the results for cost. *As _rc_ decreases, the overall cost increases*.
 
 image:graphs/solve-m-a-cost.pdf.png[]
 
@@ -116,6 +120,10 @@ Notes about choosing _rc_
 
 * in general, the random strategy seems a general best option.
 
-- as _p_ increases, the _rc_ worst case also increases.
+- as _rc_ decreases, the _p_ of the worst case  increases (see effectiveness and cost graphs).
 
 - _rc_ =< 0.3 is not a good option for any cases. Although the efficiency is quite good, the few times the agent succeed to cross the grid, it did it quite fast, this result is unlikely (see effectiveness).
+
+= Choosing strategy
+
+(TBD)
