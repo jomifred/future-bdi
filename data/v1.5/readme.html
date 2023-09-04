@@ -447,10 +447,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>(see slides with the basics for the dynamic environment <a href="../../doc/future-bdi-notes-5.pdf">here</a>)</p>
 </div>
 <div class="paragraph">
-<p>The <em>environment</em> is the same grid as above, but now  walls that can appear and disappear. The agent has to cross the grid, from line 0 to line 29, as shown below.</p>
+<p>The <em>environment</em> is the same grid as in previous versions, but now  walls can appear and disappear. The agent has to cross the grid, from line 0 to line 19, as shown below.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="figs/d-env.png" alt="d env"></span></p>
+</div>
+<div class="paragraph">
+<p>The agent <strong>behaviour</strong> is:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Perceive the environment and select a plan based on its policy (a plan implies an action). The policy is: select a plan with a valid action that brings the agent near its destination.</p>
+</li>
+<li>
+<p>Use the matrix to compute the future; if ok, proceed with the selected plan.</p>
+</li>
+<li>
+<p>If not ok, use a recovery strategy to search for an alternative plan (the recovery plan). Then use the action of this plan. [assuming that <em>recovery plan</em> was explained somewhere else, it may be another option now or in the future.]</p>
+</li>
+<li>
+<p>Go to step 1.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>We <strong>measure</strong>:</p>
@@ -458,10 +477,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>efficiency. We measure the <em>number of actions</em> the agent does to achieve its goal.</p>
+<p>effectiveness. We measure whether the agent <em>successfully</em> cross the grid before a timeout;</p>
 </li>
 <li>
-<p>the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so <em>number of matrices</em> is used.</p>
+<p>efficiency. We measure the <em>number of actions</em> the agent does to achieve its goal; and</p>
+</li>
+<li>
+<p>the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so the number of <em>visited states</em> is used.</p>
 </li>
 </ul>
 </div>
@@ -474,10 +496,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>the environment dynamicity (<em>p</em>), from environments that do not change (<em>p</em>=0) to environments that change every cycle (<em>p</em>=1). Changes are implemented by adding or removing walls in the scenario.</p>
 </li>
 <li>
-<p>how far the agent looks ahead in the future. It is based on a required certainty (<em>rc</em>) of a future state in the matrix (computed by the stochastic properties of the environment). If the agent reaches a state with less than the required certainty, it stops the matrix. For instance, if <em>rc</em>=1, the agent only considers future states that it can be fully sure to be in. If <em>rc</em>=0, the agent does not care about certainty.</p>
+<p>how far the agent looks ahead in the future. It is based on a required certainty (<em>rc</em>) of a future state of the matrix (computed from the stochastic properties of the environment). If the matrix reaches a state with less than the required certainty, the agent stops the matrix. For instance, if <em>rc</em>=1, the agent only considers future states that it can be fully sure about. If <em>rc</em>=0, the agent does not care about certainty.</p>
 </li>
 <li>
-<p>the agent strategy (<em>s</em>) to find recovery plans when its current policy will bring it to failure. solve_P, solve_M, and solve_F are considered.</p>
+<p>the agent recovery strategy (<em>s</em>) while searching for a recovery plan when its current policy selects plans that bring it to a failure. <em>s</em> = solve_P, solve_M, solve_F, or random. Random strategy consists of selecting a random valid plan in place of the selected plan.</p>
 </li>
 </ul>
 </div>
@@ -487,10 +509,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p><em>episode</em> starts with the agent at (15,0) and ends when it arrives at (15,29).</p>
+<p>an <em>episode</em> starts with the agent at (15,0) and ends when either it arrives at (15,19) or the deadline is reached.</p>
 </li>
 <li>
 <p><em>configuration</em> : a combination of <em>p</em>, <em>rc</em>, <em>s</em>  used in the execution of an episode.</p>
+</li>
+<li>
+<p>environment <em>cycle</em> starts with an environment state, the agent executes an action, and we have the next state (for the next cycle).</p>
 </li>
 </ul>
 </div>
@@ -500,10 +525,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_results">Results</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>It follows the result of an agent using solve_F and <em>rc</em> = 0.9. Number of walls is 5. 1031 episodes. Executions with more than 5000 matrices are aborted.</p>
+<p>It follows the result of an agent using <em>s</em> = solve_M and <em>rc</em> = 0.9, <em>p</em> varies from 0 to 1 (x-axis). Number of walls is 5. We run 895 episodes.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="figs/solve-f90-5walls.png" alt="solve f90 5walls"></span></p>
+<p><em>Effectiveness</em> is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) <em>Efficiency</em> is measured by the mean of the number of actions used to cross the grid. <em>Cost</em> is measure by the mean of the number of states visited in the search for recovery plans.</p>
+</div>
+<div class="paragraph">
+<p>The objective is to evaluate <em>rc</em> in the search for recovery plans. (it is not the use of matrix to detect future failures.)</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="graphs/solve-m-states-0.9.pdf.png" alt="solve m states 0.9.pdf"></span></p>
 </div>
 <div class="paragraph">
 <p>Notes:</p>
@@ -511,25 +542,137 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (<em>p</em> &lt; 0.1), since the agent can compute a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, a lot of matrices were run to find that best plan. <strong>we pay for efficiency</strong></p>
+<p>The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (<em>p</em> &lt; 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, several states are visited in the search for that recovery plan. <strong>we pay for efficiency</strong>. That cost may be so high that the agent misses the deadline (not effective).</p>
 </li>
 <li>
-<p>With <em>p</em> &gt; 0.5, the agent has not enough certainty about its environment to produce recovery plans and thus few matrices are created (low cost). When its policy can not be applied and no recovery plans can be built, the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal. <strong>no cost, no gain</strong>, <strong>random scenario &#8594; random strategy</strong></p>
+<p>With <em>p</em> &gt; 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappears or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). <strong>no cost, no gain</strong>, <strong>random scenario &#8594; random strategy</strong></p>
 </li>
 <li>
-<p>Around <em>p</em>~0.3 we have the worst performance, both in terms of efficiency and cost. The agent still can produce recovery plans that deviates from walls. So the agent moves out of its policy to avoid walls, but they will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The expensive recovery plan might be useless in the future where the considered walls will not be there anymore or others are added. <strong>waist of energy (computational and actions) for an uncertainty environment</strong></p>
+<p>Around <em>p</em>~0.2 we have the worst performance in terms of efficiency and cost, also not great in terms of effectiveness. Given this dynamicity, the agent can still dedicate time in the search for recovery plans. Using these plans, the agent moves out of its policy to avoid walls, but these walls will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The recovery plans (expensive to find) might be inefficient in the future when the walls may not be there anymore or others are added. <strong>waist of energy (computational and actions) for an uncertainty environment</strong></p>
 </li>
 <li>
-<p>Conclusion, in configurations (., 0.9, solve_f), it is useful to build recovery plans until <em>p</em> &lt; 0.1 (less than 35 actions), after that, it is better to select actions randomly when the policy has no future (around 43 actions).</p>
+<p>Around <em>p</em>~0.1 we have only 30% of success in crossing the grid! Although the random strategy could be used, since it is always effective, the efficiency is also quite bad. For now, this kind of environment is quite a challenge. (latter we will discover that other values of <em>rc</em> can do better in this environment.)</p>
+</li>
+<li>
+<p>The efficiency of the random strategy gets better as the environment becomes more dynamic. With <em>p</em> &gt; 0.3, its efficiency is almost the same as solve_M. Notice that there is no cost in this strategy.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For <em>rc</em>~0.9, better results are achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in an environment with <em>p</em> ~ 0.2. (this <em>p</em> value changes as we change <em>rc</em> as seen in the next Section.)</p>
+</li>
+<li>
+<p>Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until <em>p</em> &lt; 0.2, after that, it is better to select actions randomly when the policy has no future.</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
+<h1 id="_choosing_rc" class="sect0">Choosing <em>rc</em></h1>
+<div class="paragraph">
+<p>The objective here is to evaluate different required certainties (<em>rc</em>) on different environments (with different dynamicity). Solve_M is used as the recovery strategy. We run 4737 episodes, 950 for rc=1.0 + 950 for rc=0.9 &#8230;&#8203;</p>
+</div>
+<div class="paragraph">
+<p>The following graph shows how effective is the agent for different <em>rc</em>. <strong>As <em>rc</em> decreases, the overall effectiveness decreases</strong>. [overall means for all <em>p</em>; the area above each line.]</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="graphs/solve-m-a-success.pdf.png" alt="solve m a success.pdf"></span></p>
+</div>
+<div class="paragraph">
+<p>The following graph shows how the efficiency evolves as dynamicity increases. <strong>As <em>rc</em> decreases, the overall efficiency increases</strong>.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="graphs/solve-m-a-eff.pdf.png" alt="solve m a eff.pdf"></span></p>
+</div>
+<div class="paragraph">
+<p>The following graph presents the results for cost. <strong>As <em>rc</em> decreases, the overall cost increases</strong>.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="graphs/solve-m-a-cost.pdf.png" alt="solve m a cost.pdf"></span></p>
+</div>
+<div class="paragraph">
+<p>Notes about choosing <em>rc</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>low dynamic environment (<em>p</em> ~ 0.1):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if effectiveness is an issue, <em>rc</em> =&lt; 0.5 is preferred. <em>p</em>=1 is also effective, but its efficiency is quite bad.</p>
+</li>
+<li>
+<p>if efficiency is an issue, <em>rc</em> &lt; 0.9 is preferred.</p>
+</li>
+<li>
+<p>if cost is an issue, all values of <em>rc</em> are ok. <em>p</em> ~ 1.0 has better cost, but it performs quite badly in the other criteria.</p>
+</li>
+<li>
+<p><em>rc</em> ~ 0.5 seems the general best option.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>medium dynamic environment (<em>p</em> ~ 0.5)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if effectiveness is an issue, <em>rc</em> &gt;= 0.9 should be chosen.</p>
+</li>
+<li>
+<p>if efficiency is an issue, <em>rc</em> =&lt; 0.7 is preferred. Although the differences may be not relevant for some applications.</p>
+</li>
+<li>
+<p>if cost is an issue, 0.5 =&lt; <em>rc</em> =&lt; 0.7 has worst cost</p>
+</li>
+<li>
+<p><em>rc</em> ~ 0.9 seems the general best option.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>high dynamic environment (<em>p</em> ~ 0.9):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>regarding effectiveness, <em>rc</em> &gt;= 0.5 should be chosen.</p>
+</li>
+<li>
+<p>regarding efficiency, all values have similar results.</p>
+</li>
+<li>
+<p>regarding cost, <em>rc</em> &gt;= 0.7 should be chosen.</p>
+</li>
+<li>
+<p><em>rc</em> ~ 1.0 seems the general best option. Notice that with <em>rc</em>=1 and <em>p</em>=1, we have the same case of the random strategy, since no matrix can run in that configuration.</p>
+</li>
+<li>
+<p>in general, the random strategy seems a general best option.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>as <em>rc</em> decreases, the <em>p</em> of the worst case  increases (see effectiveness and cost graphs).</p>
+</li>
+<li>
+<p><em>rc</em> =&lt; 0.3 is not a good option for any cases. Although the efficiency is quite good, the few times the agent succeeded to cross the grid, it did it quite fast, this result is unlikely (see effectiveness).</p>
+</li>
+</ul>
+</div>
+<h1 id="_choosing_strategy" class="sect0">Choosing strategy</h1>
+<div class="paragraph">
+<p>(TBD)</p>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-09 12:47:48 UTC
+Last updated 2023-09-04 14:52:06 UTC
 </div>
 </div>
 </body>
