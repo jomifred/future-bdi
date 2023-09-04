@@ -1,0 +1,20 @@
+1. executions
+     edit file examples/run-all-grid-3/run-all.sh
+     set strategy and RC
+
+     in directory examples/run-all-grid-3m execute
+          ./run-20all.sh
+
+2. consolidate "on time"
+
+     execute in root directory
+         ./gradlew :examples:genCSV
+
+3. produce graphs
+
+    execute here
+        ./graph-solve-m.gnuplot
+
+4. generate png from pdf
+    in graphs directory
+        find . -name "*.pdf" -exec pdftoppm -png -scale-to 1920 -singlefile {} {} \;

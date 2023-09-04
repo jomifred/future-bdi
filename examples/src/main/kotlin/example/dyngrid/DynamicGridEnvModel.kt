@@ -12,7 +12,7 @@ class DynamicGridEnvModel(
     currentState: GridState,
     goalState   : GridState,
     val pChange     : Double
-) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1) {
+) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 20,20) {
 
     private val wallSize = 7
     internal val walls = mutableListOf<Pair<Int, Int>>()
@@ -61,7 +61,7 @@ class DynamicGridEnvModel(
     fun addRandomWall() {
         while (!addWall(
             (1..width - wallSize - 2).random(),
-            (1..height - 2).random()
+            (4..height - 2).random()
         )) {}
     }
 

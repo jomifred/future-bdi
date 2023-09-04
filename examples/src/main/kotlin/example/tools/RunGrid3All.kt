@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
             `in`.close()*/
 
             var failure = "ok"
-            process.waitFor(5, TimeUnit.SECONDS)
+            process.waitFor(15, TimeUnit.SECONDS)
             if (process.isAlive) {
                 process.destroyForcibly()
                 failure = "timeout"

@@ -12,8 +12,10 @@ import jason.future.State
 open class GridEnvModel(
     protected var currentState: GridState,
     var goalState   : GridState,
-    var scenario    : Int = 0
-) : EnvironmentModel<GridState, Action>, GridWorldModel(30, 30, 1) {
+    var scenario    : Int = 0,
+    var wwidth       : Int = 30,
+    var wheight      : Int = 30
+) : EnvironmentModel<GridState, Action>, GridWorldModel(wwidth, wheight, 1) {
 
     val DEST = 16 // represent the destination
     val VISITED = 32

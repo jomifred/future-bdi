@@ -2,7 +2,7 @@
 
 MAS grid3 {
 
-    environment: example.dyngrid.DynamicGridJasonEnv(init(15,0),goal(15,29))
+    environment: example.dyngrid.DynamicGridJasonEnv(init(10,0),goal(10,19))
 
     agents:
         grid_recovery agentClass jason.future.ForeseeProblemAgent;

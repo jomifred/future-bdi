@@ -8,9 +8,11 @@
 +destination(X,Y) <- !pos(X,Y). // create a goal when my destination is perceived
 -destination(X,Y) <- .drop_all_desires. // drop everything if my destination is removed
 
-+pos(X,Y) : not jason.future.in_matrix & destination(X,Y)
-   <- jason.future.store_stats;
-      .stopMAS.
++pos(X,Y) : not jason.future.in_matrix & destination(X,Y) <- example.tools.store_stats(0).
+
+!timeout.
++!timeout : not jason.future.in_matrix <- example.tools.store_stats(10000).
++!timeout.
 
 // recovery plan
 -!pos(X,Y)[error(no_future),error_msg(M)]

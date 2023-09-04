@@ -4,7 +4,7 @@
 .gradle
 build
 bin
-data/*.old
+*.old
 
 # Log file
 *.log
