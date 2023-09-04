@@ -60,7 +60,7 @@ Notes:
 - For _rc_~0.9, better results can be achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
 
 
-- Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.1 (less than 35 actions), after that, it is better to select actions randomly when the policy has no future (around 43 actions).
+- Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.2, after that, it is better to select actions randomly when the policy has no future.
 
 == Choosing _rc_
 
@@ -68,15 +68,15 @@ It follows the result of an agent using _s_ = solve_M. The environment dynamicit
 
 The objective is to evaluate different required certainties (_rc_) on different environments, with different dynamicity (_p_).
 
-The following graph shows the behaviour of efficacy (percentage of executions where the agent has crossed the grid before 10 seconds). *As _rc_ increase, the efficacy reduces*.
+The following graph shows the behaviour of efficacy (percentage of executions where the agent has crossed the grid before 10 seconds). *As _rc_ decrease, the efficacy decrease*.
 
 image:graphs/solve-m-a-success.pdf.png[]
 
-The following graph shows the behaviour of efficiency (how many actions to cross the grid). *As _rc_ increase, the efficiency also increase*.
+The following graph shows the behaviour of efficiency (how many actions to cross the grid). *As _rc_ decrease, the efficiency increase*.
 
 image:graphs/solve-m-a-eff.pdf.png[]
 
-The following graph shows the behaviour of cost (how many states were visited to select recovery choices) . *As _rc_ increase, the cost also increase*.
+The following graph shows the behaviour of cost (how many states were visited to select recovery choices) . *As _rc_ decrease, the cost increase*.
 
 image:graphs/solve-m-a-cost.pdf.png[]
 
@@ -86,15 +86,16 @@ Notes about choosing _rc_:
 
 * all _rc_ have equal efficiency.
 
-* high _rc_ has better cost and efficacy. Notice that with _rc_=1 and _p_=1, we have the same case of random strategy, since no matrix can run in that configuration.
-
+* high _rc_ has better cost and efficacy. Notice that with _rc_=1 and _p_=1, we have the same case of the random strategy, since no matrix can run in that configuration.
 
 - low dynamic environment (_p_ ~ 0.1):
 
 * if efficiency is not an issue, high _rc_ is preferable, given the low cost and high efficacy.
 
-* if efficiency is an issue, _rc_ ~ 0.9 could be better (not so much cost, not so bad efficacy)
+* if efficiency is an issue, _rc_ ~ 0.9 has a good balance (not so much cost, not so bad efficacy)
 
-- medium dynamic environment (_p_ ~ 0.5): really depends on what is more important for the application. In general, _rc_ ~ 0.5 has a good balance among the three criteria.
+//- medium dynamic environment (_p_ ~ 0.5): really depends on what is more important for the application. In general, _rc_ ~ 0.5 has a good balance among the three criteria.
 
-- as _rc_ increase, the worst case _p_ also increase.
+- as _rc_ increase, the _p_ of the worst case also increase.
+
+- of course, low _rc_ does not make sense, reasoning about the uncertain! Its efficiency is quite good: the few times the agent succeed to cross the grid, it did it quite fast. This result is unlikely (see efficacy).

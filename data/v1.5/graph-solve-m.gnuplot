@@ -48,14 +48,16 @@ do for [rc in RCS] {
     plot fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $9 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2 ,\
          fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
          "stats-g3-solve-m-5walls-v3-to.csv" using 2:($1 == rc ? $3*10000/($3+$4) : 1/0) axis x1y2 title "efficacy rc=".rc smooth sbezier with line dashtype 5 lw 2,\
-         fileR using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier
+         fileR using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2
 }
 
 set output "graphs/solve-m-a-eff.pdf"
 set key bottom right
 unset y2label
 unset y2tics
-plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $9 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2
+plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $9 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2,\
+     fileR using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2
+
 
 set output "graphs/solve-m-a-cost.pdf"
 unset ylabel
