@@ -16,7 +16,7 @@ The agent *behaviour* is:
 
 We *measure*:
 
-- efficacy. We measure whether the agent _successfully_ cross the grid before a timeout;
+- effectiveness. We measure whether the agent _successfully_ cross the grid before a timeout;
 - efficiency. We measure the _number of actions_ the agent does to achieve its goal; and
 - the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so the number of _visited states_ is used.
 
@@ -38,7 +38,7 @@ We *vary*:
 
 == Results
 
-It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. 895 episodes. Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved. (to read the efficacy in the graph, the y line for 100000 visited states corresponds to 100% of efficacy.)
+It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies from 0 to 1 (x-axis). Number of walls is 5. 895 episodes. Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved. (to read the effectiveness in the graph, the y line for 100000 visited states corresponds to the fact that the agent is effective 100% of the executions.)
 
 The objective is to evaluate _rc_ in the search for recovery plans. (it is not the use of matrix to detect future failures.)
 
@@ -47,18 +47,19 @@ image:graphs/solve-m-states-0.9.pdf.png[]
 
 Notes:
 
-- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, a several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (lower efficacy).
+- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, a several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
 
-- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high efficacy of this case). *no cost, no gain*, *random scenario -> random strategy*
+- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappear or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
 
-- Around _p_~0.2 we have the worst performance, both in terms of efficiency and cost, also not great in terms of efficacy. Given this dynamicity, the agent can still dedicate time in the search for recovery plans. Using these plans, the agent moves out of its policy to avoid walls, but these walls will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The recovery plans (expensive to find) might be inefficient in the future when the walls may not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
+- Around _p_~0.2 we have the worst performance in terms of efficiency and cost, also not great in terms of effectiveness. Given this dynamicity, the agent can still dedicate time in the search for recovery plans. Using these plans, the agent moves out of its policy to avoid walls, but these walls will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The recovery plans (expensive to find) might be inefficient in the future when the walls may not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
 
-- The efficiency of random strategy gets better as the environment becomes more dynamic. With _p_ > 0.3, its efficiency is almost the same as solve_M. Notice that there is no cost in this strategy.
+- Around _p_~0.1 we have only 30% of success in crossing the grid! Although the random strategy could be used, since it is always effective, the efficiency is also quite bad. For now, this kind of environment is quite a challenge. (latter we will discover that other values of _rc_ can do better in this environment.)
+
+- The efficiency of the random strategy gets better as the environment becomes more dynamic. With _p_ > 0.3, its efficiency is almost the same as solve_M. Notice that there is no cost in this strategy.
 
 //- With _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that avoids to deviate from the agent policy (that is not optimal in these experiments). When _p_ increases a bit, recovery plans tend to select more efficient plans.
 
 - For _rc_~0.9, better results can be achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
-
 
 - Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.2, after that, it is better to select actions randomly when the policy has no future.
 
@@ -68,34 +69,53 @@ It follows the result of an agent using _s_ = solve_M. The environment dynamicit
 
 The objective is to evaluate different required certainties (_rc_) on different environments, with different dynamicity (_p_).
 
-The following graph shows the behaviour of efficacy (percentage of executions where the agent has crossed the grid before 10 seconds). *As _rc_ decrease, the efficacy decrease*.
+The following graph shows how effective is the agent for different _rc_, measured by percentage of executions where the agent has crossed the grid before 10 seconds. *As _rc_ decreases, the overall effectiveness decreases*. [overall means for all _p_.]
 
 image:graphs/solve-m-a-success.pdf.png[]
 
-The following graph shows the behaviour of efficiency (how many actions to cross the grid). *As _rc_ decrease, the efficiency increase*.
+The following graph shows the behaviour of efficiency, measured by the mean of the number of actions used to cross the grid. *As _rc_ decreases, the overall efficiency increases*.
 
 image:graphs/solve-m-a-eff.pdf.png[]
 
-The following graph shows the behaviour of cost (how many states were visited to select recovery choices) . *As _rc_ decrease, the cost increase*.
+The following graph shows the behaviour of cost, measure by the mean of the number of states visited to select recovery choices. *As _rc_ decreases, the overall cost increases*.
 
 image:graphs/solve-m-a-cost.pdf.png[]
 
-Notes about choosing _rc_:
-
-- high dynamic environment (_p_ ~ 0.9): *high _rc_ is preferable*.
-
-* all _rc_ have equal efficiency.
-
-* high _rc_ has better cost and efficacy. Notice that with _rc_=1 and _p_=1, we have the same case of the random strategy, since no matrix can run in that configuration.
+Notes about choosing _rc_
 
 - low dynamic environment (_p_ ~ 0.1):
 
-* if efficiency is not an issue, high _rc_ is preferable, given the low cost and high efficacy.
+* if effectiveness is an issue, _rc_ =< 0.5 is preferred. _p_=1 is also effective, but its efficiency is quite bad.
 
-* if efficiency is an issue, _rc_ ~ 0.9 has a good balance (not so much cost, not so bad efficacy)
+* if efficiency is an issue, _rc_ < 0.9 is preferred.
 
-//- medium dynamic environment (_p_ ~ 0.5): really depends on what is more important for the application. In general, _rc_ ~ 0.5 has a good balance among the three criteria.
+* if cost is an issue, all values of _rc_ are ok. _p_ ~ 1.0 has better cost, but it performs quite bad in the other criteria.
 
-- as _rc_ increase, the _p_ of the worst case also increase.
+* _rc_ ~ 0.5 seems the general best option.
 
-- of course, low _rc_ does not make sense, reasoning about the uncertain! Its efficiency is quite good: the few times the agent succeed to cross the grid, it did it quite fast. This result is unlikely (see efficacy).
+- medium dynamic environment (_p_ ~ 0.5)
+
+* if effectiveness is an issue, _rc_ >= 0.9 should be chosen.
+
+* if efficiency is an issue, _rc_ =< 0.7 is preferred. Although the differences may be not relevant for some applications.
+
+* if cost is an issue, 0.5 =< _rc_ =< 0.7 has worst cost
+
+* _rc_ ~ 0.9 seems the general best option.
+
+
+- high dynamic environment (_p_ ~ 0.9):
+
+* regarding effectiveness, _rc_ >= 0.5 should be chosen.
+
+* regarding efficiency, all values have similar results.
+
+* regarding cost, _rc_ >= 0.7 should be chosen.
+
+* _rc_ ~ 1.0 seems the general best option. Notice that with _rc_=1 and _p_=1, we have the same case of the random strategy, since no matrix can run in that configuration.
+
+* in general, the random strategy seems a general best option.
+
+- as _p_ increases, the _rc_ worst case also increases.
+
+- _rc_ =< 0.3 is not a good option for any cases. Although the efficiency is quite good, the few times the agent succeed to cross the grid, it did it quite fast, this result is unlikely (see effectiveness).

@@ -47,7 +47,7 @@ do for [rc in RCS] {
     set output "graphs/solve-m-states-".rc.".pdf"
     plot fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $9 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2 ,\
          fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
-         "stats-g3-solve-m-5walls-v3-to.csv" using 2:($1 == rc ? $3*10000/($3+$4) : 1/0) axis x1y2 title "efficacy rc=".rc smooth sbezier with line dashtype 5 lw 2,\
+         "stats-g3-solve-m-5walls-v3-to.csv" using 2:($1 == rc ? $3*10000/($3+$4) : 1/0) axis x1y2 title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2,\
          fileR using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2
 }
 
@@ -71,4 +71,4 @@ plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/
 set output "graphs/solve-m-a-success.pdf"
 set y2range[0:140]
 set y2label "% of goal achievement"
-plot for [rc in RCS] "stats-g3-solve-m-5walls-v3-to.csv" using 2:($1 == rc ? $3*100/($3+$4) : 1/0) axis x1y2 title "efficacy rc=".rc smooth sbezier with line dashtype 5 lw 2
+plot for [rc in RCS] "stats-g3-solve-m-5walls-v3-to.csv" using 2:($1 == rc ? $3*100/($3+$4) : 1/0) axis x1y2 title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2
