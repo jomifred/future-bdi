@@ -93,7 +93,7 @@ Notes about choosing _rc_
 
 * if efficiency is an issue, _rc_ < 0.9 is preferred.
 
-* if cost is an issue, all values of _rc_ are ok. _p_ ~ 1.0 has better cost, but it performs quite bad in the other criteria.
+* if cost is an issue, all values of _rc_ are ok. _p_ ~ 1.0 has better cost, but it performs quite badly in the other criteria.
 
 * _rc_ ~ 0.5 seems the general best option.
 
@@ -122,7 +122,7 @@ Notes about choosing _rc_
 
 - as _rc_ decreases, the _p_ of the worst case  increases (see effectiveness and cost graphs).
 
-- _rc_ =< 0.3 is not a good option for any cases. Although the efficiency is quite good, the few times the agent succeed to cross the grid, it did it quite fast, this result is unlikely (see effectiveness).
+- _rc_ =< 0.3 is not a good option for any cases. Although the efficiency is quite good, the few times the agent succeeded to cross the grid, it did it quite fast, this result is unlikely (see effectiveness).
 
 = Choosing strategy
 
