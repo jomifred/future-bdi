@@ -69,7 +69,7 @@ It follows the result of an agent using _s_ = solve_M. The environment dynamicit
 
 The objective is to evaluate different required certainties (_rc_) on different environments, with different dynamicity (_p_).
 
-The following graph shows how effective is the agent for different _rc_, measured by percentage of executions where the agent has crossed the grid before 10 seconds. *As _rc_ decreases, the overall effectiveness decreases*. [overall means for all _p_.]
+The following graph shows how effective is the agent for different _rc_, measured by percentage of executions where the agent has crossed the grid before 10 seconds. *As _rc_ decreases, the overall effectiveness decreases*. [overall means for all _p_; the area above each line.]
 
 image:graphs/solve-m-a-success.pdf.png[]
 
