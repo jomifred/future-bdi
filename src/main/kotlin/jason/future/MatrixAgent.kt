@@ -73,7 +73,8 @@ class MatrixAgent(
             //acumCost,
             lastFO,
             //myFO,
-            costWeight(), search,
+            costWeight(),
+            search,
             myFO!!.otherAgs)
     }
 }

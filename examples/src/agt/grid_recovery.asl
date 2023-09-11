@@ -8,7 +8,7 @@
 // recovery plan
 -!pos(X,Y)[error(no_future),error_msg(M)]
     : pos(CX,CY) // my location
-      & r_strategy(Sg)
+      & r_strategy(Sg) & Sg \== "ONE"
    <- .print("Future failure for goal pos(",X,",",Y,"): ",M);
       jason.future.plan_for(
           pos(X,Y),

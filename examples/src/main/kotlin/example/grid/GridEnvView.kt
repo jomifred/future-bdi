@@ -59,12 +59,12 @@ class GridEnvView(
         for (s in ForeseeProblemAgent.getImplementedStrategies())
             strategies.addItem(s)
 
-        strategies.selectedItem = ForeseeProblemAgent.strategy()
+        strategies.selectedItem = env.getStrategy()
         strategies.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
                     //println("select ${it.item}")
-                    ForeseeProblemAgent.setStrategy(it.item as ExplorationStrategy)
+                    env.setStrategy(it.item as ExplorationStrategy)
                 }
             }
         }
@@ -107,7 +107,7 @@ class GridEnvView(
                         gModel.add(gModel.SOLUTION, s.l)
                     }
 
-                    strategies.selectedItem = ForeseeProblemAgent.strategy()
+                    strategies.selectedItem = env.getStrategy()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }

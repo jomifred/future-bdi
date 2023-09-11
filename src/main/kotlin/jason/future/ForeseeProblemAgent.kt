@@ -5,8 +5,6 @@ import jason.asSemantics.NoOptionException
 import jason.asSemantics.Option
 import jason.asSyntax.ASSyntax
 import jason.infra.local.RunLocalMAS
-import jason.mas2j.AgentParameters
-import jason.runtime.Settings.PROJECT_PARAMETER
 import java.io.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -21,22 +19,22 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     override fun initAg() {
         super.initAg()
         try {
-            val agC = (ts.settings.userParameters[PROJECT_PARAMETER] as AgentParameters).agClass
+            /*val agC = (ts.settings.userParameters[PROJECT_PARAMETER] as AgentParameters).agClass
             if (agC.parameters.isNotEmpty()) {
                 var dStrategy = agC.getParameter(0)
                 dStrategy = dStrategy.substring(1, dStrategy.length - 1)
-                recoverStrategy = ExplorationStrategy.valueOf(dStrategy)
-            }
+                //recoverStrategy = ExplorationStrategy.valueOf(dStrategy)
+            }*/
 
             val conf = Properties()
             try {
                 conf.load(FileReader("params.properties"))
                 rCertainty = conf.getOrDefault("requiredCertainty", rCertainty).toString().toDouble()
 
-                data.strategy = ExplorationStrategy.valueOf(
+                /*data.strategy = ExplorationStrategy.valueOf(
                     conf.getOrDefault("recover_strategy", "NONE").toString())
                 addBel(ASSyntax.parseLiteral("r_strategy(\"${data.strategy}\")"))
-                recoverStrategy = data.strategy
+                recoverStrategy = data.strategy*/
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -66,7 +64,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         //println("In select option for ${defaultOption?.evt?.trigger}")
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || recoverStrategy == ExplorationStrategy.NONE
+            || data.strategy == ExplorationStrategy.NONE
             || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
@@ -88,7 +86,7 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     companion object {
         private var msg: String = ""
-        private var recoverStrategy = ExplorationStrategy.SOLVE_M
+        //private var recoverStrategy = ExplorationStrategy.SOLVE_M
         private var solution      : MutableList<State> = mutableListOf()
         val visitedStates = ConcurrentHashMap.newKeySet<State>()
         val data = ExperimentData()
@@ -98,12 +96,12 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
         fun getSolution() = solution
-        fun strategy() = recoverStrategy
+        /*fun strategy() = recoverStrategy
         fun setStrategy(e: ExplorationStrategy) {
             recoverStrategy = e
             println("exploration set to $e")
             msg = ""
-        }
+        }*/
 
         fun setMsg(s: String) { msg = s }
         fun getMsg() = msg

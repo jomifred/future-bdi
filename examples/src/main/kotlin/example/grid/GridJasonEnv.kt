@@ -7,10 +7,10 @@ import jason.asSyntax.NumberTerm
 import jason.asSyntax.StringTerm
 import jason.asSyntax.Structure
 import jason.environment.Environment
-import jason.future.Action
-import jason.future.EnvironmentModel
-import jason.future.MatrixCapable
+import jason.future.*
 import jason.runtime.RuntimeServicesFactory
+import java.io.FileReader
+import java.util.*
 import java.util.logging.Logger
 import kotlin.concurrent.thread
 
@@ -50,6 +50,14 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
                 if (a.startsWith("no_gui")) {
                     gui = false
                 }
+
+                try {
+                    val conf = Properties()
+                    conf.load(FileReader("params.properties"))
+                    setStrategy(conf.getOrDefault("recover_strategy", "NONE").toString())
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
         if (gui) {
@@ -68,6 +76,15 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     }
 
     override fun getModel(): EnvironmentModel<GridState, Action> = model
+
+    fun getStrategy() = ForeseeProblemAgent.data.strategy
+
+    fun setStrategy(s: ExplorationStrategy) {
+        ForeseeProblemAgent.data.strategy = s
+    }
+    fun setStrategy(s: String) {
+        setStrategy(ExplorationStrategy.valueOf(s))
+    }
 
     var delay : Long = 100
 
@@ -92,5 +109,6 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     internal fun updateAgPercept(agName: String) {
         clearPercepts(agName)
         addPercept(agName, *(model.agPerception(agName).toTypedArray()))
+        addPercept(agName, ASSyntax.parseLiteral("r_strategy(\"${ForeseeProblemAgent.data.strategy}\")"))
     }
 }
