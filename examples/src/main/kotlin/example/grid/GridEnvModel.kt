@@ -80,17 +80,17 @@ open class GridEnvModel(
         )
 
     private val actions = listOf(
-        Action("n"),
-        Action("nw"),
-        Action("ne"),
-        Action("w"),
-        Action("e"),
-        Action("s"),
-        Action("sw"),
-        Action("se"),
+        Action("n", 1.0),
+        Action("nw",1.4),
+        Action("ne",1.4),
+        Action("w", 1.0),
+        Action("e", 1.0),
+        Action("s", 1.0),
+        Action("sw",1.4),
+        Action("se",1.4),
     ).associateBy { it.name }
 
-    private val skip = Action("skip")
+    private val skip = Action("skip", 1.9)
 
     override fun actions() = actions.values
 

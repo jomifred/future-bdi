@@ -53,11 +53,14 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
     override fun executeAction(agName: String, action: Structure): Boolean {
         val dmodel = model as DynamicGridEnvModel
-        ForeseeProblemAgent.data.nbActions++ // stats
 
         // test if action moves to a free location and produce action failure if not
         val a = dmodel.structureToAction(agName, action)
         val s = dmodel.currentState()
+
+        ForeseeProblemAgent.data.nbActions++ // stats
+        ForeseeProblemAgent.data.actionsCost += a.cost
+
         if (dmodel.hasObject(OBSTACLE, dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
             log.info("*** error trying action $action (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")
             return false

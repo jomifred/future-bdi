@@ -1,6 +1,5 @@
 package example.bridge
 
-import example.grid.GridState
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
 import jason.asSyntax.Structure
@@ -14,10 +13,6 @@ class BridgeEnvModel(
     private var currentState: BridgeState,
     var scenario : Int = 0
 ) : EnvironmentModel<BridgeState, BridgeAction>, GridWorldModel(20, 20, 2) {
-
-    //val DEST = 16 // represent the destination
-    //val VISITED = 32
-    //val SOLUTION = 64
 
     init {
         setScenarioWalls(scenario)
@@ -37,64 +32,28 @@ class BridgeEnvModel(
         setAgPos(0, currentState.l[0])
         setAgPos(1, currentState.l[1])
     }
-//    fun setGoal(c: GridState) {
-//        remove( DEST, goalState.l)
-//        goalState = c
-//        add( DEST, goalState.l)
-//    }
 
     fun setScenarioWalls(i: Int) {
         scenario = i
         removeAll(OBSTACLE)
         addWalls0()
-//        if (scenario > 0) addWalls1()
-//        if (scenario > 1) addWalls2()
-//        if (scenario > 2) addWalls3()
     }
 
     fun addWalls0() {
         addWall(4, 0, 15, 7)
         addWall(4, 9, 15, height - 1)
     }
-    /*    fun addWalls1() {
-        addWall(12,7, 12, 15 )
-        addWall(20,7, 20, 15 )
-    }
-    fun addWalls2() {
-        addWall(12,19,20,19)
-        addWall(12,19, 12, 23 )
-        addWall(20,19, 20, 23 )
-    }
-    fun addWalls3() {
-        addWall(12,23,20,23)
-    }*/
 
     override fun clone(): BridgeEnvModel =
         BridgeEnvModel(
             BridgeState(currentState),
-//            GridState(goalState.l),
             scenario
         )
-
-    /*private val idle = Action("idle")
-
-    private val actions = listOf<Action>(
-        idle,
-        Action("n"),
-        Action("nw"),
-        Action("ne"),
-        Action("w"),
-        Action("e"),
-        Action("s"),
-        Action("sw"),
-        Action("se"),
-    ).associateBy { it.name }*/
-
 
     override fun actions() = emptyList<BridgeAction>()
 
     override fun structureToAction(agName: String, jasonAction: Structure): BridgeAction {
-        return BridgeAction(agNameToNb(agName), jasonAction.functor) // here, only functor is relevant
+        return BridgeAction(agNameToNb(agName), jasonAction.functor, 1.0) // here, only functor is relevant
     }
 
     fun agNameToNb(agName: String) =
@@ -115,7 +74,7 @@ class BridgeEnvModel(
 
     override fun agPerception(agName: String): MutableCollection<Literal> {
         val p = fixedPerception.toMutableList()
-        var ag = agNameToNb(agName)
+        val ag = agNameToNb(agName)
         val l = getAgPos(ag)
         p.add(
             ASSyntax.createLiteral(
@@ -213,5 +172,5 @@ class BridgeState : State {
     override fun hashCode() = l[0].hashCode() + l[1].hashCode() * 31
 }
 
-class BridgeAction(val ag: Int, name:String) : Action(name) {
+class BridgeAction(val ag: Int, name: String, cost: Double) : Action(name, cost) {
 }

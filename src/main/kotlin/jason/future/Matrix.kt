@@ -56,7 +56,7 @@ interface State {
     //fun asPerception(): MutableCollection<Literal>
 }
 
-open class Action(val name: String) {
+open class Action(val name: String, val cost: Double) {
     override fun toString(): String = name
 }
 
