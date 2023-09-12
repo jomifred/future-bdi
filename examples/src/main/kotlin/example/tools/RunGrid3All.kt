@@ -1,14 +1,13 @@
 package example.tools
 
-import java.io.BufferedReader
 import java.io.FileWriter
-import java.io.InputStreamReader
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 fun main(args: Array<String>) {
     var pChange = 0.0
+    val strategy = args[0].uppercase()
     while (pChange <= 1.01) {
 
         var rCert = args[1].toDouble()
@@ -17,7 +16,7 @@ fun main(args: Array<String>) {
             conf.setProperty("pChange", pChange.toString())
             conf.setProperty("requiredCertainty", rCert.toString())
             //conf.setProperty("maxTime", "20000")
-            conf.setProperty("recover_strategy", args[0])
+            conf.setProperty("recover_strategy", strategy)
 
             conf.store(FileWriter("examples/params.properties"), "conf")
 
@@ -41,7 +40,7 @@ fun main(args: Array<String>) {
                 failure = "timeout"
             }
 
-            println("${args[0]}: ${pChange}, ${rCert}, $failure")
+            println("$strategy: ${pChange}, ${rCert}, $failure")
 
             //rCert += 0.1
         //}

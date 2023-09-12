@@ -18,7 +18,7 @@ We *measure*:
 
 - effectiveness. We measure whether the agent _successfully_ cross the grid before a timeout;
 
-- efficiency. We measure the _number of actions_ the agent does to achieve its goal; and
+- efficiency. We measure the cost of the actions performed by the agent to achieve its goal (the travelled _path length_); and
 
 - the cost of that efficiency. We considered to measure elapse time, number of created matrices, and number of visited states. All three are very correlated, so the number of _visited states_ is used.
 
@@ -44,7 +44,7 @@ It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies
 
 //Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved.
 
-_Effectiveness_ is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) _Efficiency_ is measured by the mean of the number of actions used to cross the grid. _Cost_ is measure by the mean of the number of states visited in the search for recovery plans.
+_Effectiveness_ is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) _Efficiency_ is measured by the mean of the length of paths used to cross the grid. _Cost_ is measure by the mean of the number of states visited in the search for recovery plans.
 
 The objective is to evaluate _rc_ in the search for recovery plans. (it is not the use of matrix to detect future failures.)
 
@@ -53,7 +53,7 @@ image:graphs/solve-m-states-0.9.pdf.png[]
 
 Notes:
 
-- The best efficiency (less actions to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
+- The best efficiency (the shortest path to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
 
 - With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappears or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
 
@@ -64,6 +64,8 @@ Notes:
 - The efficiency of the random strategy gets better as the environment becomes more dynamic. With _p_ > 0.3, its efficiency is almost the same as solve_M. Notice that there is no cost in this strategy.
 
 //- With solve_p and _p_=0 we do not have the best efficiency! The reason is the solve_f strategy, that avoids deviating from the agent policy (that is not optimal in these experiments). When _p_ increases a bit, recovery plans tend to select more efficient plans.
+
+- effectiveness and cost are correlated: more cost implies more time to find recovery plans and potentially too much time (timeout).
 
 - For _rc_~0.9, better results are achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in an environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
 

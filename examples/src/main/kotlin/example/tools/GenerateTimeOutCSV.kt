@@ -9,22 +9,22 @@ import java.io.FileReader
 import java.io.FileWriter
 
 fun main(args: Array<String>) {
-    doRC("stats-g3-solve-m-5walls-v3")
-    doRC("stats-g3-random-5walls-v3")
+    doRC("stats-g3-solve-m-5walls-v4")
+    doRC("stats-g3-random-5walls-v4")
 }
 
 fun doRC(fileName: String) {
     println("Processing $fileName")
-    val byRC = load("../data/v1.5/$fileName.csv")
+    val byRC = load("../data/v1.5/runs/$fileName.csv")
 
-    BufferedWriter(FileWriter("../data/v1.5/$fileName-to.csv")).use {out ->
+    BufferedWriter(FileWriter("../data/v1.5/runs/$fileName-to.csv")).use {out ->
         CSVPrinter(out, CSVFormat.DEFAULT.builder().setHeader(
             "rc", "p", "ontime", "timeout"
         ).build()).use { csvPrinter ->
             byRC.forEach { (rc, le) ->
                 val ot = le.count { it.success.equals("ontime") }
                 val to = le.count { it.success.equals("timeout") }
-                println("$rc: $ot $to ${le.size}")
+                println("$rc: $ot + $to = ${le.size}")
 
                 byP(le).forEach {(p, le) ->
                     val ot = le.count { it.success.equals("ontime") }
