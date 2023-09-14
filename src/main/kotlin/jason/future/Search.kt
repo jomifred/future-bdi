@@ -74,7 +74,7 @@ open class Search (
                         ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     //val planStr = mainAg.storeGoodOptions(fo)
                     println("   plan is ${fo.allActions()}")
-                    //storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
+                    storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
 
                     return fo //.ag.originalOption
                 }
@@ -123,7 +123,7 @@ open class Search (
     }
 
     fun storeStats(fo: FutureOption?, nbOptions: Int, statesVisited: Int, defaultPlan: Set<State>) {
-        if (statesVisited <= 0)
+        if (statesVisited <= 0 || strategy == ExplorationStrategy.ONE)
             return
         try {
             BufferedWriter(FileWriter("stats.txt", true)).use { out ->

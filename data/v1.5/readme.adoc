@@ -44,7 +44,7 @@ It follows the result of an agent using _s_ = solve_M and _rc_ = 0.9, _p_ varies
 
 //Executions that took more than 10 seconds were aborted and the agent goal is considered not achieved.
 
-_Effectiveness_ is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) _Efficiency_ is measured by the mean of the length of paths used to cross the grid. _Cost_ is measure by the mean of the number of states visited in the search for recovery plans.
+_Effectiveness_ is measured by percentage of executions where the agent has crossed the grid before 10 seconds (to read the effectiveness in the graph, y=100000 corresponds to the fact that the agent is effective in 100% of the executions.) _Efficiency_ is measured by the mean of the length of paths used to cross the grid. _Cost_ is measure by the mean of the number of states visited in the search for recovery plans (considering both successful and timeout executions).
 
 The objective is to evaluate _rc_ in the search for recovery plans. (it is not the use of matrix to detect future failures.)
 
@@ -55,7 +55,7 @@ Notes:
 
 - The best efficiency (the shortest path to achieve the goal) is obtained when the environment is not so dynamic (_p_ < 0.1), since the agent can find a good recovery plan that remains good during the episode. It pays for that, of course. In this configuration, several states are visited in the search for that recovery plan. *we pay for efficiency*. That cost may be so high that the agent misses the deadline (not effective).
 
-- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its policy can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappears or the random movements will place it in a state where its policy can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
+- With _p_ > 0.5, the agent has not enough certainty about the future of its environment to properly search for recovery plans and thus few states are visited (low cost). When its preference can not be applied (the selected plan leads to a bad future) and no recovery plans can be found (for lack of certainty), the agent simply acts randomly. In case it gets stuck, either the wall blocking it disappears or the random movements will place it in a state where its preferences can be applied again, hopefully achieving its goal (so the high effectiveness of this case). *no cost, no gain*, *random scenario -> random strategy*
 
 - Around _p_~0.2 we have the worst performance in terms of efficiency and cost, also not great in terms of effectiveness. Given this dynamicity, the agent can still dedicate time in the search for recovery plans. Using these plans, the agent moves out of its policy to avoid walls, but these walls will likely disappear (specially walls that are far from the agent). To deviate produces unnecessary steps (thus the low efficiency). The recovery plans (expensive to find) might be inefficient in the future when the walls may not be there anymore or others are added. *waist of energy (computational and actions) for an uncertainty environment*
 
@@ -69,7 +69,7 @@ Notes:
 
 - For _rc_~0.9, better results are achieved in an environment that is either more static or highly dynamic. It is particularly difficult to be effective/efficient/cheap in an environment with _p_ ~ 0.2. (this _p_ value changes as we change _rc_ as seen in the next Section.)
 
-- Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.2, after that, it is better to select actions randomly when the policy has no future.
+- Conclusion, in configurations (., 0.9, solve_M), it is useful to search for recovery plans until _p_ < 0.2, after that, it is better to select actions randomly when the policy preference has no future.
 
 = Choosing _rc_
 

@@ -2,18 +2,14 @@ cd ../..
 
 ./gradlew build
 
-S=solve_m
-V=v4
-RC=0.9
-
-SOURCE=examples/stats.csv
-RESULT=data/v1.5/runs/stats-g3-$S-5walls-$V.csv
+SOURCE=examples/stats.txt
+RESULT=data/v1.4/stats-g2.txt
 touch $SOURCE
 touch $RESULT
 rm $SOURCE
 
 kotlin -cp examples/build/libs/examples.jar:build/libs/jason-f-1.5.jar \
-   example.tools.RunGrid3AllKt \
-   $S $RC
+   example.tools.RunGrid2AllKt
+
 cp $RESULT $RESULT.old
-cat $SOURCE >> $RESULT
+cp $SOURCE $RESULT

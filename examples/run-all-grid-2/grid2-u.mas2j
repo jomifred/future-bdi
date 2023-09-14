@@ -1,0 +1,11 @@
+// agent has a plan to recover from failure (due to no future)
+
+MAS grid2 {
+
+    environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("U"))
+
+    agents:
+        grid2ag agentClass jason.future.ForeseeProblemAgent;
+
+    aslSourcePath: "src/agt"; "run-all-grid-2";
+}

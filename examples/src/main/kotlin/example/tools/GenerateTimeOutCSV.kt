@@ -9,7 +9,7 @@ import java.io.FileReader
 import java.io.FileWriter
 
 fun main(args: Array<String>) {
-    doRC("stats-g3-solve-m-5walls-v4")
+    doRC("stats-g3-solve_m-5walls-v4")
     doRC("stats-g3-random-5walls-v4")
 }
 

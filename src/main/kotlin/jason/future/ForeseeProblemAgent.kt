@@ -140,7 +140,7 @@ class ExperimentData {
                     out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time, timeout, cost")
                 //val sNbAct = if (timeout) (nbActions+500).toDouble() else nbActions.toString()
                 val sNbAct = nbActions.toString()
-                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.4f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $sNbAct, ${System.currentTimeMillis()-startT}, $toS, $actionsCost")
+                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.4f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $sNbAct, ${System.currentTimeMillis()-startT}, $toS, ${"%.2f".format(actionsCost)}")
             }
         } catch (e: IOException) {
             e.printStackTrace()

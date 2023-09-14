@@ -56,6 +56,7 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
                     conf.load(FileReader("params.properties"))
                     setStrategy(conf.getOrDefault("recover_strategy", "NONE").toString())
                 } catch (e: Exception) {
+                    setStrategy(ExplorationStrategy.SOLVE_M)
                     e.printStackTrace()
                 }
             }
@@ -90,7 +91,13 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
     override fun executeAction(agName: String, action: Structure): Boolean {
         val prePos = model.getAgPos(0)
-        model.execute( model.structureToAction(agName, action) )
+        val a = model.structureToAction(agName, action)
+
+        model.execute( a )
+
+        ForeseeProblemAgent.data.nbActions++ // stats
+        ForeseeProblemAgent.data.actionsCost += a.cost
+
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
         if (delay>0)
             Thread.sleep(delay)

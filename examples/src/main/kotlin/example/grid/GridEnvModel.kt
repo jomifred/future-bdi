@@ -7,12 +7,13 @@ import jason.environment.grid.GridWorldModel
 import jason.environment.grid.Location
 import jason.future.Action
 import jason.future.EnvironmentModel
+import jason.future.ForeseeProblemAgent
 import jason.future.State
 
 open class GridEnvModel(
     protected var currentState: GridState,
-    var goalState   : GridState,
-    var scenario    : Int = 0,
+    var goalState    : GridState,
+    var scenario     : Int = 0,
     var wwidth       : Int = 30,
     var wheight      : Int = 30
 ) : EnvironmentModel<GridState, Action>, GridWorldModel(wwidth, wheight, 1) {
@@ -25,6 +26,8 @@ open class GridEnvModel(
         setScenarioWalls(scenario)
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
+
+        ForeseeProblemAgent.data.scenario = id()
     }
 
     override fun id() =
