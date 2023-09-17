@@ -103,9 +103,9 @@ Notes about choosing _rc_
 
 * if effectiveness is an issue, _rc_ >= 0.9 should be chosen.
 
-* if efficiency is an issue, _rc_ =< 0.7 is preferred. Although the differences may be not relevant for some applications.
+* if efficiency is an issue, _rc_ =< 0.7 is preferred. Although the differences are not significative.
 
-* if cost is an issue, 0.5 =< _rc_ =< 0.7 has worst cost
+* if cost is an issue, rc =< 0.9
 
 * _rc_ ~ 0.9 seems the general best option.
 

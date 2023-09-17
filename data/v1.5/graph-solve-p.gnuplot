@@ -1,9 +1,17 @@
 #!/opt/local/bin/gnuplot -persist
-set title "(rc=0.9)"
-
 set datafile separator ","
+set datafile missing "NaN"
+#unset datafile
+
+version="v4"
+fileM  ="runs/stats-g3-solve_p-5walls-".version.".csv"
+fileR  ="runs/stats-g3-random-5walls-".version.".csv"
+fileTOM="runs/stats-g3-solve_p-5walls-".version."-to.csv"
+
+#set title "(solve-p)"
+
 set xlabel "probability of change (p)"
-set ylabel "# actions"
+set ylabel "path length"
 set key top right
 
 set terminal pdfcairo
@@ -11,33 +19,54 @@ set terminal pdfcairo
 
 set y2tics
 set ytics nomirror
-set yrange [70:25] reverse
-
-#fileP="stats-g3-solve-p90-5walls.csv"
-#fileF="stats-g3-solve-f90-5walls-final.csv"
-fileP="stats-g3-solvep-5walls-v2.csv"
-fileF="stats-g3-solvef-5walls-v2.csv"
-
-set output "g-solve-p-visited.pdf"
-
-#set y2range [900:4500] # for time
-#set y2label "# time (ms)"
-
-set y2range [1:3500] # for states
-set y2label "# visited states"
-#set logscale y2
-
+set yrange [170:17] reverse
+set y2range[0:14000]
 set xrange [0.0:1.0]
-plot fileP using 2:($5 == 0.9 ? $9 : 1/0) title "efficiency P" smooth sbezier, \
-     fileF using 2:($5 == 0.9 ? $9 : 1/0) title "efficiency F" smooth sbezier, \
-     "stats-g3-random-5walls.csv" using 2:9 title "efficiency of no recovery" smooth sbezier, \
-     fileP using 2:($5 == 0.9 ? $8 : 1/0) title "cost P" smooth sbezier axis x1y2, \
-     fileF using 2:($5 == 0.9 ? $8 : 1/0) title "cost F" smooth sbezier axis x1y2
 
-#plot file using 2:9 title "efficiency" smooth sbezier, \
-#     file using 2:7 title "cost" smooth sbezier axis x1y2
-#     #"stats-g3-random90-5walls-final.csv" using 2:9 title "random agent" smooth sbezier, \
+set y2label "# visited states"
 
-#     "stats-g3-solve-f-90.csv" using 2:9 title "actions"  smooth sbezier,\
-#     "data-j.csv"  title "Jason"    smooth sbezier,\
-#     "data-er2.csv" title "JasonER-with-done" smooth sbezier
+#RCS = "1.0 0.95 0.9 0.7 0.5 0.3 0.1"
+RCS = "0.9"
+
+#
+# to analise each RC
+#
+
+do for [rc in RCS] {
+    set key bottom right
+    set output "graphs/solve-p-states-".rc."-".version.".pdf"
+    plot fileM   using 2:($5 == rc && strcol(11) eq "ontime" ? $12 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2 ,\
+         fileM   using 2:($5 == rc                           ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
+         fileTOM using 2:($1 == rc ? $3*10000/($3+$4) : 1/0) axis x1y2 title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2,\
+         fileR   using 2:(strcol(11) eq "ontime"? $12 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2,\
+
+         #fileM   using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
+         #fileR   using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 4 lw 2
+}
+
+#
+# to compare different RCs
+#
+set output "graphs/solve-p-a-eff-".version.".pdf"
+set key bottom right
+unset y2label
+unset y2tics
+plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $9 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2,\
+     fileR using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2
+
+
+set output "graphs/solve-p-a-cost-".version.".pdf"
+unset ylabel
+unset ytics
+set key top right
+set ylabel "# visited states"
+set yrange[0:14000]
+set ytics
+plot for [rc in RCS] fileM using 2:($5 == rc ? $8 : 1/0) title "cost rc=".rc smooth sbezier with line lw 2
+#plot for [rc in RCS] fileM using 2:($5 == rc ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2
+#plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2
+
+set output "graphs/solve-p-a-success-".version.".pdf"
+set ylabel "% of goal achievement"
+set yrange[0:140]
+plot for [rc in RCS] fileTOM using 2:($1 == rc ? $3*100/($3+$4) : 1/0) title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2

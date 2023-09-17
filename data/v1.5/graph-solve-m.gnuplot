@@ -36,11 +36,11 @@ do for [rc in RCS] {
     set key bottom right
     set output "graphs/solve-m-states-".rc."-".version.".pdf"
     plot fileM   using 2:($5 == rc && strcol(11) eq "ontime" ? $12 : 1/0) title "efficiency rc=".rc smooth sbezier with line lw 2 ,\
-         fileM   using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
          fileM   using 2:($5 == rc                           ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
          fileTOM using 2:($1 == rc ? $3*10000/($3+$4) : 1/0) axis x1y2 title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2,\
          fileR   using 2:(strcol(11) eq "ontime"? $12 : 1/0) title "efficiency random" smooth sbezier with line dashtype 3 lw 2,\
 
+         #fileM   using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2,\
          #fileR   using 2:(strcol(11) eq "ontime"? $9 : 1/0) title "efficiency random" smooth sbezier with line dashtype 4 lw 2
 }
 
@@ -59,13 +59,14 @@ set output "graphs/solve-m-a-cost-".version.".pdf"
 unset ylabel
 unset ytics
 set key top right
-set y2label "# visited states"
-set y2tics
-#set y2range[0:13000]
-plot for [rc in RCS] fileM using 2:($5 == rc ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2
+set ylabel "# visited states"
+set yrange[0:14000]
+set ytics
+plot for [rc in RCS] fileM using 2:($5 == rc ? $8 : 1/0) title "cost rc=".rc smooth sbezier with line lw 2
+#plot for [rc in RCS] fileM using 2:($5 == rc ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2
 #plot for [rc in RCS] fileM using 2:($5 == rc && strcol(11) eq "ontime" ? $8 : 1/0) title "cost rc=".rc axis x1y2 smooth sbezier with line lw 2
 
 set output "graphs/solve-m-a-success-".version.".pdf"
-set y2range[0:140]
-set y2label "% of goal achievement"
-plot for [rc in RCS] fileTOM using 2:($1 == rc ? $3*100/($3+$4) : 1/0) axis x1y2 title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2
+set ylabel "% of goal achievement"
+set yrange[0:140]
+plot for [rc in RCS] fileTOM using 2:($1 == rc ? $3*100/($3+$4) : 1/0) title "effectiveness rc=".rc smooth sbezier with line dashtype 5 lw 2
