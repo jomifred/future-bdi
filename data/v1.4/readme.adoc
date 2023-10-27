@@ -9,7 +9,7 @@ Scenario U:: good for the agent policy, it needs to anticipate that entering ins
 
 image:screens/u-m.png[]
 
-Scenario H:: bad for the policy
+Scenario H:: bad for the policy. H2 does not consider actions to north.
 
 image:screens/h-m.png[]
 
@@ -31,6 +31,10 @@ image:screens/h-m.png[]
 | H | SOLVE_P | yes | 826 | 12353 | 25 | 14 (56%)
 | H | SOLVE_M | yes | 774 | 11372 | 25 | 14 (56%)
 | H | SOLVE_F | yes | 677 | 11053 | 28 | 17 (60%)
+
+| H2 | SOLVE_P | yes | 513 | 7869 | 25 | 14 (56%)
+| H2 | SOLVE_M | yes | 488 | 7353 | 25 | 14 (56%)
+| H2 | SOLVE_F | yes | 440 | 7132 | 27 | 16 (59%)
 
 |===
 

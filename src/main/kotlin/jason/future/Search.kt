@@ -123,8 +123,8 @@ open class Search (
     }
 
     fun storeStats(fo: FutureOption?, nbOptions: Int, statesVisited: Int, defaultPlan: Set<State>) {
-        if (true)
-            return // disable for now
+//        if (true)
+//            return // disable for now
         if (statesVisited <= 0 || strategy == ExplorationStrategy.ONE)
             return
         try {
