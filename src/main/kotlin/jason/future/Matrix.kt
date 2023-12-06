@@ -68,7 +68,7 @@ interface AgentModel<T : State> {
 interface StopConditions {
     fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
         intention.isFinished
-    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean) : Boolean =
+    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, env: EnvironmentModel<State,Action>) : Boolean =
         hasLoop || stepsWithoutAct > 200
     fun stop(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, certainty: Double) : Boolean =
         steps > 5000

@@ -143,20 +143,16 @@ class BridgeEnvModel(
     }
 }
 
+/**
+ * A Brdige state is the location of agent A and location of agent B
+ */
 class BridgeState : State {
     val l: Array<Location>
 
-    //val la: Location // jason grid location for agent A
-    //val lb: Location // for agent B
-
     constructor(xa: Int, ya: Int, xb: Int, yb: Int) {
-        //la = Location(xa,ya)
-        //lb = Location(xb,yb)
         l = arrayOf(Location(xa,ya), Location(xb,yb))
     }
     constructor(a: Location, b: Location) {
-        //la = a
-        //lb = b
         l = arrayOf(a,b)
     }
     constructor(b: BridgeState) : this(b.l[0], b.l[1])
@@ -170,6 +166,14 @@ class BridgeState : State {
     }
 
     override fun hashCode() = l[0].hashCode() + l[1].hashCode() * 31
+
+    /*override fun asJason() =
+        ASSyntax.createLiteral("bridge_s",
+            NumberTermImpl(l[0].x.toDouble()),
+            NumberTermImpl(l[0].y.toDouble()),
+            NumberTermImpl(l[1].x.toDouble()),
+            NumberTermImpl(l[1].y.toDouble())
+        )*/
 }
 
 class BridgeAction(val ag: Int, name: String, cost: Double) : Action(name, cost) {

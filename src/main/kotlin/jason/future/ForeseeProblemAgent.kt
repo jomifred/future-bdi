@@ -9,7 +9,10 @@ import java.io.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-/** agent that considers the future */
+/**
+ *  agent that considers the future
+ *  and problems like loops in the behaviour/goal not achieved
+ */
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 

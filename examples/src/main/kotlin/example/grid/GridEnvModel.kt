@@ -2,6 +2,7 @@ package example.grid
 
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
+import jason.asSyntax.NumberTermImpl
 import jason.asSyntax.Structure
 import jason.environment.grid.GridWorldModel
 import jason.environment.grid.Location
@@ -14,8 +15,8 @@ open class GridEnvModel(
     protected var currentState: GridState,
     var goalState    : GridState,
     var scenario     : Int = 0,
-    var wwidth       : Int = 30,
-    var wheight      : Int = 30
+    wwidth       : Int = 30,
+    wheight      : Int = 30
 ) : EnvironmentModel<GridState, Action>, GridWorldModel(wwidth, wheight, 1) {
 
     val DEST = 16 // represent the destination
@@ -227,5 +228,10 @@ open class GridState : State {
     override fun hashCode() = l.hashCode()
 
     fun distance(l: GridState) = this.l.distanceEuclidean(Location(l.l.x, l.l.y))
+
+    /*override fun asJason() =
+        ASSyntax.createLiteral("pos",
+            NumberTermImpl(l.x.toDouble()),
+            NumberTermImpl(l.y.toDouble()))*/
 }
 

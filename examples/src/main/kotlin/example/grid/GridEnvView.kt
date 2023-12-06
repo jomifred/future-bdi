@@ -17,7 +17,7 @@ import javax.swing.JPanel
 import kotlin.concurrent.thread
 
 /** class that implements the View of Grid Env */
-class GridEnvView(
+open class GridEnvView(
     val gModel: GridEnvModel,
     private val env: GridJasonEnv)
     : GridWorldView(gModel, "Future!", 800) {

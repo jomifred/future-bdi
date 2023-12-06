@@ -1,5 +1,11 @@
 = Release notes
 
+== version 1.6
+
+- normative scenario
+
+- `grid4.mas2j`
+
 == version 1.5
 
 - _dynamic_ environment

@@ -1,0 +1,15 @@
+// normative scenario (limit traffic zone)
+
+// run with
+//     ./gradlew :examples:run --args="grid4.mas2j"
+
+
+MAS grid4 {
+
+    environment: example.normative_grid.LTZGridJasonEnv(init(15,2),goal(15,25))
+
+    agents:
+        grid_recovery agentClass jason.future.NForeseeProblemAgent;
+
+    aslSourcePath: "src/agt";
+}

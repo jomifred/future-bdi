@@ -58,8 +58,9 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
         val a = dmodel.structureToAction(agName, action)
         val s = dmodel.currentState()
 
-        ForeseeProblemAgent.data.nbActions++ // stats
-        ForeseeProblemAgent.data.actionsCost += a.cost
+        // done in super
+        //ForeseeProblemAgent.data.nbActions++ // stats
+        //ForeseeProblemAgent.data.actionsCost += a.cost
 
         if (dmodel.hasObject(OBSTACLE, dmodel.getAdjacent(s).getOrDefault(a.name, s).l )) {
             log.info("*** error trying action $action (${a.name}) from ${dmodel.currentState()} to a non free location ${dmodel.getAdjacent(s).getOrDefault(a.name, s).l}")

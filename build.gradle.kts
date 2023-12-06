@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "io.github.jason-lang"
-version = "1.5"
+version = "1.6"
 
 repositories {
     mavenCentral()

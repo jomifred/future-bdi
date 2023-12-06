@@ -16,7 +16,7 @@ class MatrixRunner (
 
     fun success() = conds.success(historyS, steps, fo.intention())
 
-    fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop)
+    fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop, env)
 
     fun stop() = conds.stop(historyS, steps, stepsWithoutAct, hasLoop, certainty)
 
