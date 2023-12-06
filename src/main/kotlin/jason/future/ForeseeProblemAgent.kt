@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
 open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
 
     /** required certainty to progress running matrix */
-    var rCertainty = 0.0
+    private var rCertainty = 0.0
 
     override fun initAg() {
         super.initAg()

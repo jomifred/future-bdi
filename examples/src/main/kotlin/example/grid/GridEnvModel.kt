@@ -22,6 +22,8 @@ open class GridEnvModel(
     val DEST = 16 // represent the destination
     val VISITED = 32
     val SOLUTION = 64
+    val LT_ZONE = 128
+
 
     init {
         setScenarioWalls(scenario)

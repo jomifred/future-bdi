@@ -123,6 +123,7 @@ open class GridEnvView(
             gModel.DEST -> drawDest(g, x, y)
             gModel.VISITED -> drawVisited(g, x, y)
             gModel.SOLUTION -> drawSolution(g, x, y)
+            gModel.LT_ZONE -> drawZone(g, x, y)
             else -> { }
         }
     }
@@ -143,5 +144,10 @@ open class GridEnvView(
     private fun drawSolution(g: Graphics, x: Int, y: Int) {
         g.color = Color.cyan
         g.fillRect(x * cellSizeW + 4, y * cellSizeH + 4, cellSizeW - 8, cellSizeH - 8)
+    }
+
+    private fun drawZone(g: Graphics, x: Int, y: Int) {
+        g.color = Color.yellow
+        g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4)
     }
 }

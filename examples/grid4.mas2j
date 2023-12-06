@@ -9,7 +9,7 @@ MAS grid4 {
     environment: example.normative_grid.LTZGridJasonEnv(init(15,2),goal(15,25))
 
     agents:
-        grid_recovery agentClass jason.future.NForeseeProblemAgent;
+        grid_recovery agentClass jason.future.NForeseeProblemAgent("norms.npl");
 
     aslSourcePath: "src/agt";
 }

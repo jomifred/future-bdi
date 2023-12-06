@@ -13,8 +13,6 @@ class LTZGridEnvModel(
     goalState   : GridState,
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 30,30) {
 
-    val LT_ZONE = 128
-
     override fun id() = "ltz-grid"
 
     init {
@@ -48,7 +46,7 @@ class LTZGridEnvModel(
         return p
     }
 
-    fun addLTZ()  {
+    private fun addLTZ()  {
         for (x in 10..20)
             for (y in 9..15)
                 add(LT_ZONE,x,y)
