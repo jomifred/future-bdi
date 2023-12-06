@@ -1,11 +1,16 @@
 package jason.future
 
+import npl.NPLInterpreter
+import java.util.logging.Logger
+
 /** Executes the matrix (simulated world) */
 class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
     val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
     val fo     : FutureOption // future option that started this Matrix
 )  {
+    protected var logger = Logger.getLogger(MatrixRunner::class.java.name)
+
     val historyS = mutableListOf<State>()
     private var hasLoop = false
 
@@ -29,7 +34,7 @@ class MatrixRunner (
         ForeseeProblemAgent.data.addNbMatrices()
 
         historyS.add( env.currentState() )
-        while (!stop() && !success() && !failure()) {
+        while (!stop() && !success() && failure() == null) {
             steps++
 
             // run one step of each agent (percept/deliberate), so all see the same state
@@ -61,6 +66,7 @@ class MatrixRunner (
         }
         //println("    simulation finished in $rcCounter reasoning cycles. intention finished=${intention.isFinished}. problem=${hasProblem()}.")
         //println("    history=$historyS")
+        //logger.info("ended by (stop/success/failure/intention finished) ${stop()}/${success()}/${failure()}/${fo.intention().isFinished}}")
         return historyS
     }
 }

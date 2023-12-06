@@ -8,10 +8,12 @@ version = "1.6"
 
 repositories {
     mavenCentral()
+    maven {url = uri("https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master") }
 }
 
 dependencies {
     implementation("io.github.jason-lang:jason-interpreter:3.3.0-SNAPSHOT")
+    implementation("org.jacamo:npl:0.6-SNAPSHOT")
     //implementation( project(":examples"))
     testImplementation(kotlin("test"))
 }

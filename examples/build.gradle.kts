@@ -9,6 +9,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven {url = uri("https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master") }
 }
 
 dependencies {

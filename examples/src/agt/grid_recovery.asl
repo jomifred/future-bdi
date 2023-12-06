@@ -6,10 +6,10 @@
 -destination(X,Y) <- .drop_all_desires. // drop everything if my destination is removed
 
 // recovery plan
--!pos(X,Y)[error(no_future),error_msg(M)]
+-!pos(X,Y)[error(future_issue(FI)),error_msg(M)]
     : pos(CX,CY) // my location
       & r_strategy(Sg) & Sg \== "ONE"
-   <- .print("Future failure for goal pos(",X,",",Y,"): ",M);
+   <- .print("Future problem for goal pos(",X,",",Y,"): ",FI,", ",M);
       jason.future.plan_for(
           pos(X,Y),
           { @[cost(0), preference(0)]+!pos(X,Y) : pos(CX,CY) },

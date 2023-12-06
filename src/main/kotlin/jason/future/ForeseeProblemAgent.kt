@@ -22,22 +22,10 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     override fun initAg() {
         super.initAg()
         try {
-            /*val agC = (ts.settings.userParameters[PROJECT_PARAMETER] as AgentParameters).agClass
-            if (agC.parameters.isNotEmpty()) {
-                var dStrategy = agC.getParameter(0)
-                dStrategy = dStrategy.substring(1, dStrategy.length - 1)
-                //recoverStrategy = ExplorationStrategy.valueOf(dStrategy)
-            }*/
-
             val conf = Properties()
             try {
                 conf.load(FileReader("params.properties"))
                 rCertainty = conf.getOrDefault("requiredCertainty", rCertainty).toString().toDouble()
-
-                /*data.strategy = ExplorationStrategy.valueOf(
-                    conf.getOrDefault("recover_strategy", "NONE").toString())
-                addBel(ASSyntax.parseLiteral("r_strategy(\"${data.strategy}\")"))
-                recoverStrategy = data.strategy*/
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -76,8 +64,13 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
         search.init( listOf<Option>(defaultOption) )
         search.run()
 
-        if (search.matrix.failure())
-            throw NoOptionException("there will be a failure to handle ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})", ASSyntax.createAtom("no_future"))
+        val failure = search.matrix.failure()
+        if (failure != null) {
+            val msg = "failure foreseen for handling ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})"
+            logger.info("$msg -- $failure")
+            throw NoOptionException(msg, ASSyntax.createLiteral("future_issue", failure)
+            )
+        }
 
         if (envModel()?.hasGUI() == true) solution.addAll(search.matrix.fo.states().first) // GUI
         return defaultOption

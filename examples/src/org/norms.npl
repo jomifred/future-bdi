@@ -1,0 +1,4 @@
+scope main {
+    // all agents are prohibited to be in a Limited Traffic Zone
+    norm n1 : true -> prohibition(A,n1, pos(X,Y) & ltz(X,Y), false).
+}

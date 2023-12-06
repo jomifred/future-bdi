@@ -1,7 +1,10 @@
 package jason.future
 
 import jason.asSemantics.Intention
+import jason.asSyntax.ASSyntax
+import jason.asSyntax.Atom
 import jason.asSyntax.Literal
+import jason.asSyntax.NumberTermImpl
 import jason.asSyntax.Structure
 
 /** general interfaces for the Matrix Model */
@@ -65,11 +68,20 @@ interface AgentModel<T : State> {
 }
 
 /** stop conditions for the matrix */
+private val hasLoopAtom = Atom("has_loop")
+
 interface StopConditions {
+
     fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
         intention.isFinished
-    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, env: EnvironmentModel<State,Action>) : Boolean =
-        hasLoop || stepsWithoutAct > 200
+    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, env: EnvironmentModel<State,Action>) : Literal? =
+        if (hasLoop)
+            hasLoopAtom
+        else if (stepsWithoutAct > 200)
+            ASSyntax.createLiteral("no_act_for", NumberTermImpl(stepsWithoutAct.toDouble()))
+        else
+            null
+
     fun stop(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, certainty: Double) : Boolean =
         steps > 5000
 
