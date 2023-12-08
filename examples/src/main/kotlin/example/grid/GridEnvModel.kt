@@ -23,7 +23,7 @@ open class GridEnvModel(
     val VISITED = 32
     val SOLUTION = 64
     val LT_ZONE = 128
-
+    val PORTAL = 256
 
     init {
         setScenarioWalls(scenario)
@@ -48,7 +48,7 @@ open class GridEnvModel(
         currentState = c
         setAgPos( 0, currentState.l)
     }
-    fun setGoal(c: GridState) {
+    open fun setGoal(c: GridState) {
         remove( DEST, goalState.l)
         goalState = c
         add( DEST, goalState.l)

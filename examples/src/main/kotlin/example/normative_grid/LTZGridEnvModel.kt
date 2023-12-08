@@ -4,20 +4,38 @@ import example.grid.GridEnvModel
 import example.grid.GridState
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
+import jason.environment.grid.Location
 import jason.future.Action
 import jason.future.EnvironmentModel
 import jason.future.ForeseeProblemAgent
+import jason.future.State
 
 class LTZGridEnvModel(
     currentState: GridState,
     goalState   : GridState,
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 30,30) {
 
+    private var step : Int = 0
+    private var visited = ArrayList<Location>()
+    private val portal = Location(18,8)
+
     override fun id() = "ltz-grid"
 
     init {
         ForeseeProblemAgent.data.scenario = id()
         addLTZ()
+        add(PORTAL, portal)
+    }
+
+    override fun execute(a: Action): State {
+        step++
+        visited.add(currentState.l)
+        return super.execute(a)
+    }
+
+    override fun setGoal(c: GridState) {
+        super.setGoal(c)
+        visited.clear()
     }
 
     override fun clone(): LTZGridEnvModel {
@@ -42,6 +60,18 @@ class LTZGridEnvModel(
                     )
                 }
             }
+        }
+        p.add(ASSyntax.createLiteral("step", ASSyntax.createNumber(step.toDouble())))
+        p.add(ASSyntax.createLiteral("portal",
+            ASSyntax.createNumber(portal.x.toDouble()),
+            ASSyntax.createNumber(portal.y.toDouble())))
+
+        for (g in visited) {
+            p.add(ASSyntax.createLiteral(
+                "visited",
+                ASSyntax.createNumber(g.x.toDouble()),
+                ASSyntax.createNumber(g.y.toDouble()),
+            ))
         }
         return p
     }

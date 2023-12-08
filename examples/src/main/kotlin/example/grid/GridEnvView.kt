@@ -124,6 +124,7 @@ open class GridEnvView(
             gModel.VISITED -> drawVisited(g, x, y)
             gModel.SOLUTION -> drawSolution(g, x, y)
             gModel.LT_ZONE -> drawZone(g, x, y)
+            gModel.PORTAL -> drawPortal(g, x, y)
             else -> { }
         }
     }
@@ -149,5 +150,13 @@ open class GridEnvView(
     private fun drawZone(g: Graphics, x: Int, y: Int) {
         g.color = Color.yellow
         g.fillRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4)
+    }
+    private fun drawPortal(g: Graphics, x: Int, y: Int) {
+        g.color = Color.black
+        g.fillRect(x * cellSizeW, y * cellSizeH, cellSizeW, cellSizeH)
+        g.color = Color.yellow
+        g.drawRect(x * cellSizeW + 2, y * cellSizeH + 2, cellSizeW - 4, cellSizeH - 4)
+        //g.drawLine(x * cellSizeW + 2, y * cellSizeH + 2, (x + 1) * cellSizeW - 2, (y + 1) * cellSizeH - 2)
+        //g.drawLine(x * cellSizeW + 2, (y + 1) * cellSizeH - 2, (x + 1) * cellSizeW - 2, y * cellSizeH + 2)
     }
 }
