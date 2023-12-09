@@ -11,6 +11,6 @@ class in_matrix : DefaultInternalAction() {
     override fun getMinArgs(): Int = 1
 
     override fun execute(ts: TransitionSystem, un: Unifier, args: Array<out Term>): Any {
-        return ts.agArch is MatrixAgentArch
+        return ts.agArch is MatrixAgArch
     }
 }

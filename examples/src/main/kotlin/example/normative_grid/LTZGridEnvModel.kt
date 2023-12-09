@@ -13,11 +13,11 @@ import jason.future.State
 class LTZGridEnvModel(
     currentState: GridState,
     goalState   : GridState,
-) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 30,30) {
+) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 25,25) {
 
     private var step : Int = 0
     private var visited = ArrayList<Location>()
-    private val portal = Location(18,8)
+    private val portal = Location(18,4)
 
     override fun id() = "ltz-grid"
 
@@ -77,14 +77,14 @@ class LTZGridEnvModel(
     }
 
     private fun addLTZ()  {
-        for (x in 10..20)
-            for (y in 9..15)
+        for (x in 7..20)
+            for (y in 6..12)
                 add(LT_ZONE,x,y)
         for (x in 13..17)
-            for (y in 16..19)
+            for (y in 13..15)
                 add(LT_ZONE,x,y)
-        for (x in 9..19)
-            for (y in 20..22)
+        for (x in 6..19)
+            for (y in 16..19)
                 add(LT_ZONE,x,y)
     }
 

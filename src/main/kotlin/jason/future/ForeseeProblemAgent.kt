@@ -1,9 +1,12 @@
 package jason.future
 
-import jason.agent.PreferenceAgent
+import jason.agent.NormativeAg
 import jason.asSemantics.NoOptionException
 import jason.asSemantics.Option
 import jason.asSyntax.ASSyntax
+import jason.asSyntax.Atom
+import jason.asSyntax.ListTermImpl
+import jason.asSyntax.Literal
 import jason.infra.local.RunLocalMAS
 import java.io.*
 import java.util.*
@@ -14,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap
  *  and problems like loops in the behaviour/goal not achieved
  */
 @Suppress("UNCHECKED_CAST")
-open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
+open class ForeseeProblemAgent : NormativeAg(), StopConditions {
 
     /** required certainty to progress running matrix */
     private var rCertainty = 0.0
@@ -79,6 +82,24 @@ open class ForeseeProblemAgent : PreferenceAgent(), StopConditions {
     // stop condition for matrix running
     override fun stop(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, certainty: Double) =
         steps > 5000 || certainty < rCertainty
+
+    override fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop: Boolean, agents: List<MatrixAgArch>): Literal? {
+        for (agArch in agents) {
+            val unfuls = agArch.getAg().myUnfulfilledNorms()
+            if (unfuls.isNotEmpty()) {
+                val norms = ListTermImpl()
+                for (ni in unfuls) {
+                    norms.add(
+                        ASSyntax.createLiteral("norm",
+                            Atom(ni.norm.id),
+                            ni.unifierAsTerm
+                        ))
+                }
+                return ASSyntax.createLiteral("norm_unfulfilled", norms)
+            }
+        }
+        return super.failure(history, steps, stepsWithoutAct, hasLoop, agents)
+    }
 
     companion object {
         private var msg: String = ""

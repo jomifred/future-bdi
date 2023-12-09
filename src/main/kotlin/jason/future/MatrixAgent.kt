@@ -1,14 +1,16 @@
 package jason.future
 
-import jason.agent.PreferenceAgent
+import jason.agent.NormativeAg
 import jason.asSemantics.Option
 
-/** (main) agent running in the "matrix" */
+/** (main) agent running in the "matrix"
+ * "not main" are other agents (bridge case)
+ */
 class MatrixAgent(
     private val originalAgent : ForeseeProblemAgent,
     val originalOption : Option,
-    val search: Search
-) : PreferenceAgent() {
+    private val search: Search
+) : NormativeAg(originalAgent.program) {
 
     init {
         setConsiderToAddMIForThisAgent(false)
@@ -19,7 +21,7 @@ class MatrixAgent(
 
     var inZone1 = false
 
-    internal fun myMatrixArch() : MatrixAgentArch = ts.agArch as MatrixAgentArch
+    internal fun myMatrixArch() : MatrixAgArch = ts.agArch as MatrixAgArch
 
     private fun envModel() : EnvironmentModel<State, Action> = myMatrixArch().env
 
@@ -56,7 +58,7 @@ class MatrixAgent(
         return defaultOption
     }
 
-    fun costWeight() =
+    private fun costWeight() =
         if (inZone1)
             when (search.strategy) {
                 ExplorationStrategy.SOLVE_M -> 0.7

@@ -7,13 +7,13 @@ import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 
 /** agent that run in the "Matrix" (simulated world) */
-class MatrixAgentArch (
+class MatrixAgArch (
     val env : EnvironmentModel<State, Action>,
     private val agName : String
 ) : AgArch() {
 
     val historyS = mutableListOf<State>()
-    val historyO = mutableListOf<Option>()
+    private val historyO = mutableListOf<Option>()
     val historyA = mutableListOf<Structure>()
 
     var myFO : FutureOption? = null
@@ -26,10 +26,10 @@ class MatrixAgentArch (
         return agName
     }
 
-    fun getAg() = ts.ag as MatrixAgent
+     fun getAg() = ts.ag as MatrixAgent
 
     // main ag is the one starting the matrix to discover something
-    fun isMainAg() = ts.ag is MatrixAgent
+    private fun isMainAg() = ts.ag is MatrixAgent
 
     override fun perceive(): MutableCollection<Literal> {
         //println("        matrix perception: ${env.agPerception(agName)} for $agName")

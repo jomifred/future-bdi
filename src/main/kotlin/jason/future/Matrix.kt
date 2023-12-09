@@ -74,7 +74,7 @@ interface StopConditions {
 
     fun success(history: List<State>, steps: Int, intention: Intention) : Boolean =
         intention.isFinished
-    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, env: EnvironmentModel<State,Action>) : Literal? =
+    fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop : Boolean, agents: List<MatrixAgArch>) : Literal? =
         if (hasLoop)
             hasLoopAtom
         else if (stepsWithoutAct > 200)

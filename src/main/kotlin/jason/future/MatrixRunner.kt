@@ -1,12 +1,11 @@
 package jason.future
 
-import npl.NPLInterpreter
 import java.util.logging.Logger
 
 /** Executes the matrix (simulated world) */
-class MatrixRunner (
+open class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
-    val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
+    private val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
     val fo     : FutureOption // future option that started this Matrix
 )  {
     protected var logger = Logger.getLogger(MatrixRunner::class.java.name)
@@ -15,18 +14,18 @@ class MatrixRunner (
     private var hasLoop = false
 
     // the list of agents in this matrix
-    val ags = mutableListOf<MatrixAgentArch>()
+    private val ags = mutableListOf<MatrixAgArch>()
 
-    fun addAg(ag: MatrixAgentArch) { ags.add(ag) }
+    fun addAg(ag: MatrixAgArch) { ags.add(ag) }
 
     fun success() = conds.success(historyS, steps, fo.intention())
 
-    fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop, env)
+    fun failure() = conds.failure(historyS, steps, stepsWithoutAct, hasLoop, ags)
 
     fun stop() = conds.stop(historyS, steps, stepsWithoutAct, hasLoop, certainty)
 
-    var steps = 0
-    var stepsWithoutAct = 0
+    private var steps = 0
+    private var stepsWithoutAct = 0
 
     var certainty = fo.certainty
 

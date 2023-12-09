@@ -26,7 +26,7 @@ data class FutureOption(
     val heuristic: Double = 0.0
 ) : Comparable<FutureOption> {
 
-    val otherAgs : MutableMap<String,MatrixAgentArch> = mutableMapOf()
+    val otherAgs : MutableMap<String,MatrixAgArch> = mutableMapOf()
 
     val actions = mutableListOf<Structure>()
 
@@ -102,7 +102,7 @@ data class FutureOption(
                     otherAgs: Map<String, AgArch>
         ) : FutureOption {
             val envClone = env.clone()
-            val agArch = MatrixAgentArch(envClone,"${originalAgent.ts.agArch.agName}_matrix${agCounter++}")
+            val agArch = MatrixAgArch(envClone,"${originalAgent.ts.agArch.agName}_matrix${agCounter++}")
             val agModel = MatrixAgent(originalAgent, originalOption, search)
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)
@@ -123,15 +123,15 @@ data class FutureOption(
 
             // add other agents
             for (agName in otherAgs.keys) {
-                if (!agName.equals( originalAgent.ts.agArch.agName)) {
-                    val oArch = otherAgs.get(agName)!!
+                if (agName != originalAgent.ts.agArch.agName) {
+                    val oArch = otherAgs[agName]!!
                     //println("adding agent $agName also in the matrix ${oArch.javaClass.name}")
-                    val newArch = MatrixAgentArch(envClone, "${agName}_matrix${agCounter++}")
+                    val newArch = MatrixAgArch(envClone, "${agName}_matrix${agCounter++}")
                     val newModel = PreferenceAgent() // TODO: use the class of the oArch agent
                     newModel.setConsiderToAddMIForThisAgent(false)
 
                     // clone agent
-                    if (oArch is MatrixAgentArch) {
+                    if (oArch is MatrixAgArch) {
                         oArch.ts.ag.cloneInto(newArch, newModel)
                     } else if (oArch is LocalAgArch) { // it is an agent with its own thread and we cannot clone while running its reasoning cycle
                         val done = AtomicBoolean(false)

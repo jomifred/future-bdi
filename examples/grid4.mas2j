@@ -6,10 +6,11 @@
 
 MAS grid4 {
 
-    environment: example.normative_grid.LTZGridJasonEnv(init(15,2),goal(15,25))
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(13,21))
 
     agents:
-        car_ag grid_recovery.asl agentClass jason.future.NForeseeProblemAgent("src/org/norms.npl");
+        car_ag grid_recovery.asl
+             agentClass jason.future.ForeseeProblemAgent("src/org/norms.npl");
 
     aslSourcePath: "src/agt";
 }
