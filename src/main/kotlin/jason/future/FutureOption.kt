@@ -101,8 +101,9 @@ data class FutureOption(
                     search: Search,
                     otherAgs: Map<String, AgArch>
         ) : FutureOption {
+            // clone env & agents for matrix
             val envClone = env.clone()
-            val agArch = MatrixAgArch(envClone,"${originalAgent.ts.agArch.agName}_matrix${agCounter++}")
+            val agArch  = MatrixAgArch(envClone,"${originalAgent.ts.agArch.agName}_matrix${agCounter++}")
             val agModel = MatrixAgent(originalAgent, originalOption, search)
             parent.cloneInto(agArch, agModel)
             agModel.ts.setLogger(agArch)

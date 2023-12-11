@@ -17,7 +17,7 @@ class LTZGridEnvModel(
 
     private var step : Int = 0
     private var visited = ArrayList<Location>()
-    private val portal = Location(18,4)
+    private val portal = Location(18,5)
 
     override fun id() = "ltz-grid"
 
@@ -48,6 +48,14 @@ class LTZGridEnvModel(
     override fun agPerception(agName: String): MutableCollection<Literal> {
         val p = super.agPerception(agName)
 
+        val l = getAgPos(0)
+        p.add(ASSyntax.createLiteral(
+            "pos",
+                ASSyntax.createAtom(agName),
+                ASSyntax.createNumber(l.x.toDouble()),
+                ASSyntax.createNumber(l.y.toDouble()),
+        ))
+
         for (x in 0 until width) {
             for (y in 0 until height) {
                 if (hasObject(LT_ZONE, x, y)) {
@@ -69,8 +77,9 @@ class LTZGridEnvModel(
         for (g in visited) {
             p.add(ASSyntax.createLiteral(
                 "visited",
-                ASSyntax.createNumber(g.x.toDouble()),
-                ASSyntax.createNumber(g.y.toDouble()),
+                    ASSyntax.createAtom(agName),
+                    ASSyntax.createNumber(g.x.toDouble()),
+                    ASSyntax.createNumber(g.y.toDouble()),
             ))
         }
         return p
@@ -83,7 +92,7 @@ class LTZGridEnvModel(
         for (x in 13..17)
             for (y in 13..15)
                 add(LT_ZONE,x,y)
-        for (x in 6..19)
+        for (x in 8..19)
             for (y in 16..19)
                 add(LT_ZONE,x,y)
     }

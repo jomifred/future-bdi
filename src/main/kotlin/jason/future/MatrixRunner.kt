@@ -1,14 +1,12 @@
 package jason.future
 
-import java.util.logging.Logger
-
 /** Executes the matrix (simulated world) */
 open class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
     private val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
     val fo     : FutureOption // future option that started this Matrix
 )  {
-    protected var logger = Logger.getLogger(MatrixRunner::class.java.name)
+    //protected var logger = Logger.getLogger(MatrixRunner::class.java.name)
 
     val historyS = mutableListOf<State>()
     private var hasLoop = false

@@ -1,5 +1,7 @@
 package jason.agent
 
+import jason.architecture.AgArch
+import jason.asSemantics.Agent
 import jason.asSyntax.Literal
 import jason.asSyntax.PredicateIndicator
 import jason.mas2j.AgentParameters
@@ -16,8 +18,8 @@ open class NormativeAg : PreferenceAgent {
 
     var program: NormativeProgram? = null
 
-    constructor() {
-    }
+    constructor()
+
     constructor(program: NormativeProgram?) {
         this.program = program
     }
@@ -41,8 +43,8 @@ open class NormativeAg : PreferenceAgent {
                 }
             }
             interpreter.setStateManager(StateTransitions(interpreter))
-            interpreter.init()
             interpreter.setAg(this)
+            interpreter.init()
             interpreter.loadNP(program?.root)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -54,10 +56,17 @@ open class NormativeAg : PreferenceAgent {
         val unFuls = bb.getCandidateBeliefs(piUnfulfilled)
         if (unFuls != null) {
             for (belUnFul in unFuls) {
-                unList.add(belUnFul.getTerm(0) as NormInstance)
+                val unf = belUnFul.getTerm(0) as NormInstance
+                if (!unf.ag.isGround || ts.agArch.agName.startsWith(unf.ag.toString())) // need to be startWith because of matrix agents names
+                    unList.add(unf)
             }
+            //logger.info("unfuls "+unList)
         }
         return unList
+    }
+
+    fun resetNPL() {
+        interpreter.clearFacts()
     }
 
     override fun stopAg() {
@@ -70,5 +79,13 @@ open class NormativeAg : PreferenceAgent {
         interpreter.verifyNorms()
         //logger.info("unfuls: "+interpreter.unFulfilled)
         return r
+    }
+
+    override fun cloneInto(arch: AgArch?, a: Agent?): Agent {
+        val newAg = super.cloneInto(arch, a)
+        if (newAg is NormativeAg) {
+            newAg.interpreter.setAllActivatedNorms( interpreter.activatedNorms)
+        }
+        return newAg
     }
 }
