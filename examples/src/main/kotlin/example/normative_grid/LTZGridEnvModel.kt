@@ -86,13 +86,13 @@ class LTZGridEnvModel(
     }
 
     private fun addLTZ()  {
-        for (x in 7..20)
+        for (x in 8..20)
             for (y in 6..12)
                 add(LT_ZONE,x,y)
-        for (x in 13..17)
+        for (x in 14..17)
             for (y in 13..15)
                 add(LT_ZONE,x,y)
-        for (x in 8..19)
+        for (x in 6..19)
             for (y in 16..19)
                 add(LT_ZONE,x,y)
     }

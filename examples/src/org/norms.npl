@@ -4,6 +4,6 @@ scope main {
 
     // the agent has to pass by the portal every path!
     // deadline is 'to arrive at destination'
-    //norm n2: portal(PX,PY) & destination(DX,DY)
-      //       -> obligation(A, n2, visited(A,PX,PY), pos(A,DX,DY) ).
+    norm n2: portal(PX,PY) & destination(DX,DY)
+             -> obligation(A, n2, visited(A,PX,PY), pos(A,DX,DY) ).
 }
