@@ -2,8 +2,8 @@ scope main {
 
     portal_near(DX,DY, PX,PY) :-
           portal(PX,PY) &
-          D = ((DX-PX)**2 + (DY-PY)**2) &
-          D < 40.
+          D = math.sqrt((DX-PX)**2 + (DY-PY)**2) &
+          D < 5.
 
     // all agents are prohibited to be in a Limited Traffic Zone
     norm n1 : true -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
