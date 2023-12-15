@@ -1,9 +1,15 @@
 scope main {
+
+    portal_near(DX,DY, PX,PY) :-
+          portal(PX,PY) &
+          D = ((DX-PX)**2 + (DY-PY)**2) &
+          D < 40.
+
     // all agents are prohibited to be in a Limited Traffic Zone
     norm n1 : true -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
 
     // the agent has to pass by the portal every path!
     // deadline is 'to arrive at destination'
-    norm n2: portal(PX,PY) & destination(DX,DY)
+    norm n2: destination(DX,DY) & portal_near(DX,DY, PX,PY)
              -> obligation(A, n2, visited(A,PX,PY), pos(A,DX,DY) ).
 }

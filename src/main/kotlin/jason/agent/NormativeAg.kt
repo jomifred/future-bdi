@@ -42,14 +42,18 @@ open class NormativeAg : PreferenceAgent {
                     nplp(FileReader(nplFileName)).program(program, null)
                 }
             }
-            interpreter.setStateManager(StateTransitions(interpreter))
-            interpreter.setAg(this)
-            interpreter.init()
-            interpreter.loadNP(program?.root)
+            if (program != null) {
+                interpreter.setStateManager(StateTransitions(interpreter))
+                interpreter.setAg(this)
+                interpreter.init()
+                interpreter.loadNP(program?.root)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
+    fun hasNPL() : Boolean = program != null
 
     fun myUnfulfilledNorms() : List<NormInstance> {
         val unList = mutableListOf<NormInstance>()
@@ -60,7 +64,7 @@ open class NormativeAg : PreferenceAgent {
                 if (!unf.ag.isGround || ts.agArch.agName.startsWith(unf.ag.toString())) // need to be startWith because of matrix agents names
                     unList.add(unf)
             }
-            //logger.info("unfuls "+unList)
+            //logger.info("** unfuls "+unList.size+":"+unList)
         }
         return unList
     }
@@ -76,14 +80,15 @@ open class NormativeAg : PreferenceAgent {
 
     override fun buf(percepts: MutableCollection<Literal>?): Int {
         val r = super.buf(percepts)
-        interpreter.verifyNorms()
+        if (hasNPL())
+            interpreter.verifyNorms()
         //logger.info("unfuls: "+interpreter.unFulfilled)
         return r
     }
 
     override fun cloneInto(arch: AgArch?, a: Agent?): Agent {
         val newAg = super.cloneInto(arch, a)
-        if (newAg is NormativeAg) {
+        if (newAg is NormativeAg && newAg.hasNPL()) {
             newAg.interpreter.setAllActivatedNorms( interpreter.activatedNorms)
         }
         return newAg

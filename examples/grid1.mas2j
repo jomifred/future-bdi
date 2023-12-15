@@ -15,7 +15,7 @@ MAS grid1 {
         //grid_problem agentClass jason.agent.PreferenceAgent;
 
         // this case detects the problem using Jason(F) ONE strategy
-        grid_problem   agentClass jason.future.ForeseeProblemAgent;
+        grid_problem agentClass jason.future.ForeseeProblemAgent;
 
     aslSourcePath: "src/agt";
 }

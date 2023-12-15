@@ -16,21 +16,26 @@ class LTZGridEnvModel(
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 25,25) {
 
     private var step : Int = 0
-    private var visited = ArrayList<Location>()
-    private val portal = Location(18,5)
+    private var visited = mutableListOf<Location>()
+    private val portals = mutableListOf<Location>()
 
     override fun id() = "ltz-grid"
 
     init {
         ForeseeProblemAgent.data.scenario = id()
         addLTZ()
-        add(PORTAL, portal)
+        portals.add(Location(18,5))
+        portals.add(Location(3,21))
+        for (p in portals)
+            add(PORTAL, p)
+        visited.add(currentState.l)
     }
 
     override fun execute(a: Action): State {
         step++
+        val r = super.execute(a)
         visited.add(currentState.l)
-        return super.execute(a)
+        return r
     }
 
     override fun setGoal(c: GridState) {
@@ -39,10 +44,13 @@ class LTZGridEnvModel(
     }
 
     override fun clone(): LTZGridEnvModel {
-        return LTZGridEnvModel(
+        val r =LTZGridEnvModel(
             GridState(currentState.l),
             GridState(goalState.l),
         )
+        r.step = this.step
+        r.visited.addAll(this.visited)
+        return r
     }
 
     override fun agPerception(agName: String): MutableCollection<Literal> {
@@ -70,9 +78,15 @@ class LTZGridEnvModel(
             }
         }
         p.add(ASSyntax.createLiteral("step", ASSyntax.createNumber(step.toDouble())))
-        p.add(ASSyntax.createLiteral("portal",
-            ASSyntax.createNumber(portal.x.toDouble()),
-            ASSyntax.createNumber(portal.y.toDouble())))
+        for (portal in portals) {
+            p.add(
+                ASSyntax.createLiteral(
+                    "portal",
+                    ASSyntax.createNumber(portal.x.toDouble()),
+                    ASSyntax.createNumber(portal.y.toDouble())
+                )
+            )
+        }
 
         for (g in visited) {
             p.add(ASSyntax.createLiteral(
