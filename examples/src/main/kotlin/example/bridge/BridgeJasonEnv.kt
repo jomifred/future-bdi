@@ -31,7 +31,7 @@ class BridgeJasonEnv : Environment(1), MatrixCapable<BridgeState, BridgeAction> 
         }
         thread(start = true) {
                 // wait for some agent to be created
-                while (RuntimeServicesFactory.get().agentsNames.isEmpty())
+                while (RuntimeServicesFactory.get().agentsName.isEmpty())
                     Thread.sleep(200)
 
                 updatePercept()
@@ -53,7 +53,7 @@ class BridgeJasonEnv : Environment(1), MatrixCapable<BridgeState, BridgeAction> 
     }
 
     fun updatePercept() {
-        for (agName in RuntimeServicesFactory.get().agentsNames) {
+        for (agName in RuntimeServicesFactory.get().agentsName) {
             updateAgPercept(agName)
             informAgsEnvironmentChanged()
         }

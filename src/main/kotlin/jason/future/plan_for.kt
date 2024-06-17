@@ -35,8 +35,8 @@ class plan_for : DefaultInternalAction(), StopConditions {
 
             // run search using matrix
             val te = Trigger(Trigger.TEOperator.add, Trigger.TEType.achieve, goal)
-            val relPlans = ts.relevantPlans(te, Event(te, buildBaseIntention(goal)))
-            val appPlans = ts.applicablePlans(relPlans)
+            val relPlans = ts.ag.relevantPlans(te, Event(te, buildBaseIntention(goal)))
+            val appPlans = ts.ag.applicablePlans(relPlans)
             if (appPlans.isEmpty()) {
                 ts.ag.logger.info("No applicable plan for ${goal}! So, no plan considering the future.")
                 return false

@@ -69,7 +69,7 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
         }
         thread(start = true) {
                 // wait for some agent to be created
-                while (RuntimeServicesFactory.get().agentsNames.isEmpty())
+                while (RuntimeServicesFactory.get().agentsName.isEmpty())
                     Thread.sleep(200)
 
                 updatePercept()
@@ -107,8 +107,8 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     }
 
     fun updatePercept() {
-        if (RuntimeServicesFactory.get().agentsNames.isNotEmpty()) {
-            updateAgPercept(RuntimeServicesFactory.get().agentsNames.first())
+        if (RuntimeServicesFactory.get().agentsName.isNotEmpty()) {
+            updateAgPercept(RuntimeServicesFactory.get().agentsName.first())
             informAgsEnvironmentChanged()
         }
     }

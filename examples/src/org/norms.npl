@@ -8,7 +8,7 @@ scope main {
     // all agents are prohibited to be in a Limited Traffic Zone
     norm n1 : true -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
 
-    // the agent has to pass by the portal every path!
+    // the agent has to pass by the near portal every path!
     // deadline is 'to arrive at destination'
     norm n2: destination(DX,DY) & portal_near(DX,DY, PX,PY)
              -> obligation(A, n2, visited(A,PX,PY), pos(A,DX,DY) ).
