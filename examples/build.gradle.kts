@@ -3,7 +3,7 @@
 // or   ./gradlew :examples:run --args="bridge1.mas2j"
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.9.20"
     application
 }
 
