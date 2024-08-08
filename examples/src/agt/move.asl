@@ -11,7 +11,7 @@
 @ne[preference(D),cost(1.4)] +!pos(X,Y) : ok(ne)& distance(ne,D) <- ne; !pos(X,Y).
 @id[preference(D),cost(1.9)] +!pos(X,Y) :     distance(idle,D) <- idle; !pos(X,Y).
 
-// checks if go to some direction is possible (free cell)
+// checks if going to some direction is possible (free cell)
 ok(D) :- next(D,X,Y) & free(X,Y).
 
 next(s ,X  ,Y+1) :- pos(X,Y). // my next location if doing south
