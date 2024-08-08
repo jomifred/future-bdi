@@ -35,3 +35,5 @@ examples/stats.csv
 data/g-solve-f-matrices.pdf
 data/g-solve-f-states.pdf
 data/g-solve-f-time.pdf
+
+.vscode
