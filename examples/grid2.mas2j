@@ -1,4 +1,7 @@
 // agent has a plan to recover from failure (due to no future)
+//
+// run with
+//      ./gradlew :examples:run --args="grid2.mas2j"
 
 MAS grid2 {
 

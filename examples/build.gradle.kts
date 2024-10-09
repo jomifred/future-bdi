@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("io.github.jason-lang:jason-interpreter:3.3.0-SNAPSHOT")
+    implementation("io.github.jason-lang:jason-interpreter:3.3.0")
     //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("org.apache.commons:commons-csv:1.10.0")
 
