@@ -1,0 +1,51 @@
+= Jason(F)
+
+This projects adds to Jason agents some capability to reason about the future. See doc folder for more details.
+
+== Grid Example
+
+In the first scenario of the grid, the agent discovers that its usual plan selection will not achieve the goal. It then searches for alternative choices and finds a way to achieve the goal.
+
+In the interface, you can select other target goals and scenarios.
+
+----
+./gradlew :examples:run --args="grid2.mas2j"
+----
+
+image::doc/grid2.png[]
+
+In the second scenario, the environment is dynamic: new walls appear and disappear dynamically.
+
+----
+./gradlew :examples:run --args="grid3.mas2j"
+----
+
+image::doc/grid3.png[]
+
+In the third scenario, the agent selects options to avoid to violate norms. The norms are defined in xref:examples/src/org/norms.npl[this file] using the language https://github.com/moise-lang/npl[NPL]. There are two norms:
+
+- the agent should not enter the limited traffic zone (in yellow in the picture). A prohibition norm.
+
+- if there is a "portal" near the target, the agent should pass through it (black squares in the picture) . An obligation norm.
+
+The beauty of this example is that we can change the norms to change the agent behaviour, no need to reprogram the agent!
+
+image::doc/grid4.png[]
+
+To run:
+
+----
+./gradlew :examples:run --args="grid4.mas2j"
+----
+
+== Bridge Example
+
+This scenario illustrate two agents acting on the same environment. Both want to cross a river using a bridge that is narrow so that only one agent can pass. One agent reason about the future, the other is "normal". It foresees that they will be blocked in the middle of the bridge and waits for the second to cross, then it crosses the bridge.
+
+image::doc/bridge.png[]
+
+To run:
+----
+./gradlew :examples:run --args="bridge2.mas2j"
+----
+

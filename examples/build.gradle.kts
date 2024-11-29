@@ -1,5 +1,5 @@
 // run with
-//      ./gradlew :examples:run --args="grid1.mas2j"
+//      ./gradlew :examples:run --args="grid2.mas2j"
 // or   ./gradlew :examples:run --args="bridge1.mas2j"
 
 plugins {

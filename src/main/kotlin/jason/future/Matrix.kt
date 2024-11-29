@@ -9,7 +9,7 @@ import jason.asSyntax.Structure
 
 /** general interfaces for the Matrix Model */
 
-/** simulates the future for an Intention */
+/** simulates the future for an Intention (used just for testing) */
 class Simulator<S : State> (
     private val env: EnvironmentModel<S, Action>,
     private val ag : AgentModel<S>

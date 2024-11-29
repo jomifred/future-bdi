@@ -6,7 +6,7 @@ import jason.asSemantics.Option
 import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 
-/** agent that run in the "Matrix" (simulated world) */
+/** agent arch to run in "Matrix" mode (simulated world). Perception and action are forwarded to the environment simulator. */
 class MatrixAgArch (
     val env : EnvironmentModel<State, Action>,
     private val agName : String

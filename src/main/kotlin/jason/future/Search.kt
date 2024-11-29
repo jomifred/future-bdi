@@ -51,7 +51,7 @@ open class Search (
             var fo = select()
             fo?.ag?.inZone1 = true // current options + those in the future of default options are in zone1
             var visited = 0
-            var defaultPlan: Set<State>? = null // used for stats (compute how many stes are in the ag policy)
+            var defaultPlan: Set<State>? = null // used for stats (compute how many steps are in the ag policy)
             while (fo != null && nbE < 3000) { // TODO: add a parameter somewhere to define o max number os options to explore
                 nbE++
                 //bestFO = fo!! // options are ordered by  G+H, so the most promising was the last taken

@@ -3,7 +3,7 @@ package jason.future
 /** Executes the matrix (simulated world) */
 open class MatrixRunner (
     val env    : EnvironmentModel<State, Action>,
-    private val conds  : StopConditions, //ForeseeProblemAgent, // the agent that is interested in this matrix
+    private val conds  : StopConditions,
     val fo     : FutureOption // future option that started this Matrix
 )  {
     //protected var logger = Logger.getLogger(MatrixRunner::class.java.name)
@@ -28,7 +28,7 @@ open class MatrixRunner (
     var certainty = fo.certainty
 
     fun run() : List<State> {
-        ForeseeProblemAgent.data.addNbMatrices()
+        ForeseeProblemAgent.data.addNbMatrices() // for stats
 
         historyS.add( env.currentState() )
         while (!stop() && !success() && failure() == null) {

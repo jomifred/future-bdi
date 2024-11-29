@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation("io.github.jason-lang:jason-interpreter:3.3.0")
-    implementation("org.jacamo:npl:0.6-SNAPSHOT")
+    implementation("org.jacamo:npl:0.6")
     //implementation( project(":examples"))
     testImplementation(kotlin("test"))
 }

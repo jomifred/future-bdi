@@ -13,8 +13,9 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- *  agent that considers the future
- *  and problems like loops in the behaviour/goal not achieved
+ *  agent that considers the future to select (or not) option (of plans)
+ *
+ *  consider problems like loops in the behaviour, goal not achieved, norm violated, ...
  */
 @Suppress("UNCHECKED_CAST")
 open class ForeseeProblemAgent : NormativeAg(), StopConditions {
@@ -163,5 +164,4 @@ class ExperimentData {
             e.printStackTrace()
         }
     }
-
 }

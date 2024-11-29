@@ -5,6 +5,8 @@ import jason.asSyntax.*
 import java.lang.StringBuilder
 import kotlin.random.Random
 
+/** internal action that finds alternative plans that avoids future problems */
+
 class plan_for : DefaultInternalAction(), StopConditions {
 
     override fun getMaxArgs(): Int = 4
