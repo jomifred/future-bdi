@@ -23,9 +23,9 @@ class DynamicGridEnvModel(
     override fun id() = "dyngrid"
 
     init {
-        ForeseeProblemAgent.data.scenario = id()
-        ForeseeProblemAgent.data.gamma = gamma()
-        ForeseeProblemAgent.data.pChange = pChange
+        ForeseeProblemAgent.expData.scenario = id()
+        ForeseeProblemAgent.expData.gamma = gamma()
+        ForeseeProblemAgent.expData.pChange = pChange
     }
 
     override fun clone(): DynamicGridEnvModel {

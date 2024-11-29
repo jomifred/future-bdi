@@ -19,11 +19,11 @@ class store_stats : DefaultInternalAction() {
         if (timeout > 0) {
             thread(start = true) {
                 Thread.sleep(timeout)
-                ForeseeProblemAgent.data.storeStats(true)
+                ForeseeProblemAgent.expData.storeStats(true)
                 System.exit(0)
             }
         } else {
-            ForeseeProblemAgent.data.storeStats(false)
+            ForeseeProblemAgent.expData.storeStats(false)
             System.exit(0)
         }
         return true

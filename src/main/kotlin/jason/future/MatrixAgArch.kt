@@ -26,7 +26,7 @@ class MatrixAgArch (
         return agName
     }
 
-     fun getAg() = ts.ag as MatrixAgent
+    fun getAg() = ts.ag as MatrixAgent
 
     // main ag is the one starting the matrix to discover something
     private fun isMainAg() = ts.ag is MatrixAgent
@@ -52,7 +52,7 @@ class MatrixAgArch (
 
         if (isMainAg()) {
             historyS.add(newState)
-            ForeseeProblemAgent.data.nbVisitedStates++
+            ForeseeProblemAgent.expData.nbVisitedStates++
         }
     }
 }

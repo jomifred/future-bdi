@@ -33,7 +33,9 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            data.requiredCertainty = rCertainty
+            expData.requiredCertainty = rCertainty
+            expData.strategy = ExplorationStrategy.SOLVE_M // TODO: read from mas2jfile?
+            // TODO: if expData has initial strategy, set from there
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -43,10 +45,10 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
     private fun userEnv() : MatrixCapable<*,*> = RunLocalMAS.getRunner().environmentInfraTier.userEnvironment as MatrixCapable<*,*>
 
     fun envModel() : EnvironmentModel<State, Action>? {
-        try {
-            return userEnv().getModel() as EnvironmentModel<State, Action>
+        return try {
+            userEnv().getModel() as EnvironmentModel<State, Action>
         } catch (e: NullPointerException) {
-            return null
+            null
         }
     }
 
@@ -56,24 +58,23 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
         clearVisited()
 
         val defaultOption = super.selectOption(options) ?: return null
-        //println("In select option for ${defaultOption?.evt?.trigger}")
+        //println("In select option for ${defaultOption.evt?.trigger}. Strategy = ${data.strategy}")
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || data.strategy == ExplorationStrategy.NONE
+            || expData.strategy == ExplorationStrategy.NONE
             || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
         // simulates the future of options
         val search = Search(this, this, ExplorationStrategy.ONE, envModel()!!)
-        search.init( listOf<Option>(defaultOption) )
+        search.init( listOf(defaultOption) )
         search.run()
 
         val failure = search.matrix.failure()
         if (failure != null) {
             val msg = "failure foreseen for handling ${defaultOption.evt.trigger} in the future! (states ahead: ${search.matrix.historyS})"
             logger.info("$msg -- $failure")
-            throw NoOptionException(msg, ASSyntax.createLiteral("future_issue", failure)
-            )
+            throw NoOptionException(msg, ASSyntax.createLiteral("future_issue", failure))
         }
 
         if (envModel()?.hasGUI() == true) solution.addAll(search.matrix.fo.states().first) // GUI
@@ -86,30 +87,33 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
 
     override fun failure(history: List<State>, steps: Int, stepsWithoutAct: Int, hasLoop: Boolean, agents: List<MatrixAgArch>): Literal? {
         for (agArch in agents) {
-            val unfuls = agArch.getAg().myUnfulfilledNorms()
-            if (unfuls.isNotEmpty()) {
-                val norms = ListTermImpl()
-                for (ni in unfuls) {
-                    norms.add(
-                        ASSyntax.createLiteral("norm",
-                            Atom(ni.norm.id),
-                            ni.unifierAsTerm
-                        ))
+            if (agArch.ts.ag is MatrixAgent) {
+                val unfuls = agArch.getAg().myUnfulfilledNorms()
+                if (unfuls.isNotEmpty()) {
+                    val norms = ListTermImpl()
+                    for (ni in unfuls) {
+                        norms.add(
+                            ASSyntax.createLiteral("norm",
+                                Atom(ni.norm.id),
+                                ni.unifierAsTerm
+                            ))
+                    }
+                    return ASSyntax.createLiteral("norm_unfulfilled", norms)
                 }
-                return ASSyntax.createLiteral("norm_unfulfilled", norms)
             }
         }
         return super.failure(history, steps, stepsWithoutAct, hasLoop, agents)
     }
 
+    // data used for the env. GUI
     companion object {
         private var msg: String = ""
         //private var recoverStrategy = ExplorationStrategy.SOLVE_M
-        private var solution      : MutableList<State> = mutableListOf()
+        private var solution : MutableList<State> = mutableListOf()
         val visitedStates = ConcurrentHashMap.newKeySet<State>()
-        val data = ExperimentData()
+        val expData = ExperimentData()
 
-        fun getImplementedStrategies() = ExplorationStrategy.values()
+        fun getImplementedStrategies() = ExplorationStrategy.entries.toTypedArray()
 
         fun getVisited() : Set<State> = visitedStates
         fun clearVisited() { visitedStates.clear() }
@@ -137,10 +141,7 @@ class ExperimentData {
     var requiredCertainty = 0.0
     var nbActions = 0
     var actionsCost = 0.0
-    var startT : Long
-    init {
-        startT = System.currentTimeMillis()
-    }
+    private var startT : Long = System.currentTimeMillis()
 
     fun addNbMatrices() {
         nbMatrices++

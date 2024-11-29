@@ -56,7 +56,7 @@ class plan_for : DefaultInternalAction(), StopConditions {
                         actionsStr.append("; ")
                     }
 
-                    ForeseeProblemAgent.data.nbPlanFor++ // stats
+                    ForeseeProblemAgent.expData.nbPlanFor++ // stats
 
                     // build the new plan
                     val newPlan = ASSyntax.parsePlan("$initialPlanStr $actionsStr .")

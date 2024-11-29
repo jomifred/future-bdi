@@ -10,7 +10,7 @@ the future-agent uses ONE strategy to detect the future problem,
 it then runs idle while in this situation (when the second agent finish to cross, it then "has future")
 
 */
-MAS bridge1 {
+MAS bridge2 {
 
     environment: example.bridge.BridgeJasonEnv()
 

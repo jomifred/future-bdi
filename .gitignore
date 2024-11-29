@@ -5,6 +5,7 @@
 build
 bin
 *.old
+*~
 
 # Log file
 *.log

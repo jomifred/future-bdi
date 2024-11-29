@@ -22,7 +22,7 @@ class LTZGridEnvModel(
     override fun id() = "ltz-grid"
 
     init {
-        ForeseeProblemAgent.data.scenario = id()
+        ForeseeProblemAgent.expData.scenario = id()
         addLTZ()
         portals.add(Location(18,5))
         portals.add(Location(3,21))

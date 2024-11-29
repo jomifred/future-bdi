@@ -2,7 +2,6 @@ package example.grid
 
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
-import jason.asSyntax.NumberTermImpl
 import jason.asSyntax.Structure
 import jason.environment.grid.GridWorldModel
 import jason.environment.grid.Location
@@ -30,7 +29,7 @@ open class GridEnvModel(
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
 
-        ForeseeProblemAgent.data.scenario = id()
+        ForeseeProblemAgent.expData.scenario = id()
     }
 
     override fun id() =

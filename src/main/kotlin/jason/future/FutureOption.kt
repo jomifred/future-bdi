@@ -126,7 +126,7 @@ data class FutureOption(
             for (agName in otherAgs.keys) {
                 if (agName != originalAgent.ts.agArch.agName) {
                     val oArch = otherAgs[agName]!!
-                    //println("adding agent $agName also in the matrix ${oArch.javaClass.name}")
+                    //println("adding agent $agName also in the matrix ${oArch.javaClass.name} / ${oArch.ts.ag.javaClass.name}")
                     val newArch = MatrixAgArch(envClone, "${agName}_matrix${agCounter++}")
                     val newModel = PreferenceAgent() // TODO: use the class of the oArch agent
                     newModel.setConsiderToAddMIForThisAgent(false)

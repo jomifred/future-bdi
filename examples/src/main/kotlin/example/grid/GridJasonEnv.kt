@@ -78,10 +78,10 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 
-    fun getStrategy() = ForeseeProblemAgent.data.strategy
+    fun getStrategy() = ForeseeProblemAgent.expData.strategy
 
     fun setStrategy(s: ExplorationStrategy) {
-        ForeseeProblemAgent.data.strategy = s
+        ForeseeProblemAgent.expData.strategy = s
     }
     fun setStrategy(s: String) {
         setStrategy(ExplorationStrategy.valueOf(s))
@@ -95,8 +95,8 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
         model.execute( a )
 
-        ForeseeProblemAgent.data.nbActions++ // stats
-        ForeseeProblemAgent.data.actionsCost += a.cost
+        ForeseeProblemAgent.expData.nbActions++ // stats
+        ForeseeProblemAgent.expData.actionsCost += a.cost
 
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
         if (delay>0)
@@ -116,6 +116,6 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     internal fun updateAgPercept(agName: String) {
         clearPercepts(agName)
         addPercept(agName, *(model.agPerception(agName).toTypedArray()))
-        addPercept(agName, ASSyntax.parseLiteral("r_strategy(\"${ForeseeProblemAgent.data.strategy}\")"))
+        addPercept(agName, ASSyntax.parseLiteral("r_strategy(\"${ForeseeProblemAgent.expData.strategy}\")"))
     }
 }

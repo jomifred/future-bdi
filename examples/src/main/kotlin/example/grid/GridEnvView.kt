@@ -62,7 +62,7 @@ open class GridEnvView(
         if (env != null)
             strategies.selectedItem = env.getStrategy()
         else
-            strategies.selectedItem = ForeseeProblemAgent.data.strategy
+            strategies.selectedItem = ForeseeProblemAgent.expData.strategy
         strategies.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
