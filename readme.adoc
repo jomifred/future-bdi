@@ -1,12 +1,12 @@
 = Jason(F)
 
-This projects adds to Jason agents some capability to reason about the future. See doc folder for more details.
+This projects adds to https://jason-lang.github.io[Jason] agents some capability to reason about the future. See doc folder for more details.
 
 == Grid Example
 
-In the first scenario of the grid, the agent discovers that its usual plan selection will not achieve the goal. It then searches for alternative choices and finds a way to achieve the goal.
+In the first scenario of the grid, the agent discovers that its usual plan selection will not achieve the goal. It then searches for alternative options and finds a way to achieve the goal.
 
-In the interface, you can select other target goals and scenarios.
+In the interface, you can select other target goals and scenarios. To run:
 
 ----
 ./gradlew :examples:run --args="grid2.mas2j"
@@ -22,7 +22,7 @@ In the second scenario, the environment is dynamic: new walls appear and disappe
 
 image::doc/grid3.png[]
 
-In the third scenario, the agent selects options to avoid to violate norms. The norms are defined in xref:examples/src/org/norms.npl[this file] using the language https://github.com/moise-lang/npl[NPL]. There are two norms:
+In the third scenario, the agent selects options to avoid to violate norms. The norms are defined in xref:examples/src/org/norms.npl[this file] using https://github.com/moise-lang/npl[NPL] (Normative Programing Language). There are two norms:
 
 - the agent should not enter the limited traffic zone (in yellow in the picture). A prohibition norm.
 
