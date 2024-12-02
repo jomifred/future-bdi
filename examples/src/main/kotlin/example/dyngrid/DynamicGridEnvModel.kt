@@ -6,7 +6,7 @@ import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
 import jason.future.Action
 import jason.future.EnvironmentModel
-import jason.future.ForeseeProblemAgent
+import jason.future.StatData
 
 class DynamicGridEnvModel(
     currentState: GridState,
@@ -23,9 +23,9 @@ class DynamicGridEnvModel(
     override fun id() = "dyngrid"
 
     init {
-        ForeseeProblemAgent.expData.scenario = id()
-        ForeseeProblemAgent.expData.gamma = gamma()
-        ForeseeProblemAgent.expData.pChange = pChange
+        StatData.scenario = id()
+        StatData.gamma = gamma()
+        StatData.pChange = pChange
     }
 
     override fun clone(): DynamicGridEnvModel {

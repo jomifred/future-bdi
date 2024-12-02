@@ -1,7 +1,7 @@
 package example.bridge
 
 import jason.environment.grid.GridWorldView
-import jason.future.ForeseeProblemAgent
+import jason.future.Search
 
 /** class that implements the View of Bridge Env */
 class BridgeGridEnvView(
@@ -16,8 +16,8 @@ class BridgeGridEnvView(
 
     fun resetGUI() {
         env.updatePercept()
-        ForeseeProblemAgent.clearVisited()
-        ForeseeProblemAgent.setMsg("")
+        Search.clearVisited()
+        Search.setMsg("")
         update()
     }
 }

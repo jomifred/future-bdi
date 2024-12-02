@@ -5,10 +5,7 @@ import jason.asSyntax.Literal
 import jason.asSyntax.Structure
 import jason.environment.grid.GridWorldModel
 import jason.environment.grid.Location
-import jason.future.Action
-import jason.future.EnvironmentModel
-import jason.future.ForeseeProblemAgent
-import jason.future.State
+import jason.future.*
 
 open class GridEnvModel(
     protected var currentState: GridState,
@@ -29,7 +26,7 @@ open class GridEnvModel(
         setAgPos( 0, currentState.l)
         add( DEST, goalState.l)
 
-        ForeseeProblemAgent.expData.scenario = id()
+        StatData.scenario = id()
     }
 
     override fun id() =

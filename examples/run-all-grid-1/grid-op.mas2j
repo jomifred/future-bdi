@@ -1,6 +1,6 @@
 MAS grid {
 
-environment: example.grid.GridJasonEnv(init(15,5),goal(15,21), scenario("O"), no_gui)
+environment: example.grid.GridJasonEnv(init(15,5),goal(15,21), scenario("O"), no_gui, params("params.properties"))
     agents:
         robot_fut_problem_cost_exit agentClass jason.future.ForeseeProblemAgent("SOLVE_P","O");
 

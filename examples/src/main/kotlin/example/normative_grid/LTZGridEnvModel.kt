@@ -5,10 +5,7 @@ import example.grid.GridState
 import jason.asSyntax.ASSyntax
 import jason.asSyntax.Literal
 import jason.environment.grid.Location
-import jason.future.Action
-import jason.future.EnvironmentModel
-import jason.future.ForeseeProblemAgent
-import jason.future.State
+import jason.future.*
 
 class LTZGridEnvModel(
     currentState: GridState,
@@ -22,7 +19,7 @@ class LTZGridEnvModel(
     override fun id() = "ltz-grid"
 
     init {
-        ForeseeProblemAgent.expData.scenario = id()
+        StatData.scenario = id()
         addLTZ()
         portals.add(Location(18,5))
         portals.add(Location(3,21))

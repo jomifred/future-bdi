@@ -36,10 +36,12 @@ open class NormativeAg : PreferenceAgent {
                 if (agC.parameters.isNotEmpty()) {
                     var nplFileName = agC.parameters.first()
                     nplFileName = nplFileName.substring(1..nplFileName.length - 2)
-                    logger.info("*** loading norms from $nplFileName")
+                    if (nplFileName.endsWith(".npl")) {
+                        logger.info("*** loading norms from $nplFileName")
 
-                    program = NormativeProgram()
-                    nplp(FileReader(nplFileName)).program(program, null)
+                        program = NormativeProgram()
+                        nplp(FileReader(nplFileName)).program(program, null)
+                    }
                 }
             }
             if (program != null) {
@@ -70,7 +72,9 @@ open class NormativeAg : PreferenceAgent {
     }
 
     fun resetNPL() {
-        interpreter.clearFacts()
+        if (program != null) {
+            interpreter.clearFacts()
+        }
     }
 
     override fun stopAg() {

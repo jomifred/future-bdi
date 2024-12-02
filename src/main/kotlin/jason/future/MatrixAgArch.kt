@@ -52,7 +52,7 @@ class MatrixAgArch (
 
         if (isMainAg()) {
             historyS.add(newState)
-            ForeseeProblemAgent.expData.nbVisitedStates++
+            StatData.nbVisitedStates++
         }
     }
 }

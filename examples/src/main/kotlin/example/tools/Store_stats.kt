@@ -5,7 +5,7 @@ import jason.asSemantics.TransitionSystem
 import jason.asSemantics.Unifier
 import jason.asSyntax.NumberTerm
 import jason.asSyntax.Term
-import jason.future.ForeseeProblemAgent
+import jason.future.StatData
 import kotlin.concurrent.thread
 
 class store_stats : DefaultInternalAction() {
@@ -19,11 +19,11 @@ class store_stats : DefaultInternalAction() {
         if (timeout > 0) {
             thread(start = true) {
                 Thread.sleep(timeout)
-                ForeseeProblemAgent.expData.storeStats(true)
+                StatData.storeStats(true)
                 System.exit(0)
             }
         } else {
-            ForeseeProblemAgent.expData.storeStats(false)
+            StatData.storeStats(false)
             System.exit(0)
         }
         return true

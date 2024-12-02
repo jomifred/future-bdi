@@ -3,11 +3,13 @@ package jason.future
 import jason.asSemantics.Option
 import jason.infra.local.RunLocalMAS
 import java.io.BufferedWriter
+import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.PriorityBlockingQueue
 
-enum class ExplorationStrategy { NONE, ONE, SOLVE_P, SOLVE_M, SOLVE_F, RANDOM }
+enum class ExplorationStrategy { ONE, SOLVE_P, SOLVE_M, SOLVE_F, RANDOM }
 
 /** search for a good option for the agent */
 open class Search (
@@ -71,7 +73,7 @@ open class Search (
                 if (matrix.success()) {
                     mainAg.logger.info("   found an option with a likely nice future! ${"%.8f".format(matrix.certainty)} of certainty. $nbE options tried. option=${envModel.currentState()}->${fo.ag.originalOption.plan?.label?.functor}, cost=${fo.cost}")
                     if (nbE > 1)
-                        ForeseeProblemAgent.setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
+                        setMsg("explored $nbE options to find a nice future. depth=${fo.planSize()} visited=${visited}.")
                     //val planStr = mainAg.storeGoodOptions(fo)
                     mainAg.logger.info("   plan is ${fo.allActions()}")
                     storeStats(fo, nbE, visited, defaultPlan?:setOf<State>())
@@ -84,7 +86,7 @@ open class Search (
             storeStats(null, nbE, visited, defaultPlan?:setOf<State>())
             if (!matrix.stop())
                 mainAg.logger.info("   sorry, all options (using $strategy) have an unpleasant future!\n")
-            ForeseeProblemAgent.setMsg("explored $nbE options and ... no future")
+            setMsg("explored $nbE options and ... no future")
             return null
         } finally {
             visitedOptions.clear()
@@ -108,7 +110,7 @@ open class Search (
     }
 
     fun rollout(fo: FutureOption) : MatrixRunner {
-        if (envModel.hasGUI()) ForeseeProblemAgent.visitedStates.add( fo.state ) // for GUI
+        if (envModel.hasGUI()) visitedStates.add( fo.state ) // for GUI
         visitedOptions.add( fo.getPairId() )
 
         // run agent with event and option to be explored
@@ -156,5 +158,66 @@ open class Search (
             e.printStackTrace()
         }
     }
+
+    // Used mostly for GUI
+    companion object {
+        private var msg: String = ""
+        //private var recoverStrategy = ExplorationStrategy.SOLVE_M
+        var solution : MutableList<State> = mutableListOf()
+        val visitedStates = ConcurrentHashMap.newKeySet<State>()
+        //val expData = ExperimentData()
+
+        fun getImplementedStrategies() = ExplorationStrategy.entries.toTypedArray()
+
+        fun getVisited() : Set<State> = visitedStates
+        fun clearVisited() { visitedStates.clear() }
+        //fun getSolution() = solution
+        /*fun strategy() = recoverStrategy
+        fun setStrategy(e: ExplorationStrategy) {
+            recoverStrategy = e
+            println("exploration set to $e")
+            msg = ""
+        }*/
+
+        fun setMsg(s: String) { msg = s }
+        fun getMsg() = msg
+    }
 }
 
+/*class ExperimentData {
+    var gamma = 0.0
+    var pChange = 0.0
+    var scenario = "none"
+    var nbPlanFor = 0
+    private var nbMatrices = 0
+    var nbVisitedStates = 0
+    var strategy = ExplorationStrategy.ONE
+    var requiredCertainty = 0.0
+    var nbActions = 0
+    var actionsCost = 0.0
+    private var startT : Long = System.currentTimeMillis()
+
+    fun addNbMatrices() {
+        nbMatrices++
+        /*if (nbMatrices > 5000) {
+            System.exit(0)
+        }*/
+    }
+
+    fun storeStats(timeout: Boolean) {
+        try {
+            val toS = if (timeout) "timeout" else "ontime"
+            val newf = ! File("stats.csv").exists()
+            BufferedWriter(FileWriter("stats.csv", true)).use { out ->
+                if (newf)
+                    out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time, timeout, cost")
+                //val sNbAct = if (timeout) (nbActions+500).toDouble() else nbActions.toString()
+                val sNbAct = nbActions.toString()
+                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.4f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $sNbAct, ${System.currentTimeMillis()-startT}, $toS, ${"%.2f".format(actionsCost)}")
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+}
+*/

@@ -3,14 +3,12 @@ package jason.future
 import jason.agent.NormativeAg
 import jason.asSemantics.NoOptionException
 import jason.asSemantics.Option
-import jason.asSyntax.ASSyntax
-import jason.asSyntax.Atom
-import jason.asSyntax.ListTermImpl
-import jason.asSyntax.Literal
+import jason.asSyntax.*
 import jason.infra.local.RunLocalMAS
+import jason.mas2j.AgentParameters
+import jason.runtime.Settings
 import java.io.*
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  *  agent that considers the future to select (or not) option (of plans)
@@ -21,22 +19,31 @@ import java.util.concurrent.ConcurrentHashMap
 open class ForeseeProblemAgent : NormativeAg(), StopConditions {
 
     /** required certainty to progress running matrix */
-    private var rCertainty = 0.0
+    private var rCertainty = 0.95
 
     override fun initAg() {
         super.initAg()
         try {
             val conf = Properties()
             try {
-                conf.load(FileReader("params.properties"))
-                rCertainty = conf.getOrDefault("requiredCertainty", rCertainty).toString().toDouble()
+                val agC = (ts.settings.userParameters[Settings.PROJECT_PARAMETER] as AgentParameters).agClass
+                var paramFleName = ""
+
+                for (arg in agC.parameters) {
+                    println("Arg = $arg")
+                    val l = ASSyntax.parseLiteral(arg)
+                    paramFleName = (l.getTerm(0) as StringTerm).string
+                    logger.info("*** loading parameters from $paramFleName")
+                }
+                if (paramFleName.isNotEmpty()) {
+                    conf.load(FileReader(paramFleName))
+                    rCertainty = conf.getOrDefault("requiredCertainty", rCertainty).toString().toDouble()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-            expData.requiredCertainty = rCertainty
-            expData.strategy = ExplorationStrategy.SOLVE_M // TODO: read from mas2jfile?, no need keep solvem, the plan_for has arg for that
-            // TODO: if expData has initial strategy, set from there, it is set by the env if param is defined
-
+            logger.info("*** requiredCertainty = $rCertainty")
+            StatData.requiredCertainty = rCertainty
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -54,14 +61,13 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
 
     @Throws(NoOptionException::class)
     override fun selectOption(options: MutableList<Option>): Option? {
-        if (envModel()?.hasGUI() == true) solution.clear() // GUI
-        clearVisited()
+        if (envModel()?.hasGUI() == true) Search.solution.clear() // for GUI
+        Search.clearVisited() // for GUI
 
         val defaultOption = super.selectOption(options) ?: return null
         //println("In select option for ${defaultOption.evt?.trigger}. Strategy = ${data.strategy}")
 
         if (ts.c.selectedEvent.intention == null // we are considering options only for an intention
-            || expData.strategy == ExplorationStrategy.NONE
             || defaultOption.evt.trigger.isFailureGoal) // do not use matrix for failure goals
             return defaultOption
 
@@ -77,7 +83,7 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
             throw NoOptionException(msg, ASSyntax.createLiteral("future_issue", failure))
         }
 
-        if (envModel()?.hasGUI() == true) solution.addAll(search.matrix.fo.states().first) // GUI
+        if (envModel()?.hasGUI() == true) Search.solution.addAll(search.matrix.fo.states().first) // for GUI
         return defaultOption
     }
 
@@ -103,66 +109,5 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
             }
         }
         return super.failure(history, steps, stepsWithoutAct, hasLoop, agents)
-    }
-
-    // data used for the env. GUI
-    companion object {
-        private var msg: String = ""
-        //private var recoverStrategy = ExplorationStrategy.SOLVE_M
-        private var solution : MutableList<State> = mutableListOf()
-        val visitedStates = ConcurrentHashMap.newKeySet<State>()
-        val expData = ExperimentData()
-
-        fun getImplementedStrategies() = ExplorationStrategy.entries.toTypedArray()
-
-        fun getVisited() : Set<State> = visitedStates
-        fun clearVisited() { visitedStates.clear() }
-        fun getSolution() = solution
-        /*fun strategy() = recoverStrategy
-        fun setStrategy(e: ExplorationStrategy) {
-            recoverStrategy = e
-            println("exploration set to $e")
-            msg = ""
-        }*/
-
-        fun setMsg(s: String) { msg = s }
-        fun getMsg() = msg
-    }
-}
-
-class ExperimentData {
-    var gamma = 0.0
-    var pChange = 0.0
-    var scenario = "none"
-    var nbPlanFor = 0
-    private var nbMatrices = 0
-    var nbVisitedStates = 0
-    var strategy = ExplorationStrategy.NONE
-    var requiredCertainty = 0.0
-    var nbActions = 0
-    var actionsCost = 0.0
-    private var startT : Long = System.currentTimeMillis()
-
-    fun addNbMatrices() {
-        nbMatrices++
-        /*if (nbMatrices > 5000) {
-            System.exit(0)
-        }*/
-    }
-
-    fun storeStats(timeout: Boolean) {
-        try {
-            val toS = if (timeout) "timeout" else "ontime"
-            val newf = ! File("stats.csv").exists()
-            BufferedWriter(FileWriter("stats.csv", true)).use { out ->
-                if (newf)
-                    out.appendLine("scenario, pChange, gamma, recovery_strategy, required_certainty, build_plans, matrices, visited_states, actions, time, timeout, cost")
-                //val sNbAct = if (timeout) (nbActions+500).toDouble() else nbActions.toString()
-                val sNbAct = nbActions.toString()
-                out.appendLine("$scenario, ${"%.2f".format(pChange)}, ${"%.4f".format(gamma)}, $strategy, ${"%.2f".format(requiredCertainty)}, $nbPlanFor, $nbMatrices, $nbVisitedStates, $sNbAct, ${System.currentTimeMillis()-startT}, $toS, ${"%.2f".format(actionsCost)}")
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
     }
 }

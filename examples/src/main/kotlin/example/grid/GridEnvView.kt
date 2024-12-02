@@ -2,12 +2,9 @@ package example.grid
 
 import jason.environment.grid.GridWorldView
 import jason.future.ExplorationStrategy
-import jason.future.ForeseeProblemAgent
-import java.awt.BorderLayout
-import java.awt.Color
-import java.awt.FlowLayout
-import java.awt.Graphics
-import java.awt.Panel
+import jason.future.Search
+import jason.future.StatData
+import java.awt.*
 import java.awt.event.ItemEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
@@ -44,8 +41,8 @@ open class GridEnvView(
 
     fun resetGUI() {
         env.updatePercept()
-        ForeseeProblemAgent.clearVisited()
-        ForeseeProblemAgent.setMsg("")
+        Search.clearVisited()
+        Search.setMsg("")
         model.removeAll( gModel.VISITED )
         model.removeAll( gModel.SOLUTION )
         update()
@@ -56,13 +53,13 @@ open class GridEnvView(
     override fun initComponents(width: Int) {
         super.initComponents(width)
         val strategies = JComboBox<ExplorationStrategy>()
-        for (s in ForeseeProblemAgent.getImplementedStrategies())
+        for (s in Search.getImplementedStrategies())
             strategies.addItem(s)
 
         if (env != null)
             strategies.selectedItem = env.getStrategy()
         else
-            strategies.selectedItem = ForeseeProblemAgent.expData.strategy
+            strategies.selectedItem = StatData.strategy
         strategies.apply {
             addItemListener {
                 if (it.stateChange == ItemEvent.SELECTED) {
@@ -100,12 +97,12 @@ open class GridEnvView(
                 try {
                     Thread.sleep(300)
 
-                    msgText?.text = ForeseeProblemAgent.getMsg()
-                    for (s in ForeseeProblemAgent.getVisited()) {
+                    msgText?.text = Search.getMsg()
+                    for (s in Search.getVisited()) {
                         s as GridState
                         gModel.add(gModel.VISITED, s.l)
                     }
-                    for (s in ForeseeProblemAgent.getSolution()) {
+                    for (s in Search.solution) {
                         s as GridState
                         gModel.add(gModel.SOLUTION, s.l)
                     }

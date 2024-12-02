@@ -2,7 +2,7 @@
 
 MAS grid2 {
 
-    environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("H"))
+    environment: example.grid.GridJasonEnv(init(15,2),goal(15,25), scenario("H"), params("params.properties"))
 
     agents:
         grid2ag agentClass jason.future.ForeseeProblemAgent;

@@ -4,11 +4,12 @@ package example.dyngrid
 
 import example.grid.GridJasonEnv
 import example.grid.GridState
+import jason.asSyntax.ASSyntax
+import jason.asSyntax.StringTerm
 import jason.asSyntax.Structure
 import jason.environment.grid.GridWorldModel.OBSTACLE
 import jason.future.Action
 import jason.future.EnvironmentModel
-import jason.future.ForeseeProblemAgent
 import jason.future.MatrixCapable
 import java.io.FileReader
 import java.util.*
@@ -18,23 +19,24 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
     private val nbInitialWalls = 5
 
-    init {
-        val conf = Properties()
+    override fun init(args: Array<String>?) {
         var pChange = 0.4
-        try {
-            conf.load(FileReader("params.properties"))
-            pChange = conf.getOrDefault("pChange", pChange).toString().toDouble()
 
-            /*val maxTime = conf.getOrDefault("maxTime", 0).toString().toLong()
-            if (maxTime>0) {
-                thread(start = true) {
-                    Thread.sleep(maxTime)
-                    log.info("***** stop by time out *****")
-                    System.exit(0)
+        if (!args.isNullOrEmpty()) {
+            for (a in args) {
+                if (a.startsWith("params")) {
+                    try {
+                        val l = ASSyntax.parseLiteral(a)
+                        val fileName = l.getTerm(0) as StringTerm
+
+                        val conf = Properties()
+                        conf.load(FileReader(fileName.string))
+                        pChange = conf.getOrDefault("pChange", pChange).toString().toDouble()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
-            }*/
-        } catch (e: Exception) {
-            e.printStackTrace()
+            }
         }
 
         model = DynamicGridEnvModel(
@@ -46,6 +48,9 @@ class DynamicGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
         for (i in 0 until nbInitialWalls)
             (model as DynamicGridEnvModel).addRandomWall()
         //(model as DynamicGridEnvModel).addWall(12,15)
+
+        super.init(args)
+
     }
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 

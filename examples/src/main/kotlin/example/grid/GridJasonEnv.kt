@@ -51,13 +51,19 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
                     gui = false
                 }
 
-                try {
-                    val conf = Properties()
-                    conf.load(FileReader("params.properties"))
-                    setStrategy(conf.getOrDefault("recover_strategy", "NONE").toString())
-                } catch (e: Exception) {
-                    setStrategy(ExplorationStrategy.SOLVE_M)
-                    e.printStackTrace()
+                if (a.startsWith("params")) {
+                    try {
+                        val l = ASSyntax.parseLiteral(a)
+                        val fileName = l.getTerm(0) as StringTerm
+
+                        val conf = Properties()
+                        conf.load(FileReader(fileName.string)) //"params.properties"))
+                        setStrategy(conf.getOrDefault("recover_strategy", "NONE").toString())
+                        println("Recovery strategy from ${fileName} = ${getStrategy()}")
+                    } catch (e: Exception) {
+                        setStrategy(ExplorationStrategy.SOLVE_M)
+                        e.printStackTrace()
+                    }
                 }
             }
         }
@@ -78,10 +84,10 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
     override fun getModel(): EnvironmentModel<GridState, Action> = model
 
-    fun getStrategy() = ForeseeProblemAgent.expData.strategy
+    fun getStrategy() = StatData.strategy
 
     fun setStrategy(s: ExplorationStrategy) {
-        ForeseeProblemAgent.expData.strategy = s
+        StatData.strategy = s
     }
     fun setStrategy(s: String) {
         setStrategy(ExplorationStrategy.valueOf(s))
@@ -95,8 +101,8 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
 
         model.execute( a )
 
-        ForeseeProblemAgent.expData.nbActions++ // stats
-        ForeseeProblemAgent.expData.actionsCost += a.cost
+        StatData.nbActions++ // stats
+        StatData.actionsCost += a.cost
 
         log.info("executing: $action. from $prePos to ${model.getAgPos(0)}")
         if (delay>0)
@@ -116,6 +122,6 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     internal fun updateAgPercept(agName: String) {
         clearPercepts(agName)
         addPercept(agName, *(model.agPerception(agName).toTypedArray()))
-        addPercept(agName, ASSyntax.parseLiteral("r_strategy(\"${ForeseeProblemAgent.expData.strategy}\")"))
+        addPercept(agName, ASSyntax.parseLiteral("r_strategy(\"${StatData.strategy}\")"))
     }
 }
