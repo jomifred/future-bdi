@@ -35,7 +35,7 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
             }
             expData.requiredCertainty = rCertainty
             expData.strategy = ExplorationStrategy.SOLVE_M // TODO: read from mas2jfile?, no need keep solvem, the plan_for has arg for that
-            // TODO: if expData has initial strategy, set from there
+            // TODO: if expData has initial strategy, set from there, it is set by the env if param is defined
 
         } catch (e: Exception) {
             e.printStackTrace()
