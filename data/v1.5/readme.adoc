@@ -3,6 +3,8 @@
 
 (see slides with the basics for the dynamic environment xref:../../doc/future-bdi-notes-5.pdf[here])
 
+(the results are published http://dx.doi.org/10.1007/S10458-025-09687-8[here])
+
 The _environment_ is the same grid as in previous versions, but now  walls can appear and disappear. The agent has to cross the grid, from line 0 to line 19, as shown below.
 
 image:figs/d-env.png[]

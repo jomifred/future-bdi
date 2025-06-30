@@ -144,7 +144,7 @@ class BridgeEnvModel(
 }
 
 /**
- * A Brdige state is the location of agent A and location of agent B
+ * A Bridge state is the location of agent A and location of agent B
  */
 class BridgeState : State {
     val l: Array<Location>

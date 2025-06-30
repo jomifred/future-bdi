@@ -7,7 +7,7 @@ one uses future,
 the other is normal agent
 
 the future-agent uses ONE strategy to detect that future problems
-it uses solve_m to find a new plan
+it uses solve_f to find a new plan
 
 */
 MAS bridge1 {
