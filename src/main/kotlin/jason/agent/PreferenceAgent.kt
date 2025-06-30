@@ -5,7 +5,7 @@ import jason.asSemantics.Option
 import jason.asSyntax.Literal
 import jason.asSyntax.NumberTerm
 
-/** gets the value of a property in the annotations of a plan (of an option) */
+/** gets the value of a property in the annotations of a plan (an option) */
 fun Option.getProp(property: String, default: Double)  =
     this.plan.label
         .annots

@@ -8,8 +8,8 @@ image:screens1.3/b-p.png[]
 |===
 |scenario | strategy | solve | matrices | visited | steps | steps in policy
 
-| bridge | NONE | no | 0 | &infin; | &infin; | &infin; (100%)
-| bridge | ONE | no | 1 | 25 | -- | 0 (0%)
+| bridge | NONE | no | 0 | -- | &infin; | &infin; (100%)
+| bridge | ONE  | no | 1 | 25 | 0 | 0 (0%)
 | bridge | ONE footnote:[agent with recovery plan] | yes | 15 footnote:[the matrix is run 14 times detecting failure in the future, in the 15th execution (when the other agent has crossed) it detects no problem and the agent follows its policy.] | 15 | 15 | 15 (100%)
 | bridge | SOLVE_P | yes | 942 | 8333 | 27 | 21 (77%)
 |===
