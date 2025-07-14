@@ -2,6 +2,10 @@
 
 This projects adds to https://jason-lang.github.io[Jason] agents some capability to reason about the future. See doc folder for more details.
 
+Publications: 
+
+ - Jomi Fred Hübner, Samuele Burattini, Alessandro Ricci, and Simon Mayer. Reflexive anticipatory reasoning by BDI agents. Auton. Agents Multi Agent Syst., 39(1):7, 2025. https://doi.org/10.1007/s10458-025-09687-8.
+
 == Grid Example
 
 In the first scenario of the grid, the agent discovers that its usual plan selection will not achieve the goal. It then searches for alternative options and finds a way to achieve the goal.
