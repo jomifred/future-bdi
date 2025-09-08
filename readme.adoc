@@ -26,11 +26,11 @@ In the second scenario, the environment is dynamic: new walls appear and disappe
 
 image::doc/grid3.png[]
 
-In the third scenario, the agent selects options to avoid to violate norms. The norms are defined in xref:examples/src/org/norms.npl[this file] using https://github.com/moise-lang/npl[NPL] (Normative Programing Language). There are two norms:
+In the third scenario, the agent selects options to avoid to violate *norms*. The norms are defined in xref:examples/src/org/norms.npl[this file] using https://github.com/moise-lang/npl[NPL] (Normative Programing Language). There are two norms:
 
-- the agent should not enter the limited traffic zone (in yellow in the picture). A prohibition norm.
+- the agent should not enter the limited traffic zone (in yellow in the picture). A norm of type prohibition.
 
-- if there is a "portal" near the target, the agent should pass through it (black squares in the picture) . An obligation norm.
+- if there is a "portal" near the target, the agent should pass through it (black squares in the picture). A norm of type obligation.
 
 The beauty of this example is that we can change the norms to change the agent behaviour, no need to reprogram the agent!
 
