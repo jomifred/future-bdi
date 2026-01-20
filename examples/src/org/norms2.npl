@@ -1,0 +1,7 @@
+// uses activation condition for the prohibition
+
+scope main {
+
+    // all agents are prohibited to be in a Limited Traffic Zone
+    norm n1 : step(S) & S > 10 -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
+}
