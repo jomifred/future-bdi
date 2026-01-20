@@ -1,0 +1,17 @@
+// normative scenario (limited traffic zone)
+// example used for COINE26 paper
+
+// run with
+//     ./gradlew :examples:run --args="grid-norms0.mas2j"
+
+
+MAS grid4 {
+
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(18,13)) // goal(13,21) goal(20,1)
+
+    agents:
+        car_ag grid_recovery.asl
+             //agentClass jason.agent.PreferenceAgent;
+             agentClass jason.future.ForeseeProblemAgent("src/org/norms0.npl");
+    aslSourcePath: "src/agt";
+}

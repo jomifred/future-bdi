@@ -30,7 +30,8 @@ open class ForeseeProblemAgent : NormativeAg(), StopConditions {
                 var paramFleName = ""
 
                 for (arg in agC.parameters) {
-                    println("Arg = $arg")
+                    if (arg.endsWith(".npl\"")) continue // ignore npl file
+                    println("Init Arg = $arg")
                     val l = ASSyntax.parseLiteral(arg)
                     paramFleName = (l.getTerm(0) as StringTerm).string
                     logger.info("*** loading parameters from $paramFleName")

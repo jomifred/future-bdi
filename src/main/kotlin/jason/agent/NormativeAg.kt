@@ -38,7 +38,6 @@ open class NormativeAg : PreferenceAgent {
                     nplFileName = nplFileName.substring(1..nplFileName.length - 2)
                     if (nplFileName.endsWith(".npl")) {
                         logger.info("*** loading norms from $nplFileName")
-
                         program = NormativeProgram()
                         nplp(FileReader(nplFileName)).program(program, null)
                     }

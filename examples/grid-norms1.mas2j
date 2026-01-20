@@ -1,4 +1,5 @@
 // normative scenario (limited traffic zone)
+// example with obligation to use portals
 
 // run with
 //     ./gradlew :examples:run --args="grid-norms1.mas2j"
@@ -6,11 +7,11 @@
 
 MAS grid4 {
 
-    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(20,1)) // goal(13,21) goal(20,1)
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(20,1),portals) // goal(13,21) goal(20,1)
 
     agents:
         car_ag grid_recovery.asl
-             agentClass jason.future.ForeseeProblemAgent("src/org/norms.npl");
+             agentClass jason.future.ForeseeProblemAgent("src/org/norms1.npl");
 
     aslSourcePath: "src/agt";
 }

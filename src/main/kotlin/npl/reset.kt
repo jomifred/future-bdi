@@ -9,9 +9,11 @@ import jason.asSyntax.Term
 class reset : DefaultInternalAction() {
 
     override fun execute(ts: TransitionSystem, un: Unifier, args: Array<out Term>): Any {
-        val ag = ts.ag as NormativeAg
-        //ag.logger.info("** removing all facts from NPL **")
-        ag.resetNPL()
+        if (ts.ag is NormativeAg) {
+            val ag = ts.ag as NormativeAg
+            //ag.logger.info("** removing all facts from NPL **")
+            ag.resetNPL()
+        }
         return true
     }
 }

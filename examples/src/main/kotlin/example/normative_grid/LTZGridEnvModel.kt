@@ -7,25 +7,31 @@ import jason.asSyntax.Literal
 import jason.environment.grid.Location
 import jason.future.*
 
-class LTZGridEnvModel(
+open class LTZGridEnvModel(
     currentState: GridState,
     goalState   : GridState,
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 25,25) {
 
     private var step : Int = 0
     private var visited = mutableListOf<Location>()
-    private val portals = mutableListOf<Location>()
+    protected val portals = mutableListOf<Location>()
 
     override fun id() = "ltz-grid"
 
     init {
         StatData.scenario = id()
         addLTZ()
-        portals.add(Location(18,5))
+        /*portals.add(Location(18,5))
         portals.add(Location(3,21))
         for (p in portals)
-            add(PORTAL, p)
+            add(PORTAL, p)*/
         visited.add(currentState.l)
+    }
+
+    fun addPortal(x: Int, y: Int) {
+        val p = Location(x,y)
+        portals.add(p)
+        add(PORTAL, p)
     }
 
     override fun execute(a: Action): State {
@@ -41,12 +47,13 @@ class LTZGridEnvModel(
     }
 
     override fun clone(): LTZGridEnvModel {
-        val r =LTZGridEnvModel(
+        val r = LTZGridEnvModel(
             GridState(currentState.l),
             GridState(goalState.l),
         )
         r.step = this.step
         r.visited.addAll(this.visited)
+        r.portals.addAll(this.portals)
         return r
     }
 
