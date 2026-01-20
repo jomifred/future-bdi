@@ -1,7 +1,7 @@
 // normative scenario (limited traffic zone)
 
 // run with
-//     ./gradlew :examples:run --args="grid4.mas2j"
+//     ./gradlew :examples:run --args="grid-norms1.mas2j"
 
 
 MAS grid4 {

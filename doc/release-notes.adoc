@@ -4,7 +4,7 @@
 
 - normative scenario
 
-- `grid4.mas2j`
+- `grid-norms1.mas2j`
 
 == version 1.5
 
