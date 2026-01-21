@@ -46,8 +46,8 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
                         "H"  -> model.setScenarioWalls(2)
                         "O"  -> model.setScenarioWalls(3)
 
-                        "LTZ"    -> model.setScenarioWalls(-1)
-                        "LTZ_U"  -> model.setScenarioWalls(-2)
+                        "LTZ"    -> model.setScenarioWalls(-2)
+                        "LTZ_U"  -> model.setScenarioWalls(-3)
                     }
                 }
                 if (a.startsWith("no_gui")) {

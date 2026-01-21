@@ -9,12 +9,11 @@ import jason.environment.grid.Location
 
 class LTZGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
-
     init {
         model = LTZGridEnvModel(
             GridState(Location(15, 5)), // default initial state
             GridState(Location(15,17)),
-            -1
+            -2
         )
     }
 

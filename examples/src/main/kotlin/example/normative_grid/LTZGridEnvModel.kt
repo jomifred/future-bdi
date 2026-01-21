@@ -18,13 +18,6 @@ open class LTZGridEnvModel(
     val portals = mutableListOf<Location>()
 
     init {
-        //StatData.scenario = id()
-        //addLTZ()
-        //addLTZU()
-        /*portals.add(Location(18,5))
-        portals.add(Location(3,21))
-        for (p in portals)
-            add(PORTAL, p)*/
         visited.add(currentState.l)
     }
 

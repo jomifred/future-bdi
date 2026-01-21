@@ -36,8 +36,8 @@ open class GridEnvModel(
             2 -> "H"
             3 -> "O"
 
-            -1 -> "LTZ"
-            -2 -> "LTZ_U"
+            -2 -> "LTZ"
+            -3 -> "LTZ_U"
 
             else -> "none"
         }
@@ -62,8 +62,8 @@ open class GridEnvModel(
         if (scenario >  0) addWalls1()
         if (scenario >  1) addWalls2()
         if (scenario >  2) addWalls3()
-        if (scenario == -1) addLTZ()
-        if (scenario == -2) addLTZU()
+        if (scenario == -2) addLTZ()
+        if (scenario == -3) addLTZU()
     }
     fun addWalls0() {
         addWall(12,15,20,15)
