@@ -14,6 +14,8 @@ class BridgeEnvModel(
     var scenario : Int = 0
 ) : EnvironmentModel<BridgeState, BridgeAction>, GridWorldModel(20, 20, 2) {
 
+    var step : Int = 0
+
     init {
         setScenarioWalls(scenario)
         setInitState(currentState)
@@ -62,10 +64,10 @@ class BridgeEnvModel(
         else
             0
 
-
     override fun currentState(): BridgeState = currentState
 
     override fun execute(a: BridgeAction): State {
+        step++
         currentState = next(currentState, a)
         setAgPos(0, currentState.l[0])
         setAgPos(1, currentState.l[1])
@@ -137,8 +139,8 @@ class BridgeEnvModel(
         fun Location.ifFreeOrL(l: Location): Location = if (isFree(this)) this else l
 
         when (a.ag)  {
-            0    -> return BridgeState(getAdjacent(s.l[0]).getOrDefault(a.name, s.l[0]).ifFreeOrL(s.l[0]), s.l[1])
-            else -> return BridgeState(s.l[0], getAdjacent(s.l[1]).getOrDefault(a.name, s.l[1]).ifFreeOrL(s.l[1]))
+            0    -> return BridgeState(getAdjacent(s.l[0]).getOrDefault(a.name, s.l[0]).ifFreeOrL(s.l[0]), s.l[1], step)
+            else -> return BridgeState(s.l[0], getAdjacent(s.l[1]).getOrDefault(a.name, s.l[1]).ifFreeOrL(s.l[1]), step)
         }
     }
 }
@@ -148,24 +150,28 @@ class BridgeEnvModel(
  */
 class BridgeState : State {
     val l: Array<Location>
+    val step: Int
 
-    constructor(xa: Int, ya: Int, xb: Int, yb: Int) {
+    constructor(xa: Int, ya: Int, xb: Int, yb: Int, step: Int) {
         l = arrayOf(Location(xa,ya), Location(xb,yb))
+        this.step = step
     }
-    constructor(a: Location, b: Location) {
+    constructor(a: Location, b: Location, step: Int) {
         l = arrayOf(a,b)
+        this.step = step
     }
-    constructor(b: BridgeState) : this(b.l[0], b.l[1])
+    constructor(b: BridgeState) : this(b.l[0], b.l[1], b.step)
 
     override fun toString() = "<${l[0]}|${l[1]}>"
 
     override fun equals(other: Any?): Boolean {
         if (this === other)  return true
         if (other is BridgeState) return l[0] == other.l[0] && l[1] == other.l[1]
+        //if (other is BridgeState) return l[0] == other.l[0] && l[1] == other.l[1] && step == other.step
         return false
     }
 
-    override fun hashCode() = l[0].hashCode() + l[1].hashCode() * 31
+    override fun hashCode() = l[0].hashCode() + l[1].hashCode() * 31 //+ step
 
     /*override fun asJason() =
         ASSyntax.createLiteral("bridge_s",

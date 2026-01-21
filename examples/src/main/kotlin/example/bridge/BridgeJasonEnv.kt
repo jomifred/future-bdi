@@ -12,7 +12,7 @@ import kotlin.concurrent.thread
 
 class BridgeJasonEnv : Environment(1), MatrixCapable<BridgeState, BridgeAction> { // single thread environment
     private val model   = BridgeEnvModel(
-        BridgeState(3, 9, 17, 10), // initial state
+        BridgeState(3, 9, 17, 10, 0), // initial state
     )
     private val log :Logger  = Logger.getLogger("bridge-env")
 
@@ -45,7 +45,7 @@ class BridgeJasonEnv : Environment(1), MatrixCapable<BridgeState, BridgeAction> 
         val prePos = model.getAgPos(ag)
         model.execute( model.structureToAction(agName, action) )
         log.info("ag $ag executing: $action. from $prePos to ${model.getAgPos(ag)}")
-        Thread.sleep(100)
+        Thread.sleep(300)
         //updateAgPercept(agName)
         updatePercept()
         informAgsEnvironmentChanged()
