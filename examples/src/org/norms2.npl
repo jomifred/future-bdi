@@ -3,5 +3,9 @@
 scope main {
 
     // all agents are prohibited to be in a Limited Traffic Zone
-    norm n1 : step(S) & S > 10 -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
+    //norm n0 : true -> prohibition(A,n0, pos(A,X,Y) & ltz(X,Y), false).
+
+    //norm n1 : step(S) & S > 10 -> prohibition(A,n1, pos(A,X,Y) & ltz(X,Y), false).
+
+    norm n2 : step(S) & S < 5 -> prohibition(A,n2, pos(A,X,Y) & ltz(X,Y), false).
 }

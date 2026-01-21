@@ -35,6 +35,10 @@ open class GridEnvModel(
             1 -> "U"
             2 -> "H"
             3 -> "O"
+
+            -1 -> "LTZ"
+            -2 -> "LTZ_U"
+
             else -> "none"
         }
 
@@ -53,10 +57,13 @@ open class GridEnvModel(
     fun setScenarioWalls(i: Int) {
         scenario = i
         removeAll(OBSTACLE)
+        removeAll(LT_ZONE)
         if (scenario >= 0) addWalls0()
         if (scenario >  0) addWalls1()
         if (scenario >  1) addWalls2()
         if (scenario >  2) addWalls3()
+        if (scenario == -1) addLTZ()
+        if (scenario == -2) addLTZU()
     }
     fun addWalls0() {
         addWall(12,15,20,15)
@@ -72,6 +79,27 @@ open class GridEnvModel(
     }
     fun addWalls3() {
         addWall(12,23,20,23)
+    }
+
+    fun addLTZ() {
+        for (x in 8..20)
+            for (y in 6..12)
+                add(LT_ZONE, x, y)
+        for (x in 14..17)
+            for (y in 13..15)
+                add(LT_ZONE, x, y)
+        for (x in 6..19)
+            for (y in 16..19)
+                add(LT_ZONE, x, y)
+    }
+
+    fun addLTZU() {
+        for (x in 7..20)
+            add(LT_ZONE,x,15)
+        for (y in 7..15 ) {
+            add(LT_ZONE,7,y)
+            add(LT_ZONE,20,y)
+        }
     }
 
     override fun clone(): GridEnvModel =
@@ -133,6 +161,20 @@ open class GridEnvModel(
             ASSyntax.createNumber(goalState.l.x.toDouble()),
             ASSyntax.createNumber(goalState.l.y.toDouble()),
         ))
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                if (hasObject(LT_ZONE, x, y)) {
+                    p.add(
+                        ASSyntax.createLiteral(
+                            "ltz",
+                            ASSyntax.createNumber(x.toDouble()),
+                            ASSyntax.createNumber(y.toDouble()),
+                        )
+                    )
+                }
+            }
+        }
 
         return p
     }

@@ -1,0 +1,18 @@
+// normative scenario (limited traffic zone)
+// example used for COINE26 paper, exploiting the U scenario and idle action
+
+// run with
+//     ./gradlew :examples:run --args="grid-norms2.mas2j"
+
+
+MAS grid4 {
+
+    // the U scenario, exploit idle action waiting for LTZ to be opened
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,14),goal(13,20), scenario("LTZ_U")) // goal(18,13) goal(13,21) goal(20,1)
+
+    agents:
+        car_ag grid_recovery.asl
+             agentClass jason.future.ForeseeProblemAgent("src/org/norms2.npl"); // prohibition for some time
+
+    aslSourcePath: "src/agt";
+}

@@ -5,7 +5,7 @@
 // in case of future problems, it replans using a different options from the plan library
 
 
-+destination(X,Y) <- npl.reset; !pos(X,Y). // create a goal when my destination is perceived
++destination(X,Y) <- npl.reset; .wait(500); !pos(X,Y). // create a goal when my destination is perceived
 -destination(X,Y) <- .drop_all_desires. // drop everything if my destination is removed
 
 // recovery plan

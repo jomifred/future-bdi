@@ -17,7 +17,7 @@ import kotlin.concurrent.thread
 open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
     protected var model   = GridEnvModel(
         GridState(15, 5), // initial state
-        GridState(15,17)  // goal  state
+        GridState(15,17)  // goal state
     )
     protected val log :Logger  = Logger.getLogger("grid-env")
     protected var view: GridEnvView? = null
@@ -45,6 +45,9 @@ open class GridJasonEnv : Environment(), MatrixCapable<GridState, Action> {
                         "U"  -> model.setScenarioWalls(1)
                         "H"  -> model.setScenarioWalls(2)
                         "O"  -> model.setScenarioWalls(3)
+
+                        "LTZ"    -> model.setScenarioWalls(-1)
+                        "LTZ_U"  -> model.setScenarioWalls(-2)
                     }
                 }
                 if (a.startsWith("no_gui")) {

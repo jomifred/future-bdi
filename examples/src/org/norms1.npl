@@ -1,3 +1,5 @@
+// norm to oblige the use of portals
+
 scope main {
 
     portal_near(DX,DY, PX,PY) :-

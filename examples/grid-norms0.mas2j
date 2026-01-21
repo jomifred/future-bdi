@@ -7,13 +7,12 @@
 
 MAS grid4 {
 
-    environment: example.normative_grid.LTZGridJasonEnv(init(13,14),goal(13,20)) // goal(18,13) goal(13,21) goal(20,1)
-
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(18,13), scenario("LTZ")) // goal(18,13) goal(13,21) goal(20,1)
+    
     agents:
         car_ag grid_recovery.asl
              //agentClass jason.agent.PreferenceAgent;
-             //agentClass jason.future.ForeseeProblemAgent("src/org/norms0.npl"); // prohibition always on
-             agentClass jason.future.ForeseeProblemAgent("src/org/norms2.npl"); // prohibition for some time
+             agentClass jason.future.ForeseeProblemAgent("src/org/norms0.npl"); // prohibition always on
 
     aslSourcePath: "src/agt";
 }

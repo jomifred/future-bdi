@@ -7,20 +7,37 @@ import jason.asSyntax.Literal
 import jason.environment.grid.Location
 import jason.future.*
 
+// LTZ state considers the step as part of the state, so that idle "changes" the state
+
+open class LTZState(l: Location, val step: Int) : GridState(l) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is LTZState) return false
+        if (l != other.l) return false
+        if (step != other.step) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode() + step.hashCode()
+    }
+}
+
 open class LTZGridEnvModel(
-    currentState: GridState,
-    goalState   : GridState,
-) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, -1, 25,25) {
+    currentState: LTZState,
+    goalState   : LTZState,
+    scenario    : Int
+) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, scenario, 25,25) {
 
     private var step : Int = 0
     private var visited = mutableListOf<Location>()
     protected val portals = mutableListOf<Location>()
 
-    override fun id() = "ltz-grid"
-
     init {
-        StatData.scenario = id()
-        addLTZ()
+        //StatData.scenario = id()
+        //addLTZ()
+        //addLTZU()
         /*portals.add(Location(18,5))
         portals.add(Location(3,21))
         for (p in portals)
@@ -35,7 +52,6 @@ open class LTZGridEnvModel(
     }
 
     override fun execute(a: Action): State {
-        step++
         val r = super.execute(a)
         visited.add(currentState.l)
         return r
@@ -46,10 +62,17 @@ open class LTZGridEnvModel(
         visited.clear()
     }
 
+    override fun next(s: GridState, a: Action): GridState {
+        val n = super.next(s, a)
+        step++
+        return LTZState(n.l, step)
+    }
+
     override fun clone(): LTZGridEnvModel {
         val r = LTZGridEnvModel(
-            GridState(currentState.l),
-            GridState(goalState.l),
+            LTZState(currentState.l, step),
+            LTZState(goalState.l, step),
+            scenario
         )
         r.step = this.step
         r.visited.addAll(this.visited)
@@ -68,20 +91,8 @@ open class LTZGridEnvModel(
                 ASSyntax.createNumber(l.y.toDouble()),
         ))
 
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                if (hasObject(LT_ZONE, x, y)) {
-                    p.add(
-                        ASSyntax.createLiteral(
-                            "ltz",
-                            ASSyntax.createNumber(x.toDouble()),
-                            ASSyntax.createNumber(y.toDouble()),
-                        )
-                    )
-                }
-            }
-        }
         p.add(ASSyntax.createLiteral("step", ASSyntax.createNumber(step.toDouble())))
+
         for (portal in portals) {
             p.add(
                 ASSyntax.createLiteral(
@@ -102,17 +113,4 @@ open class LTZGridEnvModel(
         }
         return p
     }
-
-    private fun addLTZ()  {
-        for (x in 8..20)
-            for (y in 6..12)
-                add(LT_ZONE,x,y)
-        for (x in 14..17)
-            for (y in 13..15)
-                add(LT_ZONE,x,y)
-        for (x in 6..19)
-            for (y in 16..19)
-                add(LT_ZONE,x,y)
-    }
-
 }
