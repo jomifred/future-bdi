@@ -58,6 +58,7 @@ data class FutureOption(
         return false
     }
 
+    // the states form the search root until this leaf
     fun states() : Pair<List<State>, Int> {
         val states = mutableListOf<State>()
         var f = this
@@ -74,6 +75,7 @@ data class FutureOption(
         return Pair(states, beforePolicy)
     }
 
+    // the actions from the root search until this leaf
     fun allActions() : List<Structure> {
         val result = mutableListOf<Structure>()
         var f = this.parent

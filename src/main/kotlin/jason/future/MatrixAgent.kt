@@ -16,7 +16,7 @@ class MatrixAgent(
         setConsiderToAddMIForThisAgent(false)
     }
 
-    var firstSO = true // if it is the first time this agent calls selectOption (in that cases, add FO)
+    var firstSO = true // if it is the first time this agent has called selectOption (in that cases, add FO)
     internal var myFO : FutureOption? = null // the FO being tried by this agent
 
     var inZone1 = false
@@ -58,7 +58,7 @@ class MatrixAgent(
         return defaultOption
     }
 
-    private fun costWeight() =
+    private fun strategyWeight() =
         if (inZone1)
             when (search.strategy) {
                 ExplorationStrategy.SOLVE_M -> 0.7
@@ -75,7 +75,7 @@ class MatrixAgent(
             //acumCost,
             lastFO,
             //myFO,
-            costWeight(),
+            strategyWeight(),
             search,
             myFO!!.otherAgs)
     }

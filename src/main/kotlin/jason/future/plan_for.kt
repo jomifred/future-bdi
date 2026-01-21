@@ -45,7 +45,7 @@ class plan_for : DefaultInternalAction(), StopConditions {
             }
 
             // run search using matrix
-            if (strategy  != ExplorationStrategy.RANDOM) {
+            if (strategy != ExplorationStrategy.RANDOM) {
                 val search = Search(ag, searchConds, strategy, ag.envModel()!!)
                 search.init(appPlans)
                 val opt = search.run()

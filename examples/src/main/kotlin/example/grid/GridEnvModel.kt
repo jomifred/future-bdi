@@ -9,8 +9,8 @@ import jason.future.*
 
 open class GridEnvModel(
     protected var currentState: GridState,
-    var goalState    : GridState,
-    var scenario     : Int = 0,
+    var goalState   : GridState,
+    var scenario : Int =  0,
     wwidth       : Int = 30,
     wheight      : Int = 30
 ) : EnvironmentModel<GridState, Action>, GridWorldModel(wwidth, wheight, 1) {
@@ -90,15 +90,17 @@ open class GridEnvModel(
         Action("s", 1.0),
         Action("sw",1.4),
         Action("se",1.4),
+        Action("idle", 0.0)
     ).associateBy { it.name }
 
-    private val skip = Action("skip", 1.9)
+    private val skip = Action("idle", 0.0)
 
     override fun actions() = actions.values
 
     override fun structureToAction(agName: String, jasonAction: Structure): Action {
         return actions.getOrDefault( jasonAction.functor, skip) // here, only functor is relevant
     }
+
     override fun currentState(): GridState = currentState
 
     override fun execute(a: Action): State {
