@@ -7,7 +7,7 @@
 
 MAS grid4 {
 
-    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(20,1),portals) // goal(13,21) goal(20,1)
+    environment: example.normative_grid.LTZGridJasonEnv(init(13,1),goal(20,1),scenario("LTZ"),portals) // goal(13,21) goal(20,1)
 
     agents:
         car_ag grid_recovery.asl

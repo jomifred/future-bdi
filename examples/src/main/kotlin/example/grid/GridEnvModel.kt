@@ -118,10 +118,10 @@ open class GridEnvModel(
         Action("s", 1.0),
         Action("sw",1.4),
         Action("se",1.4),
-        Action("idle", 0.0)
+        Action("idle", 0.9)
     ).associateBy { it.name }
 
-    private val skip = Action("idle", 0.0)
+    private val skip = Action("idle", 0.9)
 
     override fun actions() = actions.values
 

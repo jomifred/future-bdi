@@ -12,9 +12,9 @@ class LTZGridJasonEnv : GridJasonEnv(), MatrixCapable<GridState, Action> {
 
     init {
         model = LTZGridEnvModel(
-            LTZState(Location(15, 5), 0), // default initial state
-            LTZState(Location(15,17), 1000),
-            -1// default goal  state
+            GridState(Location(15, 5)), // default initial state
+            GridState(Location(15,17)),
+            -1
         )
     }
 

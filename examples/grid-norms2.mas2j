@@ -8,7 +8,7 @@
 MAS grid4 {
 
     // the U scenario, exploit idle action waiting for LTZ to be opened
-    environment: example.normative_grid.LTZGridJasonEnv(init(13,14),goal(13,20), scenario("LTZ_U")) // goal(18,13) goal(13,21) goal(20,1)
+    environment: example.normative_grid.LTZGridJasonEnvU(init(13,14),goal(13,20)) // goal(18,13) goal(13,21) goal(20,1)
 
     agents:
         car_ag grid_recovery.asl

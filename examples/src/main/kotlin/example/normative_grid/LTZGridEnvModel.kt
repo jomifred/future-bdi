@@ -7,32 +7,15 @@ import jason.asSyntax.Literal
 import jason.environment.grid.Location
 import jason.future.*
 
-// LTZ state considers the step as part of the state, so that idle "changes" the state
-
-open class LTZState(l: Location, val step: Int) : GridState(l) {
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is LTZState) return false
-        if (l != other.l) return false
-        if (step != other.step) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return super.hashCode() + step.hashCode()
-    }
-}
-
 open class LTZGridEnvModel(
-    currentState: LTZState,
-    goalState   : LTZState,
+    currentState: GridState,
+    goalState   : GridState,
     scenario    : Int
 ) : EnvironmentModel<GridState, Action>, GridEnvModel(currentState, goalState, scenario, 25,25) {
 
-    private var step : Int = 0
-    private var visited = mutableListOf<Location>()
-    protected val portals = mutableListOf<Location>()
+    var step : Int = 0
+    var visited = mutableListOf<Location>()
+    val portals = mutableListOf<Location>()
 
     init {
         //StatData.scenario = id()
@@ -62,16 +45,11 @@ open class LTZGridEnvModel(
         visited.clear()
     }
 
-    override fun next(s: GridState, a: Action): GridState {
-        val n = super.next(s, a)
-        step++
-        return LTZState(n.l, step)
-    }
 
     override fun clone(): LTZGridEnvModel {
         val r = LTZGridEnvModel(
-            LTZState(currentState.l, step),
-            LTZState(goalState.l, step),
+            GridState(currentState.l),
+            GridState(goalState.l),
             scenario
         )
         r.step = this.step
