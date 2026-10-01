@@ -4,10 +4,15 @@ This projects adds to https://jason-lang.github.io[Jason] agents some capability
 
 Publications: 
 
- - Jomi Fred Hübner, Samuele Burattini, Alessandro Ricci, and Simon Mayer. Reflexive anticipatory reasoning by BDI agents. Auton. Agents Multi Agent Syst., 39(1):7, 2025. https://doi.org/10.1007/s10458-025-09687-8.
+ - Jomi Fred Hübner, Samuele Burattini, Alessandro Ricci, and Simon Mayer. _Reflexive anticipatory reasoning by BDI agents_. Auton. Agents Multi Agent Syst., 39(1):7, 2025. +
+ https://doi.org/10.1007/s10458-025-09687-8[doi: 10.1007/s10458-025-09687-8] +
+ https://colab.research.google.com/drive/1q-EFZEdO67Rj1rCBs3ebkLHO8wyFF5uE?usp=sharing[jupyter notebook with the code of the paper]
 
- - Jomi Hübner, Samuele Burattini, Alessandro Ricci, and Simon Mayer. Anticipatory thinking in multi-agent contexts. In Anais do XIX Workshop-Escola de Sistemas de Agentes, seus Ambientes e Aplicações, Brasil, 2025. SBC. (best paper).
- http://dx.doi.org/10.5753/wesaac.2025.37525.
+ - Jomi Hübner, Samuele Burattini, Alessandro Ricci, and Simon Mayer. _Anticipatory thinking in multi-agent contexts_. In Anais do XIX Workshop-Escola de Sistemas de Agentes, seus Ambientes e Aplicações, Brasil, 2025. SBC. (best paper). +
+ http://dx.doi.org/10.5753/wesaac.2025.37525[doi: 10.5753/wesaac.2025.37525].
+
+ - Jomi Fred Hübner, Elena Yan, Luis Gustavo Nardin, Olivier Boissier. _Anticipatory Thinking in Normative Contexts_. International Workshop on Coordination, Organizations, Institutions, Norms and Ethics for Governance of Multi-Agent Systems (COINE), co-located with AAMAS 2026, May 2026, Paphos, Cyprus. +
+ https://hal.science/hal-05633900[hal-05633900]
 
 == Grid Example
 
